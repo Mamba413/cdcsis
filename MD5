@@ -1,0 +1,15 @@
+ba1fd910a26760922a4ed0c9a7f6e797 *DESCRIPTION
+54f701639b4e03ca205924db0096c144 *NAMESPACE
+62c4eb7f502d2574aeb8bcdc9689234b *R/bw.R
+a9f93346e3fe5cfe7311d7948b60c224 *R/cdcor.R
+0d025e340e0185d0296e1a485dea7fcd *R/cdcor.ada.R
+b5b0e80f96d18151ca4650a5c2de346e *R/cdcov.R
+a68246b7d446f33ee078cfb16f2a32cf *R/cdcsis.R
+c7972e566e57667201b83d49022c1b6d *man/bw.Rd
+21244b28064fb077d3d6aa17bc7ef54e *man/cdcor.Rd
+cdcc96d8c930c68caeb3ae15c971a275 *man/cdcor.ada.Rd
+19ae25a4f0a840c317a6f6c76e25e58b *man/cdcov.Rd
+24fee4d67204900b923b094634f2dba2 *man/cdcsis-package.Rd
+881f0577aedab2f4bf7ad9df5efae148 *man/cdcsis.Rd
+7c6057e367ea07c4fe43d7984d4f2dd2 *src/IterationcdCov.cpp
+7096eebcc6380ccf78d36ba72c8cf6ad *src/cdCOV.c

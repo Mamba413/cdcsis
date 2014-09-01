@@ -1,0 +1,18 @@
+Package: cdcsis
+Type: Package
+Title: Conditional Distance Correlation and Its Related Feature
+        Screening Method
+Version: 1.0
+Date: 2014-09-01
+Author: Canhong Wen, Wenliang Pan, Mian Huang, and Xueqin Wang
+Depends: R(>= 3.0.1), stats
+Imports: ks
+Suggests: MASS, energy
+Maintainer: Canhong Wen <wencanhong@gmail.com>
+Description: Gives conditional distance correlation and performs the conditional distance correlation sure independence screening procedure for ultrahigh dimensional data. The conditional distance correlation is a novel conditional dependence measurement of two random variables given a third variable. The conditional distance correlation sure independence screening is used for screening variables in ultrahigh dimensional setting.
+License: GPL (>= 2)
+Packaged: 2014-10-21 14:47:45 UTC; wencanh
+Repository: CRAN
+Collate: 'cdcov.R' 'cdcor.R' 'cdcor.ada.R' 'bw.R' 'cdcsis.R'
+NeedsCompilation: yes
+Date/Publication: 2014-10-21 17:48:22
