@@ -173,6 +173,16 @@ void brmul(double *a, double *b,int m,int n,int k,double *c)
 }
 
 
+/*
+ * 
+ * Compute the kernel estimation for C_i - C_j
+ * 
+ * @param z: a vectorized matrix. z[i*d+k] is corrresponding to the i-th row, k-th column of original matrix C, 
+ * C is a n \times d matrix.
+ * @param Kernel: a vectorized kernel density estimator matrix. Kernel[i*n+j] = Kernel[j*n+i] are the density
+ * estimator of C_i - C_j
+ * 
+ */
 void dmvnorm(double *z, double *width, int d, int n, double *Kernel)
 {
 	/*Multivariate normal density*/
