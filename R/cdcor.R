@@ -1,5 +1,4 @@
-cdcor <-
-function(x,y,z,width,index=1) {
+cdcor <- function(x,y,z,width,index=1) {
 
   x<-as.matrix(x);y<-as.matrix(y);z<-as.matrix(z)
   dim_x<-dim(x); n<-dim_x[1];M<-dim_x[2];p<-1; q<-dim(y)[2];d<-dim(z)[2]
