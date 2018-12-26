@@ -1,5 +1,0 @@
-exportPattern("^[[:alpha:]]+")
-export(cdcov, cdcor, cdcor.ada, cdcsis)
-import(ks)
-useDynLib(cdcsis)
-
