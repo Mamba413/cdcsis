@@ -16,4 +16,11 @@ enum KernelType {
     KERNEL_RECTANGLE = 3
 };
 
+enum StatsType {
+    CONDITION_DISTANCE_COVARIANCE = 1,
+    CONDITION_DISTANCE_CORRELATION = 2
+};
+
+const bool DISTANCE = false;
+
 #endif //GLOBAL_H

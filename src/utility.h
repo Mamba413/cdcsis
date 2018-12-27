@@ -26,6 +26,8 @@ double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weig
 
 std::vector<std::vector<double>> Euclidean_distance(std::vector<std::vector<double>> &matrix, double index);
 
+std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, uint num_row, uint num_col);
+
 std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<double>> &distance_matrix,
                                                        std::vector<double> &weight);
 

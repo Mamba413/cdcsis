@@ -237,6 +237,20 @@ std::vector<std::vector<double>> Euclidean_distance(std::vector<std::vector<doub
     return distance_matrix;
 }
 
+std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, uint num_row, uint num_col) {
+
+    std::vector<std::vector<double>> matrix(num_row, std::vector<double>(num_col));
+
+    uint k = 0;
+    for (uint i = 0; i < num_row; i++) {
+        for (uint j = 0; j < num_col; j++) {
+            matrix[i][j] = vector[k++];
+        }
+    }
+
+    return matrix;
+}
+
 std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<double>> &distance_matrix,
                                                        std::vector<double> &weight) {
     double weight_sum = vector_sum(weight);
