@@ -11,31 +11,29 @@ cdcor(x, y, z, width, index = 1)
 
 \item{y}{a numeric vector or matrix with compatible dimensions to \code{x}}
 
-\item{z}{the variable being conditioned. \code{z} is a numeric vector or
-matrix with compatible dimensions to \code{x}}
+\item{z}{the variable being conditioned. \code{z} is a numeric vector or matrix with compatible dimensions to \code{x}}
 
 \item{width}{a positive value, user-specified}
 
-\item{index}{exponent on Euclidean distance, in (0,2]}
+\item{index}{exponent on Euclidean distance, in \eqn{(0,2]}}
 }
 \value{
-\item{ cdcov }{the conditional distance covariance with given
-variable z } \item{ mcdcov }{mean of the conditional distance covariance
-with given variable z} \item{ width }{ the bandwidth } \item{ index }{
-exponent on Euclidean distance, in (0,2] }
+\item{cdcov}{the conditional distance covariance with given variable \code{z}}
+\item{mcdcov}{mean of the conditional distance covariance with given variable \code{z}}
+\item{width}{the bandwidth}
+\item{index}{exponent on Euclidean distance, in \eqn{(0,2]}}
 }
 \description{
-Performs conditional distance correlation with given bandwidth.
-}
-\details{
-It performs conditional distance correlation with given bandwidth.
+Performs conditional distance correlation with given bandwidth. It performs conditional distance correlation with given bandwidth.
 }
 \examples{
 x <- rnorm(100)
 y <- rnorm(100)
 z <- rnorm(100)
-cdcor(x,y,z,0.25)
-
+cdcor(x, y, z, 0.25)
+# 
+z <- cbind(rnorm(100), rnorm(100))
+cdcor(x, y, z, diag(1, 2))
 }
 \references{
 Canhong Wen, Wenliang Pan, Mian Huang and Xueqin Wang(2014).
