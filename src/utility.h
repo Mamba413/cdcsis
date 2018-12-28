@@ -22,6 +22,8 @@ double quadratic_matrix_multiplication(std::vector<std::vector<double>> &x, std:
 
 double vector_sum(std::vector<double> &vector1);
 
+double vector_mean(std::vector<double> &vector1);
+
 double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weight);
 
 std::vector<std::vector<double>> Euclidean_distance(std::vector<std::vector<double>> &matrix, double index);

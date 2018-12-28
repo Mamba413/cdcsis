@@ -43,6 +43,42 @@ std::vector<double> ConditionDistanceCovarianceStats::compute_condition_distance
 }
 
 
+std::vector<double> ConditionDistanceCovarianceStats::compute_condition_distance_correlation(
+        std::vector<std::vector<double>> &distance_x, std::vector<std::vector<double>> &distance_y,
+        std::vector<std::vector<double>> &kernel_density_estimation) {
+
+    uint num = (uint) distance_x.size();
+    std::vector<std::vector<double>> anova_x(num, std::vector<double>(num));
+    std::vector<std::vector<double>> anova_y(num, std::vector<double>(num));
+    std::vector<double> condition_distance_covariance_xy(num);
+    std::vector<double> condition_distance_covariance_xx(num);
+    std::vector<double> condition_distance_covariance_yy(num);
+
+    for (uint i = 0; i < num; i++) {
+        anova_x = weight_distance_anova(distance_x, kernel_density_estimation[i]);
+        anova_y = weight_distance_anova(distance_y, kernel_density_estimation[i]);
+
+        for (uint k = 0; k < num; k++) {
+            for (uint j = 0; j < num; j++) {
+                condition_distance_covariance_xy[i] += anova_x[k][j] * anova_y[k][j] * kernel_density_estimation[i][k] *
+                                                       kernel_density_estimation[i][j];
+                condition_distance_covariance_xx[i] += anova_x[k][j] * anova_x[k][j] * kernel_density_estimation[i][k] *
+                                                       kernel_density_estimation[i][j];
+                condition_distance_covariance_yy[i] += anova_y[k][j] * anova_y[k][j] * kernel_density_estimation[i][k] *
+                                                       kernel_density_estimation[i][j];
+            }
+        }
+    }
+
+    for (uint i = 0; i < num; i++) {
+        condition_distance_covariance_xy[i] /= sqrt(
+                condition_distance_covariance_xx[i] * condition_distance_covariance_yy[i]);
+    }
+
+    return condition_distance_covariance_xy;
+}
+
+
 void ConditionDistanceCovarianceStats::compute_stats() {
     switch (this->statsType) {
         case CONDITION_DISTANCE_COVARIANCE:

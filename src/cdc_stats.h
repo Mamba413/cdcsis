@@ -6,6 +6,7 @@
 #define CDC_STATS_H
 
 #include <vector>
+#include "utility.h"
 #include "global.h"
 
 class ConditionDistanceCovarianceStats {
@@ -38,26 +39,26 @@ private:
                                                               std::vector<std::vector<double>> &distance_y,
                                                               std::vector<std::vector<double>> &kernel_density_estimation);
 
+    std::vector<double> compute_condition_distance_correlation(std::vector<std::vector<double>> &distance_x,
+                                                              std::vector<std::vector<double>> &distance_y,
+                                                              std::vector<std::vector<double>> &kernel_density_estimation);
+
     double compute_condition_distance_covariance_stats(std::vector<std::vector<double>> &distance_x,
                                                        std::vector<std::vector<double>> &distance_y,
                                                        std::vector<std::vector<double>> &kernel_density_estimation) {
-        uint num = (uint) distance_x.size();
-        std::vector<double> condition_distance_covariance(num);
+        std::vector<double> condition_distance_covariance(distance_x.size());
         condition_distance_covariance = compute_condition_distance_covariance(distance_x, distance_y,
                                                                               kernel_density_estimation);
-
-        double condition_distance_covariance_stats = 0.0;
-        for (double cdc : condition_distance_covariance) {
-            condition_distance_covariance_stats += cdc;
-        }
-
-        return condition_distance_covariance_stats / num;
+        return vector_mean(condition_distance_covariance);
     }
 
     double compute_condition_distance_correlation_stats(std::vector<std::vector<double>> &distance_x,
                                                         std::vector<std::vector<double>> &distance_y,
                                                         std::vector<std::vector<double>> &kernel_density_estimation) {
-        return compute_condition_distance_covariance_stats(distance_x, distance_y, kernel_density_estimation);
+        std::vector<double> condition_distance_correlation(distance_x.size());
+        condition_distance_correlation = compute_condition_distance_correlation(distance_x, distance_y,
+                                                                              kernel_density_estimation);
+        return vector_mean(condition_distance_correlation);
     }
 };
 

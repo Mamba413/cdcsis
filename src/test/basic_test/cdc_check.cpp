@@ -66,4 +66,10 @@ TEST(cdc_stats, compute_condition_distance_covariance) {
         EXPECT_NEAR(condition_distance_covariance_true[i], condition_distance_covariance[i], abs_error);
     }
 
+    ConditionDistanceCovarianceStats conditionDistanceCorrelationStats = ConditionDistanceCovarianceStats(distance_x,
+                                                                                                          distance_y,
+                                                                                                          kde, 2);
+    conditionDistanceCorrelationStats.compute_stats();
+    double condition_distance_correlation_stats = conditionDistanceCorrelationStats.getCondition_distance_covariance_stats();
+    EXPECT_NEAR(0.1810813, condition_distance_correlation_stats, abs_error);
 }

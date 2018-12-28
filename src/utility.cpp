@@ -203,6 +203,11 @@ double vector_sum(std::vector<double> &vector1) {
     return sum_value;
 }
 
+double vector_mean(std::vector<double> &vector1) {
+    double vector_sum_value = vector_sum(vector1);
+    return vector_sum_value / vector1.size();
+}
+
 double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weight) {
     double sum_value = 0.0;
     for (int i = 0; i < vector1.size(); ++i) {
