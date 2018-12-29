@@ -2,6 +2,10 @@
 // Created by JinZhu on 2018/12/27.
 //
 
+#include <cmath>
+#include <vector>
+#include <iostream>
+#include <random>
 #include "gtest/gtest.h"
 #include "utility.h"
 #include "kde.h"
@@ -22,7 +26,6 @@ TEST(utility, compute_matrix_determinant) {
     EXPECT_EQ(compute_matrix_determinant(test_vector), 14.0);
 }
 
-
 TEST(utility, compute_matrix_inversion) {
     std::vector<std::vector<double>> test_vector(2, std::vector<double>(2));
     test_vector[0][0] = 4;
@@ -37,7 +40,6 @@ TEST(utility, compute_matrix_inversion) {
     EXPECT_NEAR(test_vector[1][0], -0.07142857, abs_error);
     EXPECT_NEAR(test_vector[1][1], 0.2857143, abs_error);
 }
-
 
 TEST(utility, compute_matrix_multiplication) {
     std::vector<std::vector<double>> matrix1(2, std::vector<double>(2));
@@ -66,6 +68,67 @@ TEST(utility, compute_matrix_multiplication) {
     EXPECT_NEAR(-2.860239, matrix3[1][2], abs_error);
 }
 
+TEST(utility, rearrange_matrix) {
+    std::vector<std::vector<double>> matrix(3, std::vector<double>(3));
+    matrix[0][0] = 0.0;
+    matrix[0][1] = 1.0;
+    matrix[0][2] = 2.0;
+    matrix[1][0] = 1.0;
+    matrix[1][1] = 0.0;
+    matrix[1][2] = 3.0;
+    matrix[2][0] = 2.0;
+    matrix[2][1] = 3.0;
+    matrix[2][2] = 0.0;
+
+    std::vector<uint> rearrange_index = {1, 2, 0};
+
+    std::vector<std::vector<double>> new_matrix(3, std::vector<double>(3));
+
+    new_matrix = rearrange_matrix(matrix, rearrange_index);
+
+    ASSERT_EQ(new_matrix[0][0], 0.0);
+    ASSERT_EQ(new_matrix[1][1], 0.0);
+    ASSERT_EQ(new_matrix[2][2], 0.0);
+}
+
+TEST(utility, sample_multinomial_distribution) {
+    std::vector<double> probability = {0.1, 0.2, 0.3, 0.4};
+    std::mt19937_64 random_number_generator;
+    std::random_device random_device;
+    random_number_generator.seed(random_device());
+
+    uint my_sample = sample_multinomial_distribution(probability, random_number_generator);
+    int get_target = 0;
+    for (int i = 0; i < probability.size(); ++i) {
+        get_target += my_sample == i;
+    }
+    EXPECT_EQ(1, get_target);
+
+    probability.push_back(0.5);
+    probability.push_back(0.6);
+    probability.push_back(0.7);
+    probability.push_back(0.8);
+    random_number_generator.seed(1);
+    uint my_sample1, my_sample2;
+    for (int j = 0; j < 50; ++j) {
+        my_sample1 = sample_multinomial_distribution(probability, random_number_generator);
+        random_number_generator.seed(1);
+        my_sample2 = sample_multinomial_distribution(probability, random_number_generator);
+        EXPECT_EQ(my_sample1, my_sample2);
+    }
+}
+
+TEST(utility, generate_sequence) {
+    std::vector<uint> seq1 = generate_sequence(0, 0);
+    EXPECT_EQ(seq1.size(), 1);
+    EXPECT_EQ(seq1[0], 0);
+
+    std::vector<uint> seq2 = generate_sequence(1, 3);
+    EXPECT_EQ(seq2.size(), 3);
+    EXPECT_EQ(seq2[0], 1);
+    EXPECT_EQ(seq2[1], 2);
+    EXPECT_EQ(seq2[2], 3);
+}
 
 TEST(kde, compute_gaussian_kernel_estimate) {
     std::vector<std::vector<double>> conditional_variable(5, std::vector<double>(2));
@@ -114,3 +177,5 @@ TEST(kde, compute_gaussian_kernel_estimate) {
         }
     }
 }
+
+
