@@ -21,6 +21,15 @@ enum StatsType {
     CONDITION_DISTANCE_CORRELATION = 2
 };
 
-const bool DISTANCE = false;
+enum StatsMethod {
+    HYPOTHESIS_TESTS = 1,
+    SURE_INDEPENDENCE_SCREENING = 2
+};
+
+const uint DEFAULT_LOCAL_BOOTSTRAP_NUM = 99;
+
+const uint DEFAULT_NUM_THREADS = 1;
+
+const double DEFAULT_DISTANCE_INDEX = 1.0;
 
 #endif //GLOBAL_H
