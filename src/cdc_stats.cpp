@@ -93,3 +93,12 @@ void ConditionDistanceCovarianceStats::compute_stats() {
             break;
     }
 }
+
+void ConditionDistanceCovarianceStats::setDistance_x(const std::vector<std::vector<double>> &distance_x) {
+    ConditionDistanceCovarianceStats::distance_x = distance_x;
+}
+
+void ConditionDistanceCovarianceStats::setKernel_density_estimation(
+        const std::vector<std::vector<double>> &kernel_density_estimation) {
+    ConditionDistanceCovarianceStats::kernel_density_estimation = kernel_density_estimation;
+}

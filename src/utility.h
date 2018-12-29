@@ -7,12 +7,14 @@
 
 #include <cmath>
 #include <vector>
+#include <array>
+#include <random>
 #include <iostream>
 #include "global.h"
 
 double compute_matrix_determinant(std::vector<std::vector<double>> matrix);
 
-void compute_matrix_inversion(std::vector<std::vector<double>>& matrix);
+void compute_matrix_inversion(std::vector<std::vector<double>> &matrix);
 
 std::vector<std::vector<double>> compute_matrix_multiplication(std::vector<std::vector<double>> &matrix_A,
                                                                std::vector<std::vector<double>> &matrix_B);

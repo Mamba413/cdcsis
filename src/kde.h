@@ -19,12 +19,14 @@ public:
         return this->kernel_density_estimate;
     }
 
-    KernelDensityEstimation(vector<vector<double>>& condition_variable, vector<vector<double>>& bandwidth, int kernel_type) {
+    KernelDensityEstimation(vector<vector<double>> &condition_variable, vector<vector<double>> &bandwidth,
+                            int kernel_type) {
         this->condition_variable = condition_variable;
         this->bandwidth = bandwidth;
         this->num = (uint) condition_variable.size();
         this->kernel_type = KernelType(kernel_type);
     }
+    ~KernelDensityEstimation() = default;
 
 private:
     uint num;

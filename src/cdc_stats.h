@@ -12,9 +12,6 @@
 class ConditionDistanceCovarianceStats {
 
 public:
-    double getCondition_distance_covariance_stats() const;
-
-    const std::vector<double> &getCondition_distance_covariance() const;
 
     ConditionDistanceCovarianceStats(std::vector<std::vector<double>> &distance_x,
                                      std::vector<std::vector<double>> &distance_y,
@@ -27,12 +24,20 @@ public:
 
     void compute_stats();
 
+    double getCondition_distance_covariance_stats() const;
+
+    const std::vector<double> &getCondition_distance_covariance() const;
+
+    void setDistance_x(const std::vector<std::vector<double>> &distance_x);
+
+    void setKernel_density_estimation(const std::vector<std::vector<double>> &kernel_density_estimation);
+
 private:
-    StatsType statsType;
     std::vector<std::vector<double>> distance_x;
     std::vector<std::vector<double>> distance_y;
     std::vector<std::vector<double>> kernel_density_estimation;
-    double condition_distance_covariance_stats;
+    StatsType statsType;
+    double condition_distance_covariance_stats = 0.0;
     std::vector<double> condition_distance_covariance;
 
     std::vector<double> compute_condition_distance_covariance(std::vector<std::vector<double>> &distance_x,

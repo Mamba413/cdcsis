@@ -189,7 +189,6 @@ double quadratic_matrix_multiplication(std::vector<std::vector<double>> &x, std:
     return quadric_value_matrix[0][0];
 }
 
-
 /**
  * Compute the summation of 1D std::vector
  * @param vector1 : 1D vector
@@ -210,7 +209,7 @@ double vector_mean(std::vector<double> &vector1) {
 
 double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weight) {
     double sum_value = 0.0;
-    for (int i = 0; i < vector1.size(); ++i) {
+    for (size_t i = 0; i < vector1.size(); ++i) {
         sum_value += vector1[i] * weight[i];
     }
     return sum_value;
@@ -222,17 +221,16 @@ double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weig
  * @param index: see energy distance for reference
 */
 std::vector<std::vector<double>> Euclidean_distance(std::vector<std::vector<double>> &matrix, double index) {
-    size_t n = matrix.size();
-    size_t d = matrix[0].size();
+    uint n = (uint) matrix.size();
+    uint d = (uint) matrix[0].size();
     std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n));
 
-    int i, j, k;
     double diff_sum, diff;
-    for (i = 1; i < n; i++) {
+    for (uint i = 1; i < n; i++) {
         distance_matrix[i][i] = 0.0;
-        for (j = 0; j < i; j++) {
+        for (uint j = 0; j < i; j++) {
             diff_sum = 0.0;
-            for (k = 0; k < d; k++) {
+            for (uint k = 0; k < d; k++) {
                 diff = matrix[i][k] - matrix[j][k];
                 diff_sum += diff * diff;
             }
@@ -259,26 +257,26 @@ std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, u
 std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<double>> &distance_matrix,
                                                        std::vector<double> &weight) {
     double weight_sum = vector_sum(weight);
-    size_t num = distance_matrix.size();
+    uint num = (uint) distance_matrix.size();
 
     std::vector<double> marginal_weight_distance(num);
-    for (int i = 0; i < num; ++i) {
+    for (uint i = 0; i < num; ++i) {
         marginal_weight_distance[i] = vector_weight_sum(distance_matrix[i], weight);
     }
 
     double weight_distance_sum = 0.0;
-    for (int i = 0; i < num; ++i) {
+    for (uint i = 0; i < num; ++i) {
         weight_distance_sum = vector_weight_sum(marginal_weight_distance, weight);
     }
     weight_distance_sum /= weight_sum * weight_sum;
 
-    for (int i = 0; i < num; ++i) {
+    for (uint i = 0; i < num; ++i) {
         marginal_weight_distance[i] /= weight_sum;
     }
 
     std::vector<std::vector<double>> weight_distance_anova_table(num, std::vector<double>(num));
-    for (int k = 0; k < num; k++) {
-        for (int j = k; j < num; j++) {
+    for (uint k = 0; k < num; k++) {
+        for (uint j = k; j < num; j++) {
             weight_distance_anova_table[k][j] =
                     distance_matrix[k][j] - marginal_weight_distance[k] - marginal_weight_distance[j] +
                     weight_distance_sum;

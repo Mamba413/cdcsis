@@ -7,7 +7,7 @@
 
 void KernelDensityEstimation::compute_kernel_density_estimate() {
     this->kernel_density_estimate.resize(this->num);
-    for (int i = 0; i < this->num; ++i) {
+    for (uint i = 0; i < this->num; ++i) {
         this->kernel_density_estimate[i].resize(this->num);
     }
 
@@ -28,9 +28,8 @@ void KernelDensityEstimation::compute_kernel_density_estimate() {
 vector<vector<double>>
 KernelDensityEstimation::compute_gaussian_kernel_estimate(vector<vector<double>> &condition_variable,
                                                           vector<vector<double>> &bandwidth) {
-    int i, j, k;
-    size_t d = bandwidth.size();
-    size_t num = condition_variable.size();
+    uint d = (uint) bandwidth.size();
+    uint num = (uint) condition_variable.size();
     std::vector<std::vector<double>> sigma(d, std::vector<double>(d));
     std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
     std::vector<std::vector<double>> expect1(1, std::vector<double>(d));
@@ -42,7 +41,7 @@ KernelDensityEstimation::compute_gaussian_kernel_estimate(vector<vector<double>>
         det = (bandwidth[0][0]) * (bandwidth[0][0]);
         sigma[0][0] = 1.0 / bandwidth[0][0];
     } else {
-        for (i = 0; i < d; i++) {
+        for (uint i = 0; i < d; i++) {
             sigma[i] = bandwidth[i];
         }
         det = compute_matrix_determinant(bandwidth);
@@ -51,10 +50,10 @@ KernelDensityEstimation::compute_gaussian_kernel_estimate(vector<vector<double>>
 
     density = 1.0 / (pow(2 * CDC_PI, d / 2.0) * pow(det, 0.5));
 
-    for (i = 0; i < num; i++) {
+    for (uint i = 0; i < num; i++) {
         kernel_density_estimate[i][i] = density;
-        for (j = 0; j < i; j++) {
-            for (k = 0; k < d; k++) {
+        for (uint j = 0; j < i; j++) {
+            for (uint k = 0; k < d; k++) {
                 expect1[0][k] = condition_variable[i][k] - condition_variable[j][k];
                 expect2[k][0] = expect1[0][k];
             }
