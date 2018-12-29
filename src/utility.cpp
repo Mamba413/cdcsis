@@ -5,6 +5,8 @@
 #include <cmath>
 #include <vector>
 #include <iostream>
+#include <random>
+#include <array>
 #include "global.h"
 #include "utility.h"
 
@@ -240,6 +242,47 @@ std::vector<std::vector<double>> Euclidean_distance(std::vector<std::vector<doub
     return distance_matrix;
 }
 
+std::vector<std::vector<double>> Euclidean_distance_byrow(std::vector<std::vector<double>> &matrix, double index) {
+    uint n = (uint) matrix[0].size();
+    uint d = (uint) matrix.size();
+    std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n));
+
+    double diff_sum, diff;
+    for (uint i = 1; i < n; i++) {
+        distance_matrix[i][i] = 0.0;
+        for (uint j = 0; j < i; j++) {
+            diff_sum = 0.0;
+            for (uint k = 0; k < d; k++) {
+                diff = matrix[k][i] - matrix[k][j];
+                diff_sum += diff * diff;
+            }
+            distance_matrix[i][j] = distance_matrix[j][i] = pow(sqrt(diff_sum), index);
+        }
+    }
+    return distance_matrix;
+}
+
+/**
+ * Compute Euclidean distance for univariate vector
+ * @param matrix
+ * @param index
+ * @return
+ */
+std::vector<std::vector<double>> Euclidean_distance(std::vector<double> &matrix, double index) {
+    uint n = (uint) matrix.size();
+    std::vector<std::vector<double>> distance_matrix(n, std::vector<double>(n));
+
+    double diff_sum;
+    for (uint i = 1; i < n; i++) {
+        distance_matrix[i][i] = 0.0;
+        for (uint j = 0; j < i; j++) {
+            diff_sum = fabs(matrix[i] - matrix[j]);
+            distance_matrix[i][j] = distance_matrix[j][i] = pow(diff_sum, index);
+        }
+    }
+    return distance_matrix;
+}
+
 std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, uint num_row, uint num_col) {
 
     std::vector<std::vector<double>> matrix(num_row, std::vector<double>(num_col));
@@ -285,4 +328,35 @@ std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<d
     }
 
     return weight_distance_anova_table;
+}
+
+std::vector<double> compositional_transform(std::vector<double> &vector) {
+    double vector_sum_value = vector_sum(vector);
+    std::vector<double> transformed_vector(vector.size());
+
+    for (size_t i = 0; i < vector.size(); i++) {
+        transformed_vector[i] = vector[i] / vector_sum_value;
+    }
+
+    return transformed_vector;
+}
+
+uint sample_multinomial_distribution(std::vector<double> &probability, std::mt19937_64 &random_number_generator) {
+    std::discrete_distribution<uint> multinomial_sampler(probability.begin(), probability.end());
+    return multinomial_sampler(random_number_generator);
+}
+
+/**
+ * Generate unsigned sequence
+ * @param start
+ * @param end
+ * @return <start, start + 1, ..., end>
+ */
+std::vector<uint> generate_sequence(uint start, uint end) {
+    std::vector<uint> sequence;
+    for (uint i = start; i <= end; ++i) {
+        sequence.push_back(i);
+    }
+
+    return sequence;
 }
