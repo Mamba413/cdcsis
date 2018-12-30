@@ -3,7 +3,7 @@
 \docType{package}
 \name{cdcsis-package}
 \alias{cdcsis-package}
-\title{Conditional Distance Correlation based Feature Screening and Conditional Independence Inference}
+\title{Conditional Distance Correlation Based Feature Screening and Conditional Independence Inference}
 \description{
 Conditional distance correlation <doi:10.1080/01621459.2014.993081> is a novel conditional dependence measurement of two multivariate random variables given a confounding variable. 
 This package provides conditional distance correlation, performs the conditional distance correlation sure independence screening procedure for ultrahigh dimensional data <doi:10.5705/ss.202014.0117>, 
