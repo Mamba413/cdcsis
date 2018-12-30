@@ -2,67 +2,74 @@
 % Please edit documentation in R/cdcsis.R
 \name{cdcsis}
 \alias{cdcsis}
-\title{Conditional Distance Correlation Sure Independence Screening (CDCSIS)}
+\title{Conditional Distance Correlation Sure Independence Screening (CDC-SIS)}
 \usage{
-cdcsis(x, y, z, thres)
+cdcsis(x, y, z = NULL, width = ifelse(is.vector(z), ks::hpi(z),
+  diag(ks::Hpi.diag(z))), threshold = nrow(y), distance = FALSE,
+  index = 1, num.threads = 1)
 }
 \arguments{
-\item{x}{a matrix}
+\item{x}{a numeric matrix, or a list which contains multiple numeric matrix}
 
-\item{y}{a numeric vector or matrix with compatible dimensions to \code{x}}
+\item{y}{a numeric vector, matrix, or \code{dist} object}
 
-\item{z}{the variable being conditioned. \code{z} is a numeric vector or
-matrix with compatible dimensions to \code{x}}
+\item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
-\item{thres}{the threshold of the number of pedictors recuited by CDCSIS.
-Should be less than or equal than the number of column of \code{x}.}
+\item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
+gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} or \code{ks::Hpi.diag} function.}
+
+\item{threshold}{the threshold of the number of pedictors recuited by CDC-SIS. 
+Should be less than or equal than the number of column of \code{x}. Default value \code{threshold} is sample size.}
+
+\item{distance}{if \code{distance = TRUE}, only \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}}
+
+\item{index}{exponent on Euclidean distance, in \eqn{(0,2]}}
+
+\item{num.threads}{number of threads. Default \code{num.threads = 1}.}
 }
 \value{
-\item{ CDCSISind }{the vector of indices selected by CDCSIS } \item{
-thres }{the threshold of the number of pedictors recuited by CDCSIS} \item{
-DC }{ the distance correlation for each dimensionality of \code{x}} \item{
-DCord }{the order of \code{DC} for each dimensionality of \code{x} }
+\item{ ix }{the vector of indices selected by CDC-SIS } 
+\item{ cdcor }{ the conditional distance correlation for each univariate/multivariate variable in \code{x}}
 }
 \description{
-Performs conditional distance correlation sure independence screening
-(CDCSIS).
-}
-\details{
-It performs conditional distance correlation sure independence screening
-(CDCSIS).
+Performs conditional distance correlation sure independence screening (CDC-SIS).
 }
 \examples{
-set.seed(0)
-n <- 100
-p <- 10
-rho <- 0.5
-Sigma <- matrix(rho, p, p)
-diag(Sigma) <- 1
+library(cdcsis)
 
-require(MASS)
-x <- mvrnorm(n,rep(0,p), Sigma)
-y <- x[,2] + x[,3] + rnorm(n)
-z <- x[,1]
+########## univariate explanation variables ##########
+set.seed(1)
+num <- 100
+p <- 200
+x <- matrix(rnorm(num * p), nrow = num)
+z <- rnorm(num)
+y <- 3 * x[, 1] + 1.5 * x[, 2] + 4 * z * x[, 5] + rnorm(num)
+res <- cdcsis(x, y, z)
+head(res[["ix"]], n = 10)
 
-cdcsis(x,y,z,2)
+########## multivariate explanation variables ##########
+x <- as.list(as.data.frame(x))
+x <- lapply(x, as.matrix)
+x[[1]] <- cbind(x[[1]], x[[2]])
+x[[2]] <- NULL
+res <- cdcsis(x, y, z)
+head(res[["ix"]], n = 10)
 
 }
 \references{
-Canhong Wen, Wenliang Pan, Mian Huang and Xueqin Wang(2014).
-Conditional distance correlation sure independence screening for ultrahigh
-dimensional data. \emph{Submitted to Biostatistics}.
+Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317.
 }
 \seealso{
-\code{\link{cdcor.ada}}, \code{\link{cdcor}}
+\code{\link{cdcor}}
 }
 \author{
-Canhong Wen, Wenliang Pan, and Xueqin Wang
+Canhong Wen, Wenliang Pan, Mian Huang, and Xueqin Wang
 }
-\keyword{Ultrahigh}
 \keyword{conditional}
-\keyword{correlation}
+\keyword{correlation,}
 \keyword{dimensional}
 \keyword{distance}
 \keyword{independence}
-\keyword{screening}
+\keyword{screening,}
 \keyword{sure}
+\keyword{ultrahigh}

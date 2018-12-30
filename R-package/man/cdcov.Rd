@@ -2,44 +2,65 @@
 % Please edit documentation in R/cdcov.R
 \name{cdcov}
 \alias{cdcov}
-\title{Conditional Distance Covariance with Given Bandwidth}
+\alias{cdcor}
+\title{Conditional Distance Covariance/Correlation Statistics}
 \usage{
-cdcov(x, y, z, width, index = 1)
+cdcov(x, y, z, width = ifelse(is.vector(z), ks::hpi(z),
+  diag(ks::Hpi.diag(z))), index = 1, distance = FALSE)
+
+cdcor(x, y, z, width = ifelse(is.vector(z), ks::hpi(z),
+  diag(ks::Hpi.diag(z))), index = 1, distance = FALSE)
 }
 \arguments{
-\item{x}{a numeric vector or matrix}
+\item{x}{a numeric vector, matrix, or \code{dist} object}
 
-\item{y}{a numeric vector or matrix with compatible dimensions to \code{x}}
+\item{y}{a numeric vector, matrix, or \code{dist} object}
 
-\item{z}{the variable being conditioned. \code{z} is a numeric vector or
-matrix with compatible dimensions to \code{x}}
+\item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
-\item{width}{a positive value, user-specified}
+\item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
+gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} or \code{ks::Hpi.diag} function.}
 
-\item{index}{exponent on Euclidean distance, in (0,2]}
+\item{index}{exponent on Euclidean distance, in \eqn{(0,2]}}
+
+\item{distance}{if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}}
 }
 \value{
-\item{cdcov}{conditional distance covariance with given variable
-\code{z}; has the same length with \code{z}} \item{width}{the bandwidth}
-\item{index}{ exponent on Euclidean distance, in (0,2] }
+\item{\code{cdcov }}{ sample version of conditional distance covariance.}
+
+\item{\code{cdcor }}{ sample version of conditional distance correlation.}
 }
 \description{
-Performs conditional distance covariance with given bandwidth.
+Computes conditional distance covariance and conditional distance correlation statistics, 
+which are multivariate measures of conditional dependence.
 }
 \details{
-Perform the measurement of the conditional independence between x and y
-given z with given bandwidth.
+\code{cdcov} and \code{cdcor} compute conditional distance covariance and conditional distance correlation statistics.
+The sample sizes (number of rows or length of the vector) of the two variables must agree, 
+and samples must not contain missing values. 
+If we set \code{distance = TRUE}, arguments \code{x}, \code{y} can be a \code{dist} object recording distance between samples; 
+otherwise, these arguments are treated as multivariate data.
 }
 \examples{
-x <- rnorm(100)
-y <- rnorm(100)
-z <- rnorm(100)
-cdcov(x,y,z,0.25)
+library(cdcsis)
+
+############# Conditional Distance Correlation #############
+set.seed(1)
+x <- rnorm(25)
+y <- rnorm(25)
+z <- rnorm(25)
+cdcov(x, y, z)
+
+############# Conditional Distance Correlation #############
+num <- 25
+set.seed(1)
+x <- rnorm(num)
+y <- rnorm(num)
+z <- rnorm(num)
+cdcor(x, y, z)
 }
 \references{
-Canhong Wen, Wenliang Pan, Mian Huang and Xueqin Wang(2014).
-Conditional distance correlation sure independence screening for ultrahigh
-dimensional data. \emph{Submitted to Biostatistics}.
+Wang, X., Pan, W., Hu, W., Tian, Y. and Zhang, H., 2015. Conditional distance correlation. Journal of the American Statistical Association, 110(512), pp.1726-1734.
 }
 \seealso{
 \code{\link{cdcor}}

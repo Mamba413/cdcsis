@@ -1,61 +1,60 @@
-#' Conditional Distance Correlation Sure Independence Screening (CDCSIS)
+#' @title Conditional Distance Correlation Sure Independence Screening (CDC-SIS)
 #' 
-#' Performs conditional distance correlation sure independence screening
-#' (CDCSIS).
+#' @description Performs conditional distance correlation sure independence screening (CDC-SIS).
 #' 
-#' It performs conditional distance correlation sure independence screening
-#' (CDCSIS).
-#' 
-#' @param x a matrix
-#' @param y a numeric vector or matrix with compatible dimensions to \code{x}
-#' @param z the variable being conditioned. \code{z} is a numeric vector or
-#' matrix with compatible dimensions to \code{x}
-#' @param thres the threshold of the number of pedictors recuited by CDCSIS.
-#' Should be less than or equal than the number of column of \code{x}.
-#' @return \item{ CDCSISind }{the vector of indices selected by CDCSIS } \item{
-#' thres }{the threshold of the number of pedictors recuited by CDCSIS} \item{
-#' DC }{ the distance correlation for each dimensionality of \code{x}} \item{
-#' DCord }{the order of \code{DC} for each dimensionality of \code{x} }
-#' @author Canhong Wen, Wenliang Pan, and Xueqin Wang
-#' @seealso \code{\link{cdcor.ada}}, \code{\link{cdcor}}
-#' @references Canhong Wen, Wenliang Pan, Mian Huang and Xueqin Wang(2014).
-#' Conditional distance correlation sure independence screening for ultrahigh
-#' dimensional data. \emph{Submitted to Biostatistics}.
-#' @keywords conditional distance correlation sure independence screening
-#' Ultrahigh dimensional
+#' @inheritParams cdcov.test
+#' @param x a numeric matrix, or a list which contains multiple numeric matrix
+#' @param distance if \code{distance = TRUE}, only \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}
+#' @param threshold the threshold of the number of pedictors recuited by CDC-SIS. 
+#' Should be less than or equal than the number of column of \code{x}. Default value \code{threshold} is sample size.
+#' @return 
+#' \item{ ix }{the vector of indices selected by CDC-SIS } 
+#' \item{ cdcor }{ the conditional distance correlation for each univariate/multivariate variable in \code{x}} 
+#' @author Canhong Wen, Wenliang Pan, Mian Huang, and Xueqin Wang
+#' @seealso \code{\link{cdcor}}
+#' @references Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317.
+#' @keywords conditional distance correlation, sure independence screening, ultrahigh dimensional
 #' @export
 #' @examples
-#' set.seed(0)
-#' n <- 100
-#' p <- 10
-#' rho <- 0.5
-#' Sigma <- matrix(rho, p, p)
-#' diag(Sigma) <- 1
+#' library(cdcsis)
 #' 
-#' require(MASS)
-#' x <- mvrnorm(n,rep(0,p), Sigma)
-#' y <- x[,2] + x[,3] + rnorm(n)
-#' z <- x[,1]
+#' ########## univariate explanation variables ##########
+#' set.seed(1)
+#' num <- 100
+#' p <- 200
+#' x <- matrix(rnorm(num * p), nrow = num)
+#' z <- rnorm(num)
+#' y <- 3 * x[, 1] + 1.5 * x[, 2] + 4 * z * x[, 5] + rnorm(num)
+#' res <- cdcsis(x, y, z)
+#' head(res[["ix"]], n = 10)
 #' 
-#' cdcsis(x,y,z,2)
+#' ########## multivariate explanation variables ##########
+#' x <- as.list(as.data.frame(x))
+#' x <- lapply(x, as.matrix)
+#' x[[1]] <- cbind(x[[1]], x[[2]])
+#' x[[2]] <- NULL
+#' res <- cdcsis(x, y, z)
+#' head(res[["ix"]], n = 10)
 #' 
-cdcsis <- function(x, y, z, thres) {
-  p <- dim(x)[2]
-  DW.c <- sapply(1:p, function(j)
-    cdcor.ada(x[, j], y, z))
-  DCW <- unlist(DW.c[1, ])
-  DCWord <- order(abs(DCW), decreasing = T)
-  CDCSISind <- DCWord[1:thres]
+cdcsis <- function(x, y, z = NULL, 
+                   width = ifelse(is.vector(z), ks::hpi(z), diag(ks::Hpi.diag(z))), 
+                   threshold = nrow(y), distance = FALSE, index = 1, num.threads = 1) {
+  width <- as.double(width)
+  z <- as.matrix(z)
   
-  return(list(
-    CDCSISind = CDCSISind,
-    thres = thres,
-    DC = DCW,
-    DCord = DCWord
-  ))
+  y <- compute_distance_matrix(y, distance, index)
+  if (is.list(x)) {
+    variable_index <- cumsum(sapply(x, ncol)) - 1
+    names(variable_index) <- NULL
+    variable_index <- as.integer(variable_index)
+    x <- do.call("cbind", x)
+  } else {
+    variable_index <- integer(0)
+  }
+  x <- as.matrix(t(x))
+  
+  res <- cdcsisCpp(2, x, variable_index, y, z, width, index, num.threads, 0, 0, 2)
+  res <- res[["statistic"]]
+  list("ix" = order(res, decreasing = T)[1:threshold], 
+       "cdcor" = res)
 }
-
-
-#' @import ks
-#' @useDynLib cdcsis
-NULL
