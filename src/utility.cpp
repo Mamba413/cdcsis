@@ -93,7 +93,7 @@ void compute_matrix_inversion(std::vector<std::vector<double>> &matrix) {
         if (d + 1.0 == 1.0) {
             delete[]is;
             delete[]js;
-            std::cout << "err**not inv" << std::endl;
+            throw "Error during estimate kernel density";
         }
         if (is[k] != k) {
             for (j = 0; j <= matrix_dim - 1; j++) {
