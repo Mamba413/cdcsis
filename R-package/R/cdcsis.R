@@ -38,11 +38,20 @@
 #' 
 cdcsis <- function(x, y, z = NULL, 
                    width = ifelse(is.vector(z), ks::hpi(z), diag(ks::Hpi.diag(z))), 
-                   threshold = nrow(y), distance = FALSE, index = 1, num.threads = 1) {
+                   threshold = nrow(y), distance = FALSE, index = 1, num.threads = 1) 
+{
   width <- as.double(width)
+  check_width_arguments(width)
+  
+  check_threads_arguments(num.threads)
+  check_index_arguments(index)
+  
   z <- as.matrix(z)
+  check_xyz_arguments(z)
   
   y <- compute_distance_matrix(y, distance, index)
+  check_xyz_arguments(y)
+  
   if (is.list(x)) {
     variable_index <- cumsum(sapply(x, ncol)) - 1
     names(variable_index) <- NULL
@@ -51,6 +60,12 @@ cdcsis <- function(x, y, z = NULL,
   } else {
     variable_index <- integer(0)
   }
+  check_xyz_arguments(x)
+  
+  check_sample_size(y, z)
+  check_sample_size(x, z)
+  check_threshold_arguments(threshold, ncol(x))
+  
   x <- as.matrix(t(x))
   
   res <- cdcsisCpp(2, x, variable_index, y, z, width, index, num.threads, 0, 0, 2)

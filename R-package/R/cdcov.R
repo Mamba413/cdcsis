@@ -33,13 +33,24 @@
 #' 
 cdcov <- function(x, y, z, 
                   width = ifelse(is.vector(z), ks::hpi(z), diag(ks::Hpi.diag(z))), 
-                  index = 1, distance = FALSE) {
-  
+                  index = 1, distance = FALSE) 
+{
   width <- as.double(width)
+  check_width_arguments(width)
+  
+  check_index_arguments(index)
+  
   z <- as.matrix(z)
+  check_xyz_arguments(z)
   
   x <- compute_distance_matrix(x, distance, index)
+  check_xyz_arguments(x)
+  
   y <- compute_distance_matrix(y, distance, index)
+  check_xyz_arguments(y)
+  
+  check_sample_size(x, z)
+  check_sample_size(y, z)
   
   res <- cdcsisCpp(stats_method = 3, x, c(0), y, z, width, index, 0, 0, 0, 1)
   res <- res[["statistic"]]
@@ -66,10 +77,21 @@ cdcor <- function(x, y, z,
                   index = 1, distance = FALSE) {
   
   width <- as.double(width)
+  check_width_arguments(width)
+  
+  check_index_arguments(index)
+  
   z <- as.matrix(z)
+  check_xyz_arguments(z)
   
   x <- compute_distance_matrix(x, distance, index)
+  check_xyz_arguments(x)
+  
   y <- compute_distance_matrix(y, distance, index)
+  check_xyz_arguments(y)
+  
+  check_sample_size(x, z)
+  check_sample_size(y, z)
   
   res <- cdcsisCpp(stats_method = 3, x, c(0), y, z, width, index, 0, 0, 0, 2)
   res <- res[["statistic"]]
@@ -153,10 +175,19 @@ cdcov.test <- function(x, y, z, num.bootstrap = 99,
   data_name <- paste(deparse(substitute(x)), "and", deparse(substitute(y)), "and", deparse(substitute(z)))
   
   width <- as.double(width)
+  check_width_arguments(width)
+  
   z <- as.matrix(z)
+  check_xyz_arguments(z)
   
   x <- compute_distance_matrix(x, distance, index)
+  check_xyz_arguments(x)
+  
   y <- compute_distance_matrix(y, distance, index)
+  check_xyz_arguments(y)
+  
+  check_sample_size(x, z)
+  check_sample_size(y, z)
   
   res <- cdcsisCpp(stats_method = 1, x, c(0), y, z, width, index, num.threads, num.bootstrap, seed, 1)
   
