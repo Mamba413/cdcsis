@@ -1,8 +1,9 @@
 <img src=https://github.com/Mamba413/git_picture/blob/master/scrcss.jpg width=135/> CDC Statistics
 ===========
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/645c7a47d9484abc80098d4426dd6a64)](https://app.codacy.com/app/Mamba413/cdcsis?utm_source=github.com&utm_medium=referral&utm_content=Mamba413/cdcsis&utm_campaign=Badge_Grade_Dashboard)
+[![Travis build status](https://travis-ci.org/Mamba413/cdcsis.svg?branch=master)](https://travis-ci.org/Mamba413/cdcsis)
 [![CRAN Status Badge](http://www.r-pkg.org/badges/version/cdcsis)](https://CRAN.R-project.org/package=cdcsis)
 ![CRAN Downloads overall](https://cranlogs.r-pkg.org/badges/grand-total/cdcsis?color=brightgreen)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/645c7a47d9484abc80098d4426dd6a64)](https://app.codacy.com/app/Mamba413/cdcsis?utm_source=github.com&utm_medium=referral&utm_content=Mamba413/cdcsis&utm_campaign=Badge_Grade_Dashboard)
 
 Introdution
 ----------
