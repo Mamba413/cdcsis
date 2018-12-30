@@ -1,6 +1,6 @@
 <img src=https://github.com/Mamba413/git_picture/blob/master/scrcss.jpg width=135/> CDC Statistics
 ===========
-![CRAN Status Badge](http://www.r-pkg.org/badges/version/cdcsis)](https://CRAN.R-project.org/package=cdcsis)
+[![CRAN Status Badge](http://www.r-pkg.org/badges/version/cdcsis)](https://CRAN.R-project.org/package=cdcsis)
 ![CRAN Downloads overall](https://cranlogs.r-pkg.org/badges/grand-total/cdcsis?color=brightgreen)
 
 Introdution
