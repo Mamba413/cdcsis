@@ -7,9 +7,8 @@ Introdution
 ----------
 The fundamental problems for data mining and statistical/machine learning are:
 
-- how to select the important features for ultra high dimensional dataset?
-
-- whether a statistical/machine learning model is sufficient (i.e. does not need to include additional variables)?
+- how to select the important features for ultra high dimensional dataset?    
+- whether a statistical/machine learning model is sufficient (i.e. does not need to include additional variables)?    
 
 CDC Statistics based statistical method provides solutions for these issues. 
 
@@ -18,6 +17,6 @@ License
 GPL (>= 2)
 
 Reference
-----------
-- Xueqin Wang, Wenliang Pan, Wenhao Hu, Yuan Tian & Heping Zhang (2015) Conditional Distance Correlation, Journal of the American Statistical Association, 110:512, 1726-1734, DOI: 10.1080/01621459.2014.993081
-- Canhong Wen, Wenliang Pan, Mian Huang and Xueqin Wang (2018) Sure independence screening adjusted for confounding covariates with ultrahigh dimensional data, Statistica Sinica, 28 (2018), no. 1, 293--318, DOI:10.5705/ss.202014.0117
+----------    
+- Xueqin Wang, Wenliang Pan, Wenhao Hu, Yuan Tian & Heping Zhang (2015) Conditional Distance Correlation, Journal of the American Statistical Association, 110:512, 1726-1734, DOI: 10.1080/01621459.2014.993081    
+- Canhong Wen, Wenliang Pan, Mian Huang and Xueqin Wang (2018) Sure independence screening adjusted for confounding covariates with ultrahigh dimensional data, Statistica Sinica, 28 (2018), no. 1, 293--318, DOI:10.5705/ss.202014.0117     

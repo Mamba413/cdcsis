@@ -1,6 +1,6 @@
 CDC Statistics
-===========
-Jin Zhu <<zhuj37@mail2.sysu.edu.cn>>
+---
+Jin Zhu
 
 ## Installation
 
@@ -30,7 +30,7 @@ head(res[["ix"]], n = 10)
 
 **cdcsis** function successfully selects the informative variables from 1000 features pool.
 
-```
+``` r
 [1]   1   5   2 628  17  87 912 903 395 630
 ```
 
