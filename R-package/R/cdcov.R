@@ -3,6 +3,8 @@
 #' which are multivariate measures of conditional dependence.
 #' 
 #' @inheritParams cdcov.test
+#' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
+#' gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} or \code{ks::Hpi.diag} function.
 #' @rdname cdcov
 #' @details 
 #' \code{cdcov} and \code{cdcor} compute conditional distance covariance and conditional distance correlation statistics.
@@ -109,7 +111,7 @@ cdcor <- function(x, y, z,
 #' @param z \code{z} is a numeric vector or matrix. It is the variable being conditioned.
 #' @param num.bootstrap the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}
 #' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-#' gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} or \code{ks::Hpi.diag} function.
+#' gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} or \code{ks::Hpi.diag} function.
 #' @param index exponent on Euclidean distance, in \eqn{(0,2]}
 #' @param distance if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}
 #' @param seed the random seed
@@ -128,6 +130,7 @@ cdcor <- function(x, y, z,
 #' @seealso \code{\link{cdcov}}
 #' 
 #' @export
+#' 
 #' @examples
 #' library(cdcsis)
 #' set.seed(1)
@@ -169,7 +172,7 @@ cdcor <- function(x, y, z,
 #' y <- dist(y)
 #' cdcov.test(x, y, z, seed = 2, distance = TRUE)
 cdcov.test <- function(x, y, z, num.bootstrap = 99, 
-                       width = ifelse(is.vector(z), ks::hpi(z), diag(ks::Hpi.diag(z))), 
+                       width = ifelse(is.vector(z), stats::bw.nrd0(z), diag(ks::Hpi.diag(z))), 
                        index = 1, distance = FALSE, seed = 1, num.threads = 1) {
   
   data_name <- paste(deparse(substitute(x)), "and", deparse(substitute(y)), "and", deparse(substitute(z)))

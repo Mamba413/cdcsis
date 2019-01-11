@@ -1,7 +1,8 @@
-#' @importFrom ks hpi
 #' @importFrom ks Hpi.diag
+#' @importFrom ks hpi
 #' @importFrom Rcpp sourceCpp
 #' @importFrom stats dist
+#' @importFrom stats bw.nrd0
 #' @useDynLib cdcsis, .registration = TRUE
 NULL
 

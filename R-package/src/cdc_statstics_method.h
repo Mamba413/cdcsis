@@ -52,14 +52,8 @@ private:
         for (double value : permuted_statistic) {
             larger_num += value > statistic;
         }
-        double p_value;
-        if (larger_num == 0.0) {
-            p_value = 1.0 / (1.0 + permuted_statistic.size());
-        } else {
-            p_value = (larger_num) / permuted_statistic.size();
-        }
-
-        return (p_value);
+        // p-value:
+        return (1.0 + larger_num) / (1.0 + (double) permuted_statistic.size());
     }
 
 protected:

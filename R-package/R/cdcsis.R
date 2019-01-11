@@ -4,8 +4,10 @@
 #' 
 #' @inheritParams cdcov.test
 #' @param x a numeric matrix, or a list which contains multiple numeric matrix
+#' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
+#' gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} or \code{ks::Hpi.diag} function.
 #' @param distance if \code{distance = TRUE}, only \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}
-#' @param threshold the threshold of the number of pedictors recuited by CDC-SIS. 
+#' @param threshold the threshold of the number of predictors recuited by CDC-SIS. 
 #' Should be less than or equal than the number of column of \code{x}. Default value \code{threshold} is sample size.
 #' @return 
 #' \item{ ix }{the vector of indices selected by CDC-SIS } 

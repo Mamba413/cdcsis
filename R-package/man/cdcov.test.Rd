@@ -5,8 +5,8 @@
 \title{Conditional Distance Covariance Independence Test}
 \usage{
 cdcov.test(x, y, z, num.bootstrap = 99, width = ifelse(is.vector(z),
-  ks::hpi(z), diag(ks::Hpi.diag(z))), index = 1, distance = FALSE,
-  seed = 1, num.threads = 1)
+  stats::bw.nrd0(z), diag(ks::Hpi.diag(z))), index = 1,
+  distance = FALSE, seed = 1, num.threads = 1)
 }
 \arguments{
 \item{x}{a numeric vector, matrix, or \code{dist} object}
@@ -18,7 +18,7 @@ cdcov.test(x, y, z, num.bootstrap = 99, width = ifelse(is.vector(z),
 \item{num.bootstrap}{the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}}
 
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} or \code{ks::Hpi.diag} function.}
+gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} or \code{ks::Hpi.diag} function.}
 
 \item{index}{exponent on Euclidean distance, in \eqn{(0,2]}}
 

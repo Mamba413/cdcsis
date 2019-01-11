@@ -18,7 +18,7 @@ cdcsis(x, y, z = NULL, width = ifelse(is.vector(z), ks::hpi(z),
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
 gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} or \code{ks::Hpi.diag} function.}
 
-\item{threshold}{the threshold of the number of pedictors recuited by CDC-SIS. 
+\item{threshold}{the threshold of the number of predictors recuited by CDC-SIS. 
 Should be less than or equal than the number of column of \code{x}. Default value \code{threshold} is sample size.}
 
 \item{distance}{if \code{distance = TRUE}, only \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}}

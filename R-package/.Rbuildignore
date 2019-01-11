@@ -4,3 +4,4 @@
 ^\.Rproj\.user$
 build.sh
 .Rhistory
+cran-comments.md
