@@ -130,6 +130,20 @@ TEST(utility, generate_sequence) {
     EXPECT_EQ(seq2[2], 3);
 }
 
+TEST(utility, quartile_value) {
+    std::vector<int> vector;
+    for (int i=1; i<=10; i++) vector.push_back(i);
+    int q_value = quartile_value(vector, 0.6);
+    EXPECT_EQ(q_value, 6);
+    vector.clear();
+
+    std::vector<double> vector1;
+    for (int i=1; i<=10; i++) vector1.push_back(static_cast<double>(i));
+    double q_value1 = quartile_value(vector1, 0.4);
+    EXPECT_EQ(q_value1, 4.0);
+    vector.clear();
+}
+
 TEST(kde, compute_gaussian_kernel_estimate) {
     std::vector<std::vector<double>> conditional_variable(5, std::vector<double>(2));
     conditional_variable[0][0] = -0.6264538;
@@ -177,5 +191,4 @@ TEST(kde, compute_gaussian_kernel_estimate) {
         }
     }
 }
-
 

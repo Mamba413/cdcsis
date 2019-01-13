@@ -10,6 +10,7 @@
 #include <array>
 #include <random>
 #include <iostream>
+#include <algorithm>
 #include "global.h"
 
 double compute_matrix_determinant(std::vector<std::vector<double>> matrix);
@@ -52,6 +53,8 @@ std::vector<std::vector<T>> extract_submatrix_bycol(std::vector<std::vector<T>> 
 double vector_sum(std::vector<double> &vector1);
 
 double vector_mean(std::vector<double> &vector1);
+
+double vector_sd(std::vector<double> &vector1);
 
 double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weight);
 
@@ -98,5 +101,12 @@ std::vector<double> compositional_transform(std::vector<double> &vector);
 uint sample_multinomial_distribution(std::vector<double> &probability, std::mt19937_64 &random_number_generator);
 
 std::vector<uint> generate_sequence(uint start, uint end);
+
+template<typename T>
+T quartile_value(std::vector<T> vector, double quartile) {
+    int q_index = (int) (vector.size() * quartile + 0.5) - 1;
+    std::nth_element(vector.begin(), vector.begin() + q_index, vector.end());
+    return vector[q_index];
+}
 
 #endif //SRC_UTILITY_H

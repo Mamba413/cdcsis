@@ -209,6 +209,17 @@ double vector_mean(std::vector<double> &vector1) {
     return vector_sum_value / vector1.size();
 }
 
+double vector_sd(std::vector<double> &vector1) {
+    double vec_mean = vector_mean(vector1);
+    double vec_sd = 0.0;
+    for(double vector1_value:vector1) {
+        vec_sd += pow(vector1_value - vec_mean, 2);
+    }
+    vec_sd = vec_sd / (vector1.size() - 1);
+    vec_sd = sqrt(vec_sd);
+    return vec_sd;
+}
+
 double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weight) {
     double sum_value = 0.0;
     for (size_t i = 0; i < vector1.size(); ++i) {
@@ -219,7 +230,7 @@ double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weig
 
 /**
  * Compute the Euclidean distance matrix
- * @param matrix: interpret x as an matrix
+ * @param matrix: interpret x as an matrix with size n*d
  * @param index: see energy distance for reference
 */
 std::vector<std::vector<double>> Euclidean_distance(std::vector<std::vector<double>> &matrix, double index) {
