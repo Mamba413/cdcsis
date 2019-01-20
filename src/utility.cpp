@@ -371,3 +371,63 @@ std::vector<uint> generate_sequence(uint start, uint end) {
 
     return sequence;
 }
+
+/**
+ * Solution of Count of Smaller Numbers After Self Problem
+ * @param a vector
+ *
+ * @refitem https://segmentfault.com/a/1190000012866241
+ * @example
+ * Input : [1, 2, 5, 4, 4, 3]
+ * Output : [0, 0, 3, 1, 1, 0]
+ */
+std::vector<int> countSmaller(std::vector<int> &nums) {
+    std::vector<int> right_smaller(nums.size(), 0);
+    std::vector<std::pair<int, int>> vec(nums.size());
+    for (int i = 0; i < nums.size(); i++) {
+        vec[i] = std::make_pair(i, nums[i]);
+    }
+    merge_sort(vec, 0, (int) vec.size(), right_smaller);
+    return right_smaller;
+}
+
+void merge_sort(std::vector<std::pair<int, int>> &vec, int start, int end,
+                std::vector<int> &right_smaller) {
+    if (end - start <= 1) return;
+    int mid = (start + end) >> 1;
+    merge_sort(vec, start, mid, right_smaller);
+    merge_sort(vec, mid, end, right_smaller);
+    merge(vec, start, mid, end, right_smaller);
+}
+
+void merge(std::vector<std::pair<int, int>> &vec, int start, int mid, int end,
+           std::vector<int> &right_smaller) {
+    auto it_start = vec.begin() + start;
+    auto it_mid = vec.begin() + mid;
+    auto it_end = vec.begin() + end;
+    std::vector<std::pair<int, int>> left(it_start, it_mid), right(it_mid, it_end);
+    int left_merged = 0, right_merged = 0, total_merged = 0;
+    while (left_merged < left.size() && right_merged < right.size()) {
+        if (left[left_merged].second < right[right_merged].second) {
+            right_smaller[left[left_merged].first] += right_merged;
+            vec[start + total_merged] = left[left_merged];
+            ++left_merged;
+            ++total_merged;
+        } else {
+            vec[start + total_merged] = right[right_merged];
+            ++right_merged;
+            ++total_merged;
+        }
+    }
+    while (left_merged < left.size()) {
+        right_smaller[left[left_merged].first] += right_merged;
+        vec[start + total_merged] = left[left_merged];
+        ++left_merged;
+        ++total_merged;
+    }
+    while (right_merged < right.size()) {
+        vec[start + total_merged] = right[right_merged];
+        ++right_merged;
+        ++total_merged;
+    }
+}

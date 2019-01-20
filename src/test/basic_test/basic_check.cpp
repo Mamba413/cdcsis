@@ -144,6 +144,48 @@ TEST(utility, quartile_value) {
     vector.clear();
 }
 
+TEST(utility, countSmaller) {
+    std::vector<int> data = {1, 2, 5, 6, 4, 3};
+    std::vector<int> true_number = {0, 0, 2, 2, 1, 0};
+    std::vector<int> number = countSmaller(data);
+    for (int i = 0; i < true_number.size(); ++i) {
+        EXPECT_EQ(number[i], true_number[i]);
+    }
+
+    data = {2, 2, 2, 2, 2, 2};
+    true_number = {5, 4, 3, 2, 1, 0};
+    number = countSmaller(data);
+    for (int i = 0; i < true_number.size(); ++i) {
+        EXPECT_EQ(number[i], true_number[i]);
+    }
+}
+
+TEST(utility, weight_sum_count_smaller_number_after_self) {
+    std::vector<double> data = {1.0, 3.0, 5.0, 4.0, 6.0, 2.0};
+    std::vector<double> weight = {3.0, 2.0, 4.0, 1.0, 2.0, 5.0};
+    std::vector<double> true_weight_sum = {0.0, 5.0, 6.0, 5.0, 5.0, 0.0};
+    std::vector<double> weight_sum = weight_sum_count_smaller_number_after_self(data, weight);
+    for (int i = 0; i < true_weight_sum.size(); ++i) {
+        EXPECT_EQ(weight_sum[i], true_weight_sum[i]);
+    }
+
+    data = {2.0, 2.0, 2.0, 2.0, 2.0, 2.0};
+    weight = {1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    true_weight_sum = {20.0, 18.0, 15.0, 11.0, 6.0, 0.0};
+    weight_sum = weight_sum_count_smaller_number_after_self(data, weight);
+    for (int i = 0; i < true_weight_sum.size(); ++i) {
+        EXPECT_EQ(weight_sum[i], true_weight_sum[i]);
+    }
+
+    data = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    weight = {1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
+    true_weight_sum = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
+    weight_sum = weight_sum_count_smaller_number_after_self(data, weight);
+    for (int i = 0; i < true_weight_sum.size(); ++i) {
+        EXPECT_EQ(weight_sum[i], true_weight_sum[i]);
+    }
+}
+
 TEST(kde, compute_gaussian_kernel_estimate) {
     std::vector<std::vector<double>> conditional_variable(5, std::vector<double>(2));
     conditional_variable[0][0] = -0.6264538;
@@ -191,4 +233,5 @@ TEST(kde, compute_gaussian_kernel_estimate) {
         }
     }
 }
+
 
