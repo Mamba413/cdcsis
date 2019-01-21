@@ -18,6 +18,9 @@ public:
 
     void conduct_cdc_test(std::vector<std::vector<double>> &distance_x, std::vector<std::vector<double>> &distance_y,
                           std::vector<std::vector<double>> &kernel, uint num_bootstrap, uint seed, uint num_threads);
+    
+    void conduct_cbc_test(std::vector<std::vector<double>> &distance_x, std::vector<std::vector<double>> &distance_y,
+                          std::vector<std::vector<double>> &kernel, uint num_bootstrap, uint seed, uint num_threads);
 
     /**
      * Conduct conditional distance correlation based screening for multivariate explanation variable

@@ -36,12 +36,8 @@ void CDCStatsticsMethod::conduct_cdc_test(std::vector<std::vector<double>> &dist
         } else {
             random_number_generator.seed(seed);
         }
-        std::vector<std::vector<uint>> random_sample_index(num_bootstrap, std::vector<uint>(distance_x.size()));
-        for (uint i = 0; i < kernel.size(); ++i) {
-            for (uint j = 0; j < num_bootstrap; ++j) {
-                random_sample_index[j][i] = sample_multinomial_distribution(kernel[i], random_number_generator);
-            }
-        }
+        std::vector<std::vector<uint>> random_sample_index = generate_random_sample_index(num_bootstrap, kernel,
+                                                                                          random_number_generator);
 
         // bootstrap test:
         std::vector<std::vector<double >> bootstrap_distance_x;
@@ -56,6 +52,13 @@ void CDCStatsticsMethod::conduct_cdc_test(std::vector<std::vector<double>> &dist
         // compute p-value:
         this->p_value = compute_p_value(this->permuted_cdc_statistic, this->cdc_statistic[0]);
     }
+}
+
+void CDCStatsticsMethod::conduct_cbc_test(std::vector<std::vector<double>> &distance_x,
+                                          std::vector<std::vector<double>> &distance_y,
+                                          std::vector<std::vector<double>> &kernel, uint num_bootstrap, uint seed,
+                                          uint num_threads) {
+
 }
 
 void CDCStatsticsMethod::conduct_cdc_screening(std::vector<std::vector<double>> &x,

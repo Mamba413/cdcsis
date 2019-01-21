@@ -109,6 +109,10 @@ std::vector<double> compositional_transform(std::vector<double> &vector);
 
 uint sample_multinomial_distribution(std::vector<double> &probability, std::mt19937_64 &random_number_generator);
 
+std::vector<std::vector<uint>> generate_random_sample_index(uint replication_number,
+                                                            std::vector<std::vector<double>> probability_matrix,
+                                                            std::mt19937_64 &random_number_generator);
+
 std::vector<uint> generate_sequence(uint start, uint end);
 
 template<typename T>
@@ -128,8 +132,8 @@ template<typename T>
 void weight_sum_merge(std::vector<std::pair<int, T>> &vec, std::vector<std::pair<int, double>> &weight_vec,
                       int start, int mid, int end,
                       std::vector<double> &right_smaller_weight_sum) {
-    std::vector<std::pair<int, double>> left(vec.begin() + start, vec.begin() + mid);
-    std::vector<std::pair<int, double>> right(vec.begin() + mid, vec.begin() + end);
+    std::vector<std::pair<int, T>> left(vec.begin() + start, vec.begin() + mid);
+    std::vector<std::pair<int, T>> right(vec.begin() + mid, vec.begin() + end);
     std::vector<std::pair<int, double>> weight_left(weight_vec.begin() + start, weight_vec.begin() + mid);
     std::vector<std::pair<int, double>> weight_right(weight_vec.begin() + mid, weight_vec.begin() + end);
     int left_merged = 0, right_merged = 0, right_merged_tmp = 0, total_merged = 0;

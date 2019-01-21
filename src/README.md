@@ -19,4 +19,9 @@ First you need a dataset in a file. Values can be seperated by whitespace. A typ
 ./cdc --file filepath/filename.txt --xindex 1 --yindex 2 --zindex 3
 ```
 
+```bash
+CDC statistics: 0.0220739
+p-value: 0.72
+```
+
 If you find any bugs, or if you experience any crashes, please report to us. If you have any questions just ask, we won't bite.
