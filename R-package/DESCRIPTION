@@ -6,7 +6,7 @@ Version: 2.0.0
 Date: 2019-1-3
 Author: Wenhao Hu, Mian Huang, Wenliang Pan, Xueqin Wang, Canhong Wen, Yuan Tian, Heping Zhang, Jin Zhu
 Depends: R(>= 3.0.1)
-Imports: ks, mvtnorm, Rcpp
+Imports: KernSmooth, mvtnorm, Rcpp
 Suggests: testthat
 Maintainer: Jin Zhu <zhuj37@mail2.sysu.edu.cn>
 License: GPL (>= 2)
