@@ -5,11 +5,13 @@
 \alias{cdcor}
 \title{Conditional Distance Covariance/Correlation Statistics}
 \usage{
-cdcov(x, y, z, width = ifelse(is.vector(z), ks::hpi(z),
-  diag(ks::Hpi.diag(z))), index = 1, distance = FALSE)
+cdcov(x, y, z, width = ifelse(dim(as.matrix(z))[2] == 1,
+  stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)),
+  index = 1, distance = FALSE)
 
-cdcor(x, y, z, width = ifelse(is.vector(z), ks::hpi(z),
-  diag(ks::Hpi.diag(z))), index = 1, distance = FALSE)
+cdcor(x, y, z, width = ifelse(dim(as.matrix(z))[2] == 1,
+  stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)),
+  index = 1, distance = FALSE)
 }
 \arguments{
 \item{x}{a numeric vector, matrix, or \code{dist} object}
@@ -19,7 +21,7 @@ cdcor(x, y, z, width = ifelse(is.vector(z), ks::hpi(z),
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} or \code{ks::Hpi.diag} function.}
+gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0}.}
 
 \item{index}{exponent on Euclidean distance, in \eqn{(0,2]}}
 

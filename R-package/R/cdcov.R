@@ -4,7 +4,7 @@
 #' 
 #' @inheritParams cdcov.test
 #' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-#' gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} or \code{ks::Hpi.diag} function.
+#' gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0}.
 #' @rdname cdcov
 #' @details 
 #' \code{cdcov} and \code{cdcor} compute conditional distance covariance and conditional distance correlation statistics.
@@ -34,7 +34,8 @@
 #' cdcov(x, y, z)
 #' 
 cdcov <- function(x, y, z, 
-                  width = ifelse(is.vector(z), ks::hpi(z), diag(ks::Hpi.diag(z))), 
+                  width = ifelse(dim(as.matrix(z))[2] == 1, 
+                                 stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)), 
                   index = 1, distance = FALSE) 
 {
   width <- as.double(width)
@@ -75,7 +76,8 @@ cdcov <- function(x, y, z,
 #' z <- rnorm(num)
 #' cdcor(x, y, z)
 cdcor <- function(x, y, z, 
-                  width = ifelse(is.vector(z), ks::hpi(z), diag(ks::Hpi.diag(z))), 
+                  width = ifelse(dim(as.matrix(z))[2] == 1, 
+                                 stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)), 
                   index = 1, distance = FALSE) {
   
   width <- as.double(width)
@@ -111,7 +113,7 @@ cdcor <- function(x, y, z,
 #' @param z \code{z} is a numeric vector or matrix. It is the variable being conditioned.
 #' @param num.bootstrap the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}
 #' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-#' gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} or \code{ks::Hpi.diag} function.
+#' gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function.
 #' @param index exponent on Euclidean distance, in \eqn{(0,2]}
 #' @param distance if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}
 #' @param seed the random seed
@@ -172,16 +174,17 @@ cdcor <- function(x, y, z,
 #' y <- dist(y)
 #' cdcov.test(x, y, z, seed = 2, distance = TRUE)
 cdcov.test <- function(x, y, z, num.bootstrap = 99, 
-                       width = ifelse(is.vector(z), stats::bw.nrd0(z), diag(ks::Hpi.diag(z))), 
+                       width = ifelse(dim(as.matrix(z))[2] == 1, 
+                                      stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)), 
                        index = 1, distance = FALSE, seed = 1, num.threads = 1) {
   
   data_name <- paste(deparse(substitute(x)), "and", deparse(substitute(y)), "and", deparse(substitute(z)))
   
-  width <- as.double(width)
-  check_width_arguments(width)
-  
   z <- as.matrix(z)
   check_xyz_arguments(z)
+  
+  width <- as.double(min(mean(width), exp(-2 * log(nrow(z)) / (ncol(z) + 4))))
+  check_width_arguments(width)
   
   x <- compute_distance_matrix(x, distance, index)
   check_xyz_arguments(x)
@@ -255,7 +258,8 @@ cdcov.test <- function(x, y, z, num.bootstrap = 99,
 #' y <- dist(y)
 #' cbcov.test(x, y, z, seed = 2, distance = TRUE)
 cbcov.test <- function(x, y, z, num.bootstrap = 99, 
-                       width = ifelse(is.vector(z), stats::bw.nrd0(z), diag(ks::Hpi.diag(z))), 
+                       width = ifelse(dim(as.matrix(z))[2] == 1, 
+                                      stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)), 
                        index = 1, distance = FALSE, seed = 1, num.threads = 1) {
   
   data_name <- paste(deparse(substitute(x)), "and", deparse(substitute(y)), "and", deparse(substitute(z)))

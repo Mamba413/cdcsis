@@ -204,6 +204,14 @@ double vector_sum(std::vector<double> &vector1) {
     return sum_value;
 }
 
+double vector_prod(std::vector<double> &vector1) {
+    double sum_value = 0.0;
+    for (double value : vector1) {
+        sum_value *= value;
+    }
+    return sum_value;
+}
+
 double vector_mean(std::vector<double> &vector1) {
     double vector_sum_value = vector_sum(vector1);
     return vector_sum_value / vector1.size();
@@ -292,6 +300,23 @@ std::vector<std::vector<double>> Euclidean_distance(std::vector<double> &matrix,
         }
     }
     return distance_matrix;
+}
+
+double square_Euclidean_distance(std::vector<double> &vector1, std::vector<double> &vector2) {
+    double distance_value = 0.0;
+    for (uint i = 0; i < vector1.size(); ++i) {
+        distance_value += pow(vector1[i] - vector2[i], 2);
+    }
+    return distance_value;
+}
+
+double weight_square_Euclidean_distance(std::vector<double> &vector1, std::vector<double> &vector2,
+                                        std::vector<double> &weight) {
+    double distance_value = 0.0;
+    for (uint i = 0; i < vector1.size(); ++i) {
+        distance_value += weight[i] * pow(vector1[i] - vector2[i], 2);
+    }
+    return distance_value;
 }
 
 std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, uint num_row, uint num_col) {

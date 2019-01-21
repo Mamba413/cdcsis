@@ -5,7 +5,7 @@ library(cdcsis)
 test_that("Test Conditional-Test (Type-I error)", {
   num <- 50
   
-  set.seed(1)
+  set.seed(123)
   cov_mat <- matrix(c(1, 0.36, 0.6, 0.36, 1, 0.6, 0.6, 0.6, 1), nrow = 3)
   dat <- mvtnorm::rmvnorm(n = num, sigma = cov_mat)
   x <- dat[, 1]
@@ -13,7 +13,7 @@ test_that("Test Conditional-Test (Type-I error)", {
   z <- dat[, 3]
   expect_gt(cdcov.test(x, y, z)[["p.value"]], 0.05)
 
-  set.seed(1)
+  set.seed(123)
   z <- rnorm(num)
   x <- 0.5 * (z^3 / 7 + z / 2) + tanh(rnorm(num))
   x <- x + x^3 / 3

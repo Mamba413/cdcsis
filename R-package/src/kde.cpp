@@ -13,9 +13,19 @@ void KernelDensityEstimation::compute_kernel_density_estimate() {
 
     switch (this->kernel_type) {
         case KERNEL_GAUSSIAN:
-            this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
-                    this->condition_variable,
-                    this->bandwidth);
+            if (!this->bandwidth.empty()) {
+                this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
+                        this->condition_variable,
+                        this->bandwidth);
+            } else if (!this->bandwidth_vector.empty()) {
+                this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
+                        this->condition_variable,
+                        this->bandwidth_vector);
+            } else {
+                this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
+                        this->condition_variable,
+                        this->bandwidth_value);
+            }
             break;
         case KERNEL_RECTANGLE:
             this->kernel_density_estimate = KernelDensityEstimation::compute_rectangle_kernel_estimate(
@@ -25,9 +35,9 @@ void KernelDensityEstimation::compute_kernel_density_estimate() {
     }
 }
 
-vector<vector<double>>
-KernelDensityEstimation::compute_gaussian_kernel_estimate(vector<vector<double>> &condition_variable,
-                                                          vector<vector<double>> &bandwidth) {
+std::vector<std::vector<double>>
+KernelDensityEstimation::compute_gaussian_kernel_estimate(std::vector<std::vector<double>> &condition_variable,
+                                                          std::vector<std::vector<double>> &bandwidth) {
     uint d = (uint) bandwidth.size();
     uint num = (uint) condition_variable.size();
     std::vector<std::vector<double>> sigma(d, std::vector<double>(d));
@@ -36,7 +46,6 @@ KernelDensityEstimation::compute_gaussian_kernel_estimate(vector<vector<double>>
     std::vector<std::vector<double>> expect2(d, std::vector<double>(1));
 
     double density, det, quadric_value;
-
     if (d == 1) {
         det = (bandwidth[0][0]) * (bandwidth[0][0]);
         sigma[0][0] = 1.0 / bandwidth[0][0];
@@ -49,7 +58,6 @@ KernelDensityEstimation::compute_gaussian_kernel_estimate(vector<vector<double>>
     }
 
     density = 1.0 / (pow(2 * CDC_PI, d / 2.0) * pow(det, 0.5));
-
     for (uint i = 0; i < num; i++) {
         kernel_density_estimate[i][i] = density;
         for (uint j = 0; j < i; j++) {
@@ -62,12 +70,59 @@ KernelDensityEstimation::compute_gaussian_kernel_estimate(vector<vector<double>>
         }
     }
 
-    return (kernel_density_estimate);
+    return kernel_density_estimate;
 }
 
-vector<vector<double>>
-KernelDensityEstimation::compute_rectangle_kernel_estimate(vector<vector<double>> &condition_variable,
-                                                           vector<vector<double>> &bandwidth) {
+std::vector<std::vector<double>> KernelDensityEstimation::compute_gaussian_kernel_estimate(
+        std::vector<std::vector<double>> &condition_variable, std::vector<double> &bandwidth) {
+    uint num = (uint) condition_variable.size();
+    uint d = (uint) condition_variable[0].size();
+    double det = vector_prod(bandwidth);
+    double density = 1.0 / (pow(2 * CDC_PI, d / 2.0) * det);
+
+    std::vector<double> weight;
+    for (double width : bandwidth) {
+        weight.push_back(1.0 / width);
+    }
+
+    std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
+    for (uint i = 0; i < num; i++) {
+        kernel_density_estimate[i][i] = density;
+        for (uint j = 0; j < i; j++) {
+            kernel_density_estimate[j][i] = exp(
+                    -0.5 * weight_square_Euclidean_distance(condition_variable[i], condition_variable[j], weight));
+            kernel_density_estimate[j][i] *= density;
+            kernel_density_estimate[i][j] = kernel_density_estimate[j][i];
+        }
+    }
+
+    return kernel_density_estimate;
+}
+
+std::vector<std::vector<double>> KernelDensityEstimation::compute_gaussian_kernel_estimate(
+        std::vector<std::vector<double>> &condition_variable, double bandwidth) {
+    uint num = (uint) condition_variable.size();
+    uint d = (uint) condition_variable[0].size();
+    double det = pow(bandwidth, d);
+    double density = 1.0 / (pow(2 * CDC_PI, d / 2.0) * det);
+
+    std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
+    for (uint i = 0; i < num; i++) {
+        kernel_density_estimate[i][i] = density;
+        for (uint j = 0; j < i; j++) {
+            kernel_density_estimate[j][i] = exp(
+                    -0.5 * square_Euclidean_distance(condition_variable[i], condition_variable[j]));
+            kernel_density_estimate[j][i] *= density;
+            kernel_density_estimate[i][j] = kernel_density_estimate[j][i];
+        }
+    }
+
+    return kernel_density_estimate;
+}
+
+std::vector<std::vector<double>>
+KernelDensityEstimation::compute_rectangle_kernel_estimate(std::vector<std::vector<double>> &condition_variable,
+                                                           std::vector<std::vector<double>> &bandwidth) {
     size_t num = condition_variable.size();
     std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
     // TODO:

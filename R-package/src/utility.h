@@ -53,6 +53,8 @@ std::vector<std::vector<T>> extract_submatrix_bycol(std::vector<std::vector<T>> 
 
 double vector_sum(std::vector<double> &vector1);
 
+double vector_prod(std::vector<double> &vector1);
+
 double vector_mean(std::vector<double> &vector1);
 
 double vector_sd(std::vector<double> &vector1);
@@ -64,6 +66,11 @@ std::vector<std::vector<double>> Euclidean_distance(std::vector<std::vector<doub
 std::vector<std::vector<double>> Euclidean_distance_byrow(std::vector<std::vector<double>> &matrix, double index);
 
 std::vector<std::vector<double>> Euclidean_distance(std::vector<double> &matrix, double index);
+
+double square_Euclidean_distance(std::vector<double> &vector1, std::vector<double> &vector2);
+
+double weight_square_Euclidean_distance(std::vector<double> &vector1, std::vector<double> &vector2,
+                                        std::vector<double> &weight);
 
 std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, uint num_row, uint num_col);
 

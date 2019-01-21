@@ -5,7 +5,7 @@
 #' @inheritParams cdcov.test
 #' @param x a numeric matrix, or a list which contains multiple numeric matrix
 #' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-#' gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} or \code{ks::Hpi.diag} function.
+#' gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} function.
 #' @param distance if \code{distance = TRUE}, only \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}
 #' @param threshold the threshold of the number of predictors recuited by CDC-SIS. 
 #' Should be less than or equal than the number of column of \code{x}. Default value \code{threshold} is sample size.
@@ -39,7 +39,8 @@
 #' head(res[["ix"]], n = 10)
 #' 
 cdcsis <- function(x, y, z = NULL, 
-                   width = ifelse(is.vector(z), ks::hpi(z), diag(ks::Hpi.diag(z))), 
+                   width = ifelse(dim(as.matrix(z))[2] == 1, 
+                                  ks::hpi(as.vector(z)), apply(as.matrix(z), 2, ks::hpi)),
                    threshold = nrow(y), distance = FALSE, index = 1, num.threads = 1) 
 {
   width <- as.double(width)

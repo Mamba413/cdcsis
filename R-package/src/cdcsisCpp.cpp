@@ -19,19 +19,8 @@ Rcpp::List cdcsisCpp(uint stats_method, Rcpp::NumericMatrix& x, std::vector<uint
   try {
     StatsMethod statsMethod = StatsMethod(stats_method);
     
-    uint condition_num_col = z.ncol();
-    std::vector<std::vector<double> > bandwidth_matrix(condition_num_col, std::vector<double>(condition_num_col));
-    for (uint i = 0; i < condition_num_col; ++i) {
-      bandwidth_matrix[i][i] = bandwidth;
-      for (uint j = 0; j < i; ++j) {
-        bandwidth_matrix[i][j] = bandwidth_matrix[j][i] = 0.0;
-      }
-    }
-    
-    // uint num_row = (int) y.nrow();
-    std::vector<std::vector<double> > kernel;
-    kernel = rcpp_matrix_to_vector2d<double>(z);
-    KernelDensityEstimation kernelDensityEstimation = KernelDensityEstimation(kernel, bandwidth_matrix, 1);
+    std::vector<std::vector<double> > kernel = rcpp_matrix_to_vector2d<double>(z);
+    KernelDensityEstimation kernelDensityEstimation = KernelDensityEstimation(kernel, bandwidth, 1);
     kernelDensityEstimation.compute_kernel_density_estimate();
     kernel = kernelDensityEstimation.get_kernel_density_estimate();
     
