@@ -5,9 +5,9 @@
 \title{Conditional Distance Correlation Sure Independence Screening (CDC-SIS)}
 \usage{
 cdcsis(x, y, z = NULL, width = ifelse(dim(as.matrix(z))[2] == 1,
-  ks::hpi(as.vector(z)), apply(as.matrix(z), 2, ks::hpi)),
-  threshold = nrow(y), distance = FALSE, index = 1,
-  num.threads = 1)
+  KernSmooth::dpik(as.vector(z)), apply(as.matrix(z), 2,
+  KernSmooth::dpik)), threshold = nrow(y), distance = FALSE,
+  index = 1, num.threads = 1)
 }
 \arguments{
 \item{x}{a numeric matrix, or a list which contains multiple numeric matrix}
@@ -17,7 +17,7 @@ cdcsis(x, y, z = NULL, width = ifelse(dim(as.matrix(z))[2] == 1,
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-gaussian kernel bandwidth. Its default value is relies on \code{ks::hpi} function.}
+gaussian kernel bandwidth. Its default value is relies on \code{KernSmooth::dpik} function.}
 
 \item{threshold}{the threshold of the number of predictors recuited by CDC-SIS. 
 Should be less than or equal than the number of column of \code{x}. Default value \code{threshold} is sample size.}

@@ -1,6 +1,5 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom mvtnorm rmvnorm
-#' @importFrom ks hpi
 #' @importFrom stats dist
 #' @importFrom stats bw.nrd0
 #' @useDynLib cdcsis, .registration = TRUE
