@@ -486,11 +486,11 @@ std::vector<uint> generate_sequence(uint start, uint end) {
  * Input : [1, 2, 5, 4, 4, 3]
  * Output : [0, 0, 3, 1, 1, 0]
  */
-std::vector<int> countSmaller(std::vector<int> &nums) {
-    std::vector<int> right_smaller(nums.size(), 0);
-    std::vector<std::pair<int, int>> vec(nums.size());
-    for (int i = 0; i < nums.size(); i++) {
-        vec[i] = std::make_pair(i, nums[i]);
+std::vector<int> countSmaller(std::vector<int> &vector) {
+    std::vector<int> right_smaller(vector.size(), 0);
+    std::vector<std::pair<int, int>> vec(vector.size());
+    for (uint i = 0; i < vector.size(); i++) {
+        vec[i] = std::make_pair(i, vector[i]);
     }
     merge_sort(vec, 0, (int) vec.size(), right_smaller);
     return right_smaller;
@@ -511,7 +511,7 @@ void merge(std::vector<std::pair<int, int>> &vec, int start, int mid, int end,
     auto it_mid = vec.begin() + mid;
     auto it_end = vec.begin() + end;
     std::vector<std::pair<int, int>> left(it_start, it_mid), right(it_mid, it_end);
-    int left_merged = 0, right_merged = 0, total_merged = 0;
+    uint left_merged = 0, right_merged = 0, total_merged = 0;
     while (left_merged < left.size() && right_merged < right.size()) {
         if (left[left_merged].second < right[right_merged].second) {
             right_smaller[left[left_merged].first] += right_merged;

@@ -136,7 +136,7 @@ void weight_sum_merge(std::vector<std::pair<int, T>> &vec, std::vector<std::pair
     std::vector<std::pair<int, T>> right(vec.begin() + mid, vec.begin() + end);
     std::vector<std::pair<int, double>> weight_left(weight_vec.begin() + start, weight_vec.begin() + mid);
     std::vector<std::pair<int, double>> weight_right(weight_vec.begin() + mid, weight_vec.begin() + end);
-    int left_merged = 0, right_merged = 0, right_merged_tmp = 0, total_merged = 0;
+    uint left_merged = 0, right_merged = 0, right_merged_tmp = 0, total_merged = 0;
     while (left_merged < left.size() && right_merged < right.size()) {
         if (left[left_merged].second < right[right_merged].second) {
             vec[start + total_merged] = left[left_merged];
@@ -206,7 +206,7 @@ std::vector<T> weight_sum_count_smaller_number_after_self(std::vector<T> &vector
     std::vector<double> right_smaller_weight_sum(vector.size(), 0);
     std::vector<std::pair<int, T>> vec(vector.size());
     std::vector<std::pair<int, double>> weight_vec(weight.size());
-    for (int i = 0; i < vector.size(); i++) {
+    for (uint i = 0; i < vector.size(); i++) {
         vec[i] = std::make_pair(i, vector[i]);
         weight_vec[i] = std::make_pair(i, weight[i]);
     }
@@ -214,7 +214,7 @@ std::vector<T> weight_sum_count_smaller_number_after_self(std::vector<T> &vector
     return right_smaller_weight_sum;
 }
 
-std::vector<int> countSmaller(std::vector<int> &nums);
+std::vector<int> countSmaller(std::vector<int> &vector);
 
 /**
  *

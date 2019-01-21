@@ -118,10 +118,10 @@ private:
         return vector_mean(condition_ball_correlation);
     }
 
-    std::vector<std::vector<double >> compute_weight_delta_xy_matrix(std::vector<std::vector<double >>& delta_y_matrix,
-                                                                     std::vector<std::vector<double >>& distance_x,
-                                                                     std::vector<std::vector<double >>& distance_y,
-                                                                     std::vector<double>& weight);
+    std::vector<std::vector<double >> compute_weight_delta_xy_matrix(std::vector<std::vector<double >> &delta_y_matrix,
+                                                                     std::vector<std::vector<double >> &distance_x,
+                                                                     std::vector<std::vector<double >> &distance_y,
+                                                                     std::vector<double> &weight);
 
     std::vector<std::vector<double >> compute_weight_delta_x_matrix(std::vector<std::vector<double >> &distance_x,
                                                                     std::vector<double> &weight) {
