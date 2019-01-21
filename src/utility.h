@@ -7,6 +7,7 @@
 
 #include <cmath>
 #include <vector>
+#include <tuple>
 #include <array>
 #include <random>
 #include <iostream>
@@ -69,6 +70,14 @@ std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, u
 std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<double>> &distance_matrix,
                                                        std::vector<double> &weight);
 
+std::vector<double> compute_weight_delta_x_vector(std::vector<double> &distance_vector,
+                                                  std::vector<double> &weight);
+
+std::vector<double> compute_weight_delta_xy_vector(std::vector<double> &delta_y_vector,
+                                                   std::vector<double> &distance_x,
+                                                   std::vector<double> &distance_y,
+                                                   std::vector<double> &weight);
+
 /**
  * Rearrange N*N matrix
  * @param matrix
@@ -119,10 +128,10 @@ template<typename T>
 void weight_sum_merge(std::vector<std::pair<int, T>> &vec, std::vector<std::pair<int, double>> &weight_vec,
                       int start, int mid, int end,
                       std::vector<double> &right_smaller_weight_sum) {
-    std::vector<std::pair<int, int>> left(vec.begin() + start, vec.begin() + mid);
-    std::vector<std::pair<int, int>> right(vec.begin() + mid, vec.begin() + end);
-    std::vector<std::pair<int, int>> weight_left(weight_vec.begin() + start, weight_vec.begin() + mid);
-    std::vector<std::pair<int, int>> weight_right(weight_vec.begin() + mid, weight_vec.begin() + end);
+    std::vector<std::pair<int, double>> left(vec.begin() + start, vec.begin() + mid);
+    std::vector<std::pair<int, double>> right(vec.begin() + mid, vec.begin() + end);
+    std::vector<std::pair<int, double>> weight_left(weight_vec.begin() + start, weight_vec.begin() + mid);
+    std::vector<std::pair<int, double>> weight_right(weight_vec.begin() + mid, weight_vec.begin() + end);
     int left_merged = 0, right_merged = 0, right_merged_tmp = 0, total_merged = 0;
     while (left_merged < left.size() && right_merged < right.size()) {
         if (left[left_merged].second < right[right_merged].second) {
@@ -202,5 +211,19 @@ std::vector<T> weight_sum_count_smaller_number_after_self(std::vector<T> &vector
 }
 
 std::vector<int> countSmaller(std::vector<int> &nums);
+
+/**
+ *
+ * @param dataset
+ * @param start
+ * @param end
+ */
+void quick_sort_dataset(std::vector<std::tuple<int, double, double>> &dataset, int start, int end);
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &dataset, int start, int end);
+
+double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> &distance_x,
+                                               std::vector<std::vector<double>> &distance_y,
+                                               std::vector<std::vector<double>> &kernel_density_estimation);
 
 #endif //SRC_UTILITY_H

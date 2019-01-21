@@ -212,7 +212,7 @@ double vector_mean(std::vector<double> &vector1) {
 double vector_sd(std::vector<double> &vector1) {
     double vec_mean = vector_mean(vector1);
     double vec_sd = 0.0;
-    for(double vector1_value:vector1) {
+    for (double vector1_value:vector1) {
         vec_sd += pow(vector1_value - vec_mean, 2);
     }
     vec_sd = vec_sd / (vector1.size() - 1);
@@ -341,6 +341,97 @@ std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<d
     return weight_distance_anova_table;
 }
 
+/**
+ * Compute Delta_{ij}^{X}, j = 1,..., n
+ * @param distance_vector a distance vector contains n element
+ * @param weight kernel density estimation omega_{k}(Z_l), k = 1,..., n
+ *
+ * @return sum_{k=1}^{n} omega_{k}(Z_l) delta_{ij, l, n}^{X}, j = 1, ..., n
+ *
+ * @example: see test case
+ */
+std::vector<double> compute_weight_delta_x_vector(std::vector<double> &distance_vector,
+                                                  std::vector<double> &weight) {
+    int num = (int) distance_vector.size();
+    std::vector<std::tuple<int, double, double>> dataset;
+    for (int i = 0; i < num; ++i) {
+        dataset.emplace_back(std::make_tuple(i, distance_vector[i], weight[i]));
+    }
+    quick_sort_dataset(dataset, 0, (int) (dataset.size() - 1));
+
+    int last_number = 1, update_number = 0;
+    double now_value, last_value = std::get<1>(dataset[0]);
+    double cumulative_value = std::get<2>(dataset[0]);
+    std::vector<double> delta_x_vector(distance_vector.size(), 0.0);
+    delta_x_vector[std::get<0>(dataset[0])] = cumulative_value;
+    for (int j = 1; j < num; ++j) {
+        now_value = std::get<1>(dataset[j]);
+        if (now_value == last_value) {
+            last_number++;
+            cumulative_value += std::get<2>(dataset[j]);
+        } else {
+            for (int i = 1; i <= last_number; ++i) {
+                delta_x_vector[std::get<0>(dataset[j - i])] = cumulative_value;
+                update_number++;
+            }
+            cumulative_value += std::get<2>(dataset[j]);
+            last_value = now_value;
+            last_number = 1;
+        }
+    }
+    if (update_number < num) {
+        for (int i = 1; i <= last_number; ++i) {
+            delta_x_vector[std::get<0>(dataset[num - i])] = cumulative_value;
+        }
+    }
+
+    return delta_x_vector;
+}
+
+/**
+ * Compute Delta_{ij}^{XY}, j = 1,..., n
+ * @param dataset a vector contains n tuple with 4 element.
+ * The 1st element: index, 2nd element: distance_x, 3rd element: distance_y, 4th element: kernel density estimation
+ * @param delta_y_vector Delta_{ij}^{Y}, j = 1,..., n
+ *
+ * @return sum_{k=1}^{n} omega_{k}(Z_l) delta_{ij, l, n}^{XY}, j = 1, ..., n
+ *
+ * @example see test case
+ *
+ * @note Only if distance_x without ties, this function is right.
+ * @todo tackle the case when distance_x is free of ties
+ */
+std::vector<double> compute_weight_delta_xy_vector(std::vector<double> &delta_y_vector,
+                                                   std::vector<double> &distance_x,
+                                                   std::vector<double> &distance_y,
+                                                   std::vector<double> &weight) {
+    int num = (int) distance_x.size(), index;
+    std::vector<std::tuple<int, double, double, double >> dataset;
+    for (int j = 0; j < num; ++j) {
+        dataset.emplace_back(std::make_tuple(j, distance_x[j], distance_y[j], weight[j]));
+    }
+    quick_sort_dataset(dataset, 0, num - 1);
+
+    std::vector<double> distance_y_vector, weight_vector, weight_sum_count_smaller_number_after_self_vec;
+    std::vector<double> weight_delta_xy_vector(dataset.size(), 0.0);
+
+    for (int j = 0; j < num; ++j) {
+        distance_y_vector.push_back(std::get<2>(dataset[j]));
+        weight_vector.push_back(std::get<3>(dataset[j]));
+    }
+    weight_sum_count_smaller_number_after_self_vec = weight_sum_count_smaller_number_after_self(distance_y_vector,
+                                                                                                weight_vector);
+
+    // Alternative formula, see https://arxiv.org/pdf/1811.03750.pdf, equation 1:
+    for (int j = 0; j < num; ++j) {
+        index = std::get<0>(dataset[j]);
+        weight_delta_xy_vector[index] =
+                delta_y_vector[index] - weight_sum_count_smaller_number_after_self_vec[j];
+    }
+
+    return weight_delta_xy_vector;
+}
+
 std::vector<double> compositional_transform(std::vector<double> &vector) {
     double vector_sum_value = vector_sum(vector);
     std::vector<double> transformed_vector(vector.size());
@@ -430,4 +521,97 @@ void merge(std::vector<std::pair<int, int>> &vec, int start, int mid, int end,
         ++right_merged;
         ++total_merged;
     }
+}
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double>> &dataset, int start, int end) {
+    if (start >= end)
+        return;
+    double mid = std::get<1>(dataset[end]);
+    int left = start, right = end - 1;
+    while (left < right) {
+        while (std::get<1>(dataset[left]) < mid && left < right)
+            left++;
+        while (std::get<1>(dataset[right]) >= mid && left < right)
+            right--;
+        dataset[left].swap(dataset[right]);
+    }
+    if (std::get<1>(dataset[left]) >= std::get<1>(dataset[end])) {
+        dataset[left].swap(dataset[end]);
+    } else {
+        left++;
+    }
+    if (left) {
+        quick_sort_dataset(dataset, start, left - 1);
+    }
+    quick_sort_dataset(dataset, left + 1, end);
+}
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &dataset, int start, int end) {
+    if (start >= end)
+        return;
+    double mid = std::get<1>(dataset[end]);
+    int left = start, right = end - 1;
+    while (left < right) {
+        while (std::get<1>(dataset[left]) < mid && left < right)
+            left++;
+        while (std::get<1>(dataset[right]) >= mid && left < right)
+            right--;
+        dataset[left].swap(dataset[right]);
+    }
+    if (std::get<1>(dataset[left]) >= std::get<1>(dataset[end])) {
+        dataset[left].swap(dataset[end]);
+    } else {
+        left++;
+    }
+    if (left) {
+        quick_sort_dataset(dataset, start, left - 1);
+    }
+    quick_sort_dataset(dataset, left + 1, end);
+}
+
+double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> &distance_x,
+                                               std::vector<std::vector<double>> &distance_y,
+                                               std::vector<std::vector<double>> &kernel_density_estimation) {
+    int num = (int) kernel_density_estimation.size();
+    std::vector<double> condition_ball_covariance(kernel_density_estimation.size(), 0.0);
+    double condition_ball_covariance_stats;
+
+    std::vector<double> kernel_rowsum(kernel_density_estimation.size(), 0.0);
+    for (int m = 0; m < num; ++m) {
+        kernel_rowsum[m] += vector_sum(kernel_density_estimation[m]);
+    }
+    std::vector<std::vector<double >> weight_delta_x_matrix(kernel_rowsum.size(),
+                                                            std::vector<double>(kernel_rowsum.size()));
+    std::vector<std::vector<double >> weight_delta_y_matrix(kernel_rowsum.size(),
+                                                            std::vector<double>(kernel_rowsum.size()));
+    std::vector<std::vector<double >> weight_delta_xy_matrix(kernel_rowsum.size(),
+                                                             std::vector<double>(kernel_rowsum.size()));
+    double delta_ijl_xy, delta_ijl_x, delta_ijl_y;
+    for (int l = 0; l < num; ++l) {
+        for (int i = 0; i < num; ++i) {
+            for (int j = 0; j < num; ++j) {
+                delta_ijl_xy = delta_ijl_x = delta_ijl_y = 0.0;
+                for (int k = 0; k < num; ++k) {
+                    delta_ijl_xy += distance_x[i][j] >= distance_x[i][k] && distance_y[i][j] >= distance_y[i][k]
+                                    ? kernel_density_estimation[k][l] : 0;
+                    delta_ijl_x += distance_x[i][j] >= distance_x[i][k] ? kernel_density_estimation[k][l] : 0;
+                    delta_ijl_y += distance_y[i][j] >= distance_y[i][k] ? kernel_density_estimation[k][l] : 0;
+                }
+                weight_delta_xy_matrix[i][j] = delta_ijl_xy;
+                weight_delta_x_matrix[i][j] = delta_ijl_x;
+                weight_delta_y_matrix[i][j] = delta_ijl_y;
+            }
+        }
+        for (int i = 0; i < num; ++i) {
+            for (int j = 0; j < num; ++j) {
+                condition_ball_covariance[l] += pow(
+                        weight_delta_xy_matrix[i][j] -
+                        weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] / kernel_rowsum[l], 2);
+            }
+        }
+        condition_ball_covariance[l] /= (kernel_rowsum[l] * kernel_rowsum[l] * num * num);
+    }
+    condition_ball_covariance_stats = vector_mean(condition_ball_covariance);
+
+    return condition_ball_covariance_stats;
 }

@@ -75,7 +75,6 @@ TEST(cdc_stats, compute_condition_distance_covariance) {
     EXPECT_NEAR(0.1810813, condition_distance_correlation_stats, abs_error);
 }
 
-
 TEST(cdc_statistics_method, conduct_cdc_screening) {
     std::vector<double> x = {-0.62645381, 0.18364332, -0.83562861, 1.59528080, 0.32950777, -0.82046838,
                              0.48742905, 0.73832471, 0.57578135, -0.30538839, 1.51178117, 0.38984324,
@@ -115,4 +114,52 @@ TEST(cdc_statistics_method, conduct_cdc_screening) {
     cdcStatsticsMethod.conduct_cdc_screening(x_2d, variable_index, distance_y, kde, 1.0);
     std::vector<double> result = cdcStatsticsMethod.getCdc_statistic();
     EXPECT_NEAR(0.1810813, result[1], abs_error);
+}
+
+TEST(cbc_stats, compute_condition_ball_covariance) {
+    std::vector<double> x = {-0.62645381, 0.18364332, -0.83562861, 1.59528080, 0.32950777, -0.82046838,
+                             0.48742905, 0.73832471, 0.57578135, -0.30538839, 1.51178117, 0.38984324,
+                             -0.62124058, -2.21469989, 1.12493092, -0.04493361, -0.01619026, 0.94383621,
+                             0.82122120, 0.59390132, 0.91897737, 0.78213630, 0.07456498, -1.98935170, 0.61982575};
+    std::vector<double> y = {-0.05612874, -0.15579551, -1.47075238, -0.47815006, 0.41794156, 1.35867955,
+                             -0.10278773, 0.38767161, -0.05380504, -1.37705956, -0.41499456, -0.39428995,
+                             -0.05931340, 1.10002537, 0.76317575, -0.16452360, -0.25336168, 0.69696338,
+                             0.55666320, -0.68875569, -0.70749516, 0.36458196, 0.76853292, -0.11234621, 0.88110773};
+    std::vector<double> z = {0.39810588, -0.61202639, 0.34111969, -1.12936310, 1.43302370, 1.98039990,
+                             -0.36722148, -1.04413463, 0.56971963, -0.13505460, 2.40161776, -0.03924000,
+                             0.68973936, 0.02800216, -0.74327321, 0.18879230, -1.80495863, 1.46555486,
+                             0.15325334, 2.17261167, 0.47550953, -0.70994643, 0.61072635, -0.93409763, -1.25363340};
+
+    uint num_row = (uint) x.size();
+    std::vector<std::vector<double>> x_2d(num_row, std::vector<double>(1));
+    std::vector<std::vector<double>> y_2d(num_row, std::vector<double>(1));
+    std::vector<std::vector<double>> z_2d(num_row, std::vector<double>(1));
+
+    x_2d = vector_to_matrix(x, num_row, 1);
+    y_2d = vector_to_matrix(y, num_row, 1);
+    z_2d = vector_to_matrix(z, num_row, 1);
+
+    std::vector<std::vector<double>> distance_x(num_row, std::vector<double>(num_row));
+    std::vector<std::vector<double>> distance_y(num_row, std::vector<double>(num_row));
+    distance_x = Euclidean_distance(x_2d, 1.0);
+    distance_y = Euclidean_distance(y_2d, 1.0);
+
+    std::vector<std::vector<double>> kde(num_row, std::vector<double>(num_row));
+    std::vector<std::vector<double>> bandwidth(1, std::vector<double>(1));
+    bandwidth[0][0] = 1;
+
+    KernelDensityEstimation kernelDensityEstimation = KernelDensityEstimation(z_2d, bandwidth, 1);
+    kernelDensityEstimation.compute_kernel_density_estimate();
+    kde = kernelDensityEstimation.get_kernel_density_estimate();
+
+    ConditionBallCovarianceStats conditionBallCovarianceStats = ConditionBallCovarianceStats(distance_x,
+                                                                                             distance_y,
+                                                                                             kde, 1);
+    conditionBallCovarianceStats.compute_stats();
+
+    double condition_ball_covariance_stats = conditionBallCovarianceStats.getCondition_ball_covariance_stats();
+    double condition_ball_covariance_stats_crude = compute_condition_ball_covariance_crude(distance_x, distance_y, kde);
+    double abs_error = 0.000001;
+    EXPECT_NEAR(0.002931456, condition_ball_covariance_stats_crude, abs_error);
+    EXPECT_NEAR(condition_ball_covariance_stats_crude, condition_ball_covariance_stats, abs_error);
 }

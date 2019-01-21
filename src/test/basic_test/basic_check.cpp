@@ -91,6 +91,43 @@ TEST(utility, rearrange_matrix) {
     ASSERT_EQ(new_matrix[2][2], 0.0);
 }
 
+TEST(utility, compute_weight_delta_x_vector) {
+    std::vector<double > distance_vector = {3.0, 2.0, 4.0, 5.0, 1.0};
+    std::vector<double > weight = {1.0, 2.0, 3.0, 4.0, 5.0};
+    std::vector<double > true_delta_x = {8.0, 7.0, 11.0, 15.0, 5.0};
+    std::vector<double > delta_x = compute_weight_delta_x_vector(distance_vector, weight);
+    for (int i = 0; i < true_delta_x.size(); ++i) {
+        EXPECT_EQ(true_delta_x[i], delta_x[i]);
+    }
+
+    distance_vector = {2.0, 2.0, 2.0, 2.0, 2.0};
+    weight = {1.0, 2.0, 3.0, 4.0, 5.0};
+    true_delta_x = {15.0, 15.0, 15.0, 15.0, 15.0};
+    delta_x = compute_weight_delta_x_vector(distance_vector, weight);
+    for (int i = 0; i < true_delta_x.size(); ++i) {
+        EXPECT_EQ(true_delta_x[i], delta_x[i]);
+    }
+}
+
+TEST(utility, compute_weight_delta_xy_vector) {
+    std::vector<double > distance_x = {1.0, 2.0, 3.0, 4.0, 5.0};
+    std::vector<double > distance_y = {5.0, 4.0, 3.0, 2.0, 1.0};
+    std::vector<double > weight = {2.0, 1.0, 2.0, 1.0, 3.0};
+    std::vector<double > delta_y = compute_weight_delta_x_vector(distance_y, weight);
+    std::vector<double > delta_xy = compute_weight_delta_xy_vector(delta_y, distance_x, distance_y, weight);
+
+    std::vector<double > delta_xy_true(distance_x.size(), 0.0);
+    for (int j = 0; j < distance_x.size(); ++j) {
+        for (int k = 0; k < distance_x.size(); ++k) {
+            delta_xy_true[j] += distance_x[j] >= distance_x[k] && distance_y[j] >= distance_y[k] ? weight[k] : 0;
+        }
+    }
+
+    for (int i = 0; i < distance_x.size(); ++i) {
+        EXPECT_EQ(delta_xy_true[i], delta_xy[i]);
+    }
+}
+
 TEST(utility, sample_multinomial_distribution) {
     std::vector<double> probability = {0.1, 0.2, 0.3, 0.4};
     std::mt19937_64 random_number_generator;
@@ -176,13 +213,21 @@ TEST(utility, weight_sum_count_smaller_number_after_self) {
     for (int i = 0; i < true_weight_sum.size(); ++i) {
         EXPECT_EQ(weight_sum[i], true_weight_sum[i]);
     }
+}
 
-    data = {0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-    weight = {1.0, 1.0, 2.0, 3.0, 4.0, 5.0, 6.0};
-    true_weight_sum = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
-    weight_sum = weight_sum_count_smaller_number_after_self(data, weight);
-    for (int i = 0; i < true_weight_sum.size(); ++i) {
-        EXPECT_EQ(weight_sum[i], true_weight_sum[i]);
+TEST(utility, quick_sort_dataset) {
+    std::vector<double> data = {0.2, 0.2, 2.0, 3.0, 0.2};
+    std::vector<double> weight = {1.0, 2.0, 3.0, 4.0, 5.0};
+    std::vector<int> index = {1, 2, 3, 4, 5};
+    std::vector<std::tuple<int, double, double >> dataset;
+    for (int i = 0; i < index.size(); ++i) {
+        dataset.emplace_back(make_tuple(index[i], data[i], weight[i]));
+    }
+    quick_sort_dataset(dataset, 0, (int) (dataset.size() - 1));
+
+    std::vector<double > true_value = {0.2, 0.2, 0.2, 2.0, 3.0};
+    for (int j = 0; j < dataset.size(); ++j) {
+        EXPECT_EQ(true_value[j], std::get<1>(dataset[j]));
     }
 }
 
@@ -233,5 +278,3 @@ TEST(kde, compute_gaussian_kernel_estimate) {
         }
     }
 }
-
-
