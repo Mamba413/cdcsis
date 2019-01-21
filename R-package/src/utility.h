@@ -7,9 +7,11 @@
 
 #include <cmath>
 #include <vector>
+#include <tuple>
 #include <array>
 #include <random>
 #include <iostream>
+#include <algorithm>
 #include "global.h"
 
 double compute_matrix_determinant(std::vector<std::vector<double>> matrix);
@@ -53,6 +55,8 @@ double vector_sum(std::vector<double> &vector1);
 
 double vector_mean(std::vector<double> &vector1);
 
+double vector_sd(std::vector<double> &vector1);
+
 double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weight);
 
 std::vector<std::vector<double>> Euclidean_distance(std::vector<std::vector<double>> &matrix, double index);
@@ -65,6 +69,14 @@ std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, u
 
 std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<double>> &distance_matrix,
                                                        std::vector<double> &weight);
+
+std::vector<double> compute_weight_delta_x_vector(std::vector<double> &distance_vector,
+                                                  std::vector<double> &weight);
+
+std::vector<double> compute_weight_delta_xy_vector(std::vector<double> &delta_y_vector,
+                                                   std::vector<double> &distance_x,
+                                                   std::vector<double> &distance_y,
+                                                   std::vector<double> &weight);
 
 /**
  * Rearrange N*N matrix
@@ -97,6 +109,125 @@ std::vector<double> compositional_transform(std::vector<double> &vector);
 
 uint sample_multinomial_distribution(std::vector<double> &probability, std::mt19937_64 &random_number_generator);
 
+std::vector<std::vector<uint>> generate_random_sample_index(uint replication_number,
+                                                            std::vector<std::vector<double>> probability_matrix,
+                                                            std::mt19937_64 &random_number_generator);
+
 std::vector<uint> generate_sequence(uint start, uint end);
+
+template<typename T>
+T quartile_value(std::vector<T> vector, double quartile) {
+    int q_index = (int) (vector.size() * quartile + 0.5) - 1;
+    std::nth_element(vector.begin(), vector.begin() + q_index, vector.end());
+    return vector[q_index];
+}
+
+void merge(std::vector<std::pair<int, int>> &vec, int start, int mid, int end,
+           std::vector<int> &right_smaller);
+
+void merge_sort(std::vector<std::pair<int, int>> &vec, int start, int end,
+                std::vector<int> &right_smaller);
+
+template<typename T>
+void weight_sum_merge(std::vector<std::pair<int, T>> &vec, std::vector<std::pair<int, double>> &weight_vec,
+                      int start, int mid, int end,
+                      std::vector<double> &right_smaller_weight_sum) {
+    std::vector<std::pair<int, T>> left(vec.begin() + start, vec.begin() + mid);
+    std::vector<std::pair<int, T>> right(vec.begin() + mid, vec.begin() + end);
+    std::vector<std::pair<int, double>> weight_left(weight_vec.begin() + start, weight_vec.begin() + mid);
+    std::vector<std::pair<int, double>> weight_right(weight_vec.begin() + mid, weight_vec.begin() + end);
+    uint left_merged = 0, right_merged = 0, right_merged_tmp = 0, total_merged = 0;
+    while (left_merged < left.size() && right_merged < right.size()) {
+        if (left[left_merged].second < right[right_merged].second) {
+            vec[start + total_merged] = left[left_merged];
+            weight_vec[start + total_merged] = weight_left[left_merged];
+
+            right_merged_tmp = right_merged;
+            while (right_merged_tmp > 0) {
+                right_smaller_weight_sum[left[left_merged].first] += weight_right[right_merged_tmp - 1].second;
+                right_merged_tmp--;
+            }
+
+            ++left_merged;
+            ++total_merged;
+        } else {
+            vec[start + total_merged] = right[right_merged];
+            weight_vec[start + total_merged] = weight_right[right_merged];
+            ++right_merged;
+            ++total_merged;
+        }
+    }
+    while (left_merged < left.size()) {
+        vec[start + total_merged] = left[left_merged];
+        weight_vec[start + total_merged] = weight_left[left_merged];
+
+        right_merged_tmp = right_merged;
+        while (right_merged_tmp > 0) {
+            right_smaller_weight_sum[left[left_merged].first] += weight_right[right_merged_tmp - 1].second;
+            right_merged_tmp--;
+        }
+
+        ++left_merged;
+        ++total_merged;
+    }
+    while (right_merged < right.size()) {
+        vec[start + total_merged] = right[right_merged];
+        weight_vec[start + total_merged] = weight_right[right_merged];
+        ++right_merged;
+        ++total_merged;
+    }
+}
+
+template<typename T>
+void
+weight_sum_merge_sort(std::vector<std::pair<int, T>> &vec, std::vector<std::pair<int, double>> &weight_vec,
+                      int start, int end,
+                      std::vector<double> &right_smaller_weight_sum) {
+    if (end - start <= 1) return;
+    int mid = (start + end) >> 1;
+    weight_sum_merge_sort(vec, weight_vec, start, mid, right_smaller_weight_sum);
+    weight_sum_merge_sort(vec, weight_vec, mid, end, right_smaller_weight_sum);
+    weight_sum_merge(vec, weight_vec, start, mid, end, right_smaller_weight_sum);
+}
+
+/**
+ * A summation version of "a typical “count of smaller numbers after self" problem
+ * @refitem: https://leetcode.com/problems/count-of-smaller-numbers-after-self/
+ *
+ * @example:
+ * Input:
+ * vector = [1.0, 3.0, 5,0, 4.0, 2.0, 2.0]
+ * weight = [3.0, 2.0, 4.0, 1.0, 2.0, 5.0]
+ * Output:
+ * [0.0, 7.0, 8.0, 7.0, 5.0, 0.0]
+ */
+template<typename T>
+std::vector<T> weight_sum_count_smaller_number_after_self(std::vector<T> &vector, std::vector<double> &weight) {
+    std::vector<double> right_smaller_weight_sum(vector.size(), 0);
+    std::vector<std::pair<int, T>> vec(vector.size());
+    std::vector<std::pair<int, double>> weight_vec(weight.size());
+    for (uint i = 0; i < vector.size(); i++) {
+        vec[i] = std::make_pair(i, vector[i]);
+        weight_vec[i] = std::make_pair(i, weight[i]);
+    }
+    weight_sum_merge_sort(vec, weight_vec, 0, (int) vec.size(), right_smaller_weight_sum);
+    return right_smaller_weight_sum;
+}
+
+std::vector<int> countSmaller(std::vector<int> &vector);
+
+/**
+ *
+ * @param dataset
+ * @param start
+ * @param end
+ */
+void quick_sort_dataset(std::vector<std::tuple<int, double, double>> &dataset, int start, int end);
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &dataset, int start, int end);
+
+double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> &distance_x,
+                                               std::vector<std::vector<double>> &distance_y,
+                                               std::vector<std::vector<double>> &kernel_density_estimation);
 
 #endif //SRC_UTILITY_H

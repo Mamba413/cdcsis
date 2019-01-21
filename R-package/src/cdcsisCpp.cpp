@@ -43,7 +43,11 @@ Rcpp::List cdcsisCpp(uint stats_method, Rcpp::NumericMatrix& x, std::vector<uint
       
       std::vector<std::vector<double> > distance_x = rcpp_distance_matrix_to_vector2d<double>(x);
       
-      cDCStatsticsMethod.conduct_cdc_test(distance_x, distance_y, kernel, num_bootstrap, seed, num_threads);
+      if (stats_type == 1) {
+          cDCStatsticsMethod.conduct_cdc_test(distance_x, distance_y, kernel, num_bootstrap, seed, num_threads);
+      } else if (stats_type == 3) {
+          cDCStatsticsMethod.conduct_cbc_test(distance_x, distance_y, kernel, num_bootstrap, seed, num_threads);
+      }
       
       result.push_back(cDCStatsticsMethod.getCdc_statistic(), "statistic");
       result.push_back(cDCStatsticsMethod.getP_value(), "p.value");

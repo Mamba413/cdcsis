@@ -209,6 +209,17 @@ double vector_mean(std::vector<double> &vector1) {
     return vector_sum_value / vector1.size();
 }
 
+double vector_sd(std::vector<double> &vector1) {
+    double vec_mean = vector_mean(vector1);
+    double vec_sd = 0.0;
+    for (double vector1_value:vector1) {
+        vec_sd += pow(vector1_value - vec_mean, 2);
+    }
+    vec_sd = vec_sd / (vector1.size() - 1);
+    vec_sd = sqrt(vec_sd);
+    return vec_sd;
+}
+
 double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weight) {
     double sum_value = 0.0;
     for (size_t i = 0; i < vector1.size(); ++i) {
@@ -219,7 +230,7 @@ double vector_weight_sum(std::vector<double> &vector1, std::vector<double> &weig
 
 /**
  * Compute the Euclidean distance matrix
- * @param matrix: interpret x as an matrix
+ * @param matrix: interpret x as an matrix with size n*d
  * @param index: see energy distance for reference
 */
 std::vector<std::vector<double>> Euclidean_distance(std::vector<std::vector<double>> &matrix, double index) {
@@ -330,6 +341,97 @@ std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<d
     return weight_distance_anova_table;
 }
 
+/**
+ * Compute Delta_{ij}^{X}, j = 1,..., n
+ * @param distance_vector a distance vector contains n element
+ * @param weight kernel density estimation omega_{k}(Z_l), k = 1,..., n
+ *
+ * @return sum_{k=1}^{n} omega_{k}(Z_l) delta_{ij, l, n}^{X}, j = 1, ..., n
+ *
+ * @example: see test case
+ */
+std::vector<double> compute_weight_delta_x_vector(std::vector<double> &distance_vector,
+                                                  std::vector<double> &weight) {
+    int num = (int) distance_vector.size();
+    std::vector<std::tuple<int, double, double>> dataset;
+    for (int i = 0; i < num; ++i) {
+        dataset.emplace_back(std::make_tuple(i, distance_vector[i], weight[i]));
+    }
+    quick_sort_dataset(dataset, 0, (int) (dataset.size() - 1));
+
+    int last_number = 1, update_number = 0;
+    double now_value, last_value = std::get<1>(dataset[0]);
+    double cumulative_value = std::get<2>(dataset[0]);
+    std::vector<double> delta_x_vector(distance_vector.size(), 0.0);
+    delta_x_vector[std::get<0>(dataset[0])] = cumulative_value;
+    for (int j = 1; j < num; ++j) {
+        now_value = std::get<1>(dataset[j]);
+        if (now_value == last_value) {
+            last_number++;
+            cumulative_value += std::get<2>(dataset[j]);
+        } else {
+            for (int i = 1; i <= last_number; ++i) {
+                delta_x_vector[std::get<0>(dataset[j - i])] = cumulative_value;
+                update_number++;
+            }
+            cumulative_value += std::get<2>(dataset[j]);
+            last_value = now_value;
+            last_number = 1;
+        }
+    }
+    if (update_number < num) {
+        for (int i = 1; i <= last_number; ++i) {
+            delta_x_vector[std::get<0>(dataset[num - i])] = cumulative_value;
+        }
+    }
+
+    return delta_x_vector;
+}
+
+/**
+ * Compute Delta_{ij}^{XY}, j = 1,..., n
+ * @param dataset a vector contains n tuple with 4 element.
+ * The 1st element: index, 2nd element: distance_x, 3rd element: distance_y, 4th element: kernel density estimation
+ * @param delta_y_vector Delta_{ij}^{Y}, j = 1,..., n
+ *
+ * @return sum_{k=1}^{n} omega_{k}(Z_l) delta_{ij, l, n}^{XY}, j = 1, ..., n
+ *
+ * @example see test case
+ *
+ * @note Only if distance_x without ties, this function is right.
+ * @todo tackle the case when distance_x is free of ties
+ */
+std::vector<double> compute_weight_delta_xy_vector(std::vector<double> &delta_y_vector,
+                                                   std::vector<double> &distance_x,
+                                                   std::vector<double> &distance_y,
+                                                   std::vector<double> &weight) {
+    int num = (int) distance_x.size(), index;
+    std::vector<std::tuple<int, double, double, double >> dataset;
+    for (int j = 0; j < num; ++j) {
+        dataset.emplace_back(std::make_tuple(j, distance_x[j], distance_y[j], weight[j]));
+    }
+    quick_sort_dataset(dataset, 0, num - 1);
+
+    std::vector<double> distance_y_vector, weight_vector, weight_sum_count_smaller_number_after_self_vec;
+    std::vector<double> weight_delta_xy_vector(dataset.size(), 0.0);
+
+    for (int j = 0; j < num; ++j) {
+        distance_y_vector.push_back(std::get<2>(dataset[j]));
+        weight_vector.push_back(std::get<3>(dataset[j]));
+    }
+    weight_sum_count_smaller_number_after_self_vec = weight_sum_count_smaller_number_after_self(distance_y_vector,
+                                                                                                weight_vector);
+
+    // Alternative formula, see https://arxiv.org/pdf/1811.03750.pdf, equation 1:
+    for (int j = 0; j < num; ++j) {
+        index = std::get<0>(dataset[j]);
+        weight_delta_xy_vector[index] =
+                delta_y_vector[index] - weight_sum_count_smaller_number_after_self_vec[j];
+    }
+
+    return weight_delta_xy_vector;
+}
+
 std::vector<double> compositional_transform(std::vector<double> &vector) {
     double vector_sum_value = vector_sum(vector);
     std::vector<double> transformed_vector(vector.size());
@@ -346,6 +448,20 @@ uint sample_multinomial_distribution(std::vector<double> &probability, std::mt19
     return multinomial_sampler(random_number_generator);
 }
 
+std::vector<std::vector<uint>> generate_random_sample_index(uint replication_number,
+                                                            std::vector<std::vector<double>> probability_matrix,
+                                                            std::mt19937_64 &random_number_generator) {
+    std::vector<std::vector<uint>> random_sample_index(replication_number,
+                                                       std::vector<uint>(probability_matrix.size()));
+    for (uint i = 0; i < probability_matrix.size(); ++i) {
+        for (uint j = 0; j < replication_number; ++j) {
+            random_sample_index[j][i] = sample_multinomial_distribution(probability_matrix[i], random_number_generator);
+        }
+    }
+
+    return random_sample_index;
+}
+
 /**
  * Generate unsigned sequence
  * @param start
@@ -359,4 +475,157 @@ std::vector<uint> generate_sequence(uint start, uint end) {
     }
 
     return sequence;
+}
+
+/**
+ * Solution of Count of Smaller Numbers After Self Problem
+ * @param a vector
+ *
+ * @refitem https://segmentfault.com/a/1190000012866241
+ * @example
+ * Input : [1, 2, 5, 4, 4, 3]
+ * Output : [0, 0, 3, 1, 1, 0]
+ */
+std::vector<int> countSmaller(std::vector<int> &vector) {
+    std::vector<int> right_smaller(vector.size(), 0);
+    std::vector<std::pair<int, int>> vec(vector.size());
+    for (uint i = 0; i < vector.size(); i++) {
+        vec[i] = std::make_pair(i, vector[i]);
+    }
+    merge_sort(vec, 0, (int) vec.size(), right_smaller);
+    return right_smaller;
+}
+
+void merge_sort(std::vector<std::pair<int, int>> &vec, int start, int end,
+                std::vector<int> &right_smaller) {
+    if (end - start <= 1) return;
+    int mid = (start + end) >> 1;
+    merge_sort(vec, start, mid, right_smaller);
+    merge_sort(vec, mid, end, right_smaller);
+    merge(vec, start, mid, end, right_smaller);
+}
+
+void merge(std::vector<std::pair<int, int>> &vec, int start, int mid, int end,
+           std::vector<int> &right_smaller) {
+    auto it_start = vec.begin() + start;
+    auto it_mid = vec.begin() + mid;
+    auto it_end = vec.begin() + end;
+    std::vector<std::pair<int, int>> left(it_start, it_mid), right(it_mid, it_end);
+    uint left_merged = 0, right_merged = 0, total_merged = 0;
+    while (left_merged < left.size() && right_merged < right.size()) {
+        if (left[left_merged].second < right[right_merged].second) {
+            right_smaller[left[left_merged].first] += right_merged;
+            vec[start + total_merged] = left[left_merged];
+            ++left_merged;
+            ++total_merged;
+        } else {
+            vec[start + total_merged] = right[right_merged];
+            ++right_merged;
+            ++total_merged;
+        }
+    }
+    while (left_merged < left.size()) {
+        right_smaller[left[left_merged].first] += right_merged;
+        vec[start + total_merged] = left[left_merged];
+        ++left_merged;
+        ++total_merged;
+    }
+    while (right_merged < right.size()) {
+        vec[start + total_merged] = right[right_merged];
+        ++right_merged;
+        ++total_merged;
+    }
+}
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double>> &dataset, int start, int end) {
+    if (start >= end)
+        return;
+    double mid = std::get<1>(dataset[end]);
+    int left = start, right = end - 1;
+    while (left < right) {
+        while (std::get<1>(dataset[left]) < mid && left < right)
+            left++;
+        while (std::get<1>(dataset[right]) >= mid && left < right)
+            right--;
+        dataset[left].swap(dataset[right]);
+    }
+    if (std::get<1>(dataset[left]) >= std::get<1>(dataset[end])) {
+        dataset[left].swap(dataset[end]);
+    } else {
+        left++;
+    }
+    if (left) {
+        quick_sort_dataset(dataset, start, left - 1);
+    }
+    quick_sort_dataset(dataset, left + 1, end);
+}
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &dataset, int start, int end) {
+    if (start >= end)
+        return;
+    double mid = std::get<1>(dataset[end]);
+    int left = start, right = end - 1;
+    while (left < right) {
+        while (std::get<1>(dataset[left]) < mid && left < right)
+            left++;
+        while (std::get<1>(dataset[right]) >= mid && left < right)
+            right--;
+        dataset[left].swap(dataset[right]);
+    }
+    if (std::get<1>(dataset[left]) >= std::get<1>(dataset[end])) {
+        dataset[left].swap(dataset[end]);
+    } else {
+        left++;
+    }
+    if (left) {
+        quick_sort_dataset(dataset, start, left - 1);
+    }
+    quick_sort_dataset(dataset, left + 1, end);
+}
+
+double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> &distance_x,
+                                               std::vector<std::vector<double>> &distance_y,
+                                               std::vector<std::vector<double>> &kernel_density_estimation) {
+    int num = (int) kernel_density_estimation.size();
+    std::vector<double> condition_ball_covariance(kernel_density_estimation.size(), 0.0);
+    double condition_ball_covariance_stats;
+
+    std::vector<double> kernel_rowsum(kernel_density_estimation.size(), 0.0);
+    for (int m = 0; m < num; ++m) {
+        kernel_rowsum[m] += vector_sum(kernel_density_estimation[m]);
+    }
+    std::vector<std::vector<double >> weight_delta_x_matrix(kernel_rowsum.size(),
+                                                            std::vector<double>(kernel_rowsum.size()));
+    std::vector<std::vector<double >> weight_delta_y_matrix(kernel_rowsum.size(),
+                                                            std::vector<double>(kernel_rowsum.size()));
+    std::vector<std::vector<double >> weight_delta_xy_matrix(kernel_rowsum.size(),
+                                                             std::vector<double>(kernel_rowsum.size()));
+    double delta_ijl_xy, delta_ijl_x, delta_ijl_y;
+    for (int l = 0; l < num; ++l) {
+        for (int i = 0; i < num; ++i) {
+            for (int j = 0; j < num; ++j) {
+                delta_ijl_xy = delta_ijl_x = delta_ijl_y = 0.0;
+                for (int k = 0; k < num; ++k) {
+                    delta_ijl_xy += distance_x[i][j] >= distance_x[i][k] && distance_y[i][j] >= distance_y[i][k]
+                                    ? kernel_density_estimation[k][l] : 0;
+                    delta_ijl_x += distance_x[i][j] >= distance_x[i][k] ? kernel_density_estimation[k][l] : 0;
+                    delta_ijl_y += distance_y[i][j] >= distance_y[i][k] ? kernel_density_estimation[k][l] : 0;
+                }
+                weight_delta_xy_matrix[i][j] = delta_ijl_xy;
+                weight_delta_x_matrix[i][j] = delta_ijl_x;
+                weight_delta_y_matrix[i][j] = delta_ijl_y;
+            }
+        }
+        for (int i = 0; i < num; ++i) {
+            for (int j = 0; j < num; ++j) {
+                condition_ball_covariance[l] += pow(
+                        weight_delta_xy_matrix[i][j] -
+                        weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] / kernel_rowsum[l], 2);
+            }
+        }
+        condition_ball_covariance[l] /= (kernel_rowsum[l] * kernel_rowsum[l] * num * num);
+    }
+    condition_ball_covariance_stats = vector_mean(condition_ball_covariance);
+
+    return condition_ball_covariance_stats;
 }

@@ -195,16 +195,99 @@ cdcov.test <- function(x, y, z, num.bootstrap = 99,
   res <- cdcsisCpp(stats_method = 1, x, c(0), y, z, width, index, num.threads, num.bootstrap, seed, 1)
   
   res <- wrap_to_htest(res, num.bootstrap, nrow(z), data_name)
+  names(res[["statistic"]]) <- "cdcov"
+  res
+}
+
+#' @title Conditional Ball Covariance Test
+#'
+#' @inheritParams cdcov.test
+#' @rdname cbcov
+#'
+#' @return \code{cbcov.test} returns a list with class "htest" containing the following components:
+#' \item{\code{statistic}}{conditional ball covariance statistic.}            
+#' \item{\code{p.value}}{the \eqn{p}-value for the test.}
+#' \item{\code{replicates}}{the number of local bootstrap procedure replications.}
+#' \item{\code{size}}{sample sizes.}
+#' \item{\code{alternative}}{a character string describing the alternative hypothesis.}
+#' \item{\code{method}}{a character string indicating what type of test was performed.}
+#' \item{\code{data.name}}{description of data.}
+#' @export
+#'
+#' @examples
+#' library(cdcsis)
+#' set.seed(1)
+#' num <- 50
+#' ################# Conditional Independent #################
+#' ## Case 1:
+#' cov_mat <- matrix(c(1, 0.36, 0.6, 0.36, 1, 0.6, 0.6, 0.6, 1), nrow = 3)
+#' dat <- mvtnorm::rmvnorm(n = num, sigma = cov_mat)
+#' x <- dat[, 1]
+#' y <- dat[, 2]
+#' z <- dat[, 3]
+#' cbcov.test(x, y, z)
+#' ## Case 2:
+#' z <- rnorm(num)
+#' x <- 0.5 * (z^3 / 7 + z / 2) + tanh(rnorm(num))
+#' x <- x + x^3 / 3
+#' y <- (z^3 + z) / 3 + rnorm(num)
+#' y <- y + tanh(y / 3)
+#' cbcov.test(x, y, z, num.bootstrap = 99)
+#' 
+#' ################# Conditional Dependent #################
+#' ## Case 3:
+#' cov_mat <- matrix(c(1, 0.7, 0.6, 0.7, 1, 0.6, 0.6, 0.6, 1), nrow = 3)
+#' dat <- mvtnorm::rmvnorm(n = num, sigma = cov_mat)
+#' x <- dat[, 1]
+#' y <- dat[, 2]
+#' z <- dat[, 3]
+#' cbcov.test(x, y, z, width = 0.5)
+#' ## Case 4:
+#' z <- matrix(rt(num * 4, df = 2), nrow = num)
+#' x <- z
+#' y <- cbind(sin(z[, 1]) + cos(z[, 2]) + (z[, 3])^2 + (z[, 4])^2, 
+#'            (z[, 1])^2 + (z[, 2])^2 + z[, 3] + z[, 4])
+#' z <- z[, 1:2]
+#' cbcov.test(x, y, z, seed = 2)
+#' 
+#' ################# Distance Matrix Input #################
+#' x <- dist(x)
+#' y <- dist(y)
+#' cbcov.test(x, y, z, seed = 2, distance = TRUE)
+cbcov.test <- function(x, y, z, num.bootstrap = 99, 
+                       width = ifelse(is.vector(z), stats::bw.nrd0(z), diag(ks::Hpi.diag(z))), 
+                       index = 1, distance = FALSE, seed = 1, num.threads = 1) {
+  
+  data_name <- paste(deparse(substitute(x)), "and", deparse(substitute(y)), "and", deparse(substitute(z)))
+  
+  width <- as.double(width)
+  check_width_arguments(width)
+  
+  z <- as.matrix(z)
+  check_xyz_arguments(z)
+  
+  x <- compute_distance_matrix(x, distance, index)
+  check_xyz_arguments(x)
+  
+  y <- compute_distance_matrix(y, distance, index)
+  check_xyz_arguments(y)
+  
+  check_sample_size(x, z)
+  check_sample_size(y, z)
+  
+  res <- cdcsisCpp(stats_method = 1, x, c(0), y, z, width, index, num.threads, num.bootstrap, seed, 3)
+  
+  res <- wrap_to_htest(res, num.bootstrap, nrow(z), data_name, cdc = FALSE)
+  names(res[["statistic"]]) <- "cbcov"
   res
 }
 
 
-wrap_to_htest <- function(res, num.bootstrap, num, data_name) {
-  names(res[["statistic"]]) <- "cdcov"
+wrap_to_htest <- function(res, num.bootstrap, num, data_name, cdc = TRUE) {
   res[["replicates"]] <- num.bootstrap
   res[["size"]] <- num
   res[["alternative"]] <- "random variables are conditional dependent"
-  res[["method"]] <- "Conditional Distance Covariance Test"
+  res[["method"]] <- sprintf("Conditional %s Covariance Test", ifelse(cdc, "Distance", "Ball"))
   data_name <- paste(data_name, sprintf("\nnumber of observations = %s, ", num))
   data_name <- paste0(data_name, "replicates = ", num.bootstrap)
   res[["data.name"]] <- data_name
