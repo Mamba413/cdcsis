@@ -1,6 +1,7 @@
 #' @importFrom Rcpp sourceCpp
 #' @importFrom mvtnorm rmvnorm
 #' @importFrom KernSmooth dpik
+#' @importFrom ks Hpi.diag
 #' @importFrom stats dist
 #' @importFrom stats bw.nrd0
 #' @useDynLib cdcsis, .registration = TRUE

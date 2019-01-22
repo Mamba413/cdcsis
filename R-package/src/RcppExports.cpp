@@ -7,7 +7,7 @@
 using namespace Rcpp;
 
 // cdcsisCpp
-Rcpp::List cdcsisCpp(uint stats_method, Rcpp::NumericMatrix& x, std::vector<uint>& variable_index, Rcpp::NumericMatrix& y, Rcpp::NumericMatrix& z, double bandwidth, double distance_index, uint num_threads, uint num_bootstrap, uint seed, uint stats_type);
+Rcpp::List cdcsisCpp(uint stats_method, Rcpp::NumericMatrix& x, std::vector<uint>& variable_index, Rcpp::NumericMatrix& y, Rcpp::NumericMatrix& z, std::vector<double>& bandwidth, double distance_index, uint num_threads, uint num_bootstrap, uint seed, uint stats_type);
 RcppExport SEXP _cdcsis_cdcsisCpp(SEXP stats_methodSEXP, SEXP xSEXP, SEXP variable_indexSEXP, SEXP ySEXP, SEXP zSEXP, SEXP bandwidthSEXP, SEXP distance_indexSEXP, SEXP num_threadsSEXP, SEXP num_bootstrapSEXP, SEXP seedSEXP, SEXP stats_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -17,7 +17,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::vector<uint>& >::type variable_index(variable_indexSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type z(zSEXP);
-    Rcpp::traits::input_parameter< double >::type bandwidth(bandwidthSEXP);
+    Rcpp::traits::input_parameter< std::vector<double>& >::type bandwidth(bandwidthSEXP);
     Rcpp::traits::input_parameter< double >::type distance_index(distance_indexSEXP);
     Rcpp::traits::input_parameter< uint >::type num_threads(num_threadsSEXP);
     Rcpp::traits::input_parameter< uint >::type num_bootstrap(num_bootstrapSEXP);

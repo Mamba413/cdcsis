@@ -205,7 +205,7 @@ double vector_sum(std::vector<double> &vector1) {
 }
 
 double vector_prod(std::vector<double> &vector1) {
-    double sum_value = 0.0;
+    double sum_value = 1.0;
     for (double value : vector1) {
         sum_value *= value;
     }

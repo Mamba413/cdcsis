@@ -4,10 +4,8 @@
 \alias{cbcov.test}
 \title{Conditional Ball Covariance Test}
 \usage{
-cbcov.test(x, y, z, num.bootstrap = 99,
-  width = ifelse(dim(as.matrix(z))[2] == 1, stats::bw.nrd0(as.vector(z)),
-  apply(as.matrix(z), 2, bw.nrd0)), index = 1, distance = FALSE,
-  seed = 1, num.threads = 1)
+cbcov.test(x, y, z, width, num.bootstrap = 99, index = 1,
+  distance = FALSE, seed = 1, num.threads = 1)
 }
 \arguments{
 \item{x}{a numeric vector, matrix, or \code{dist} object}
@@ -16,10 +14,11 @@ cbcov.test(x, y, z, num.bootstrap = 99,
 
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
-\item{num.bootstrap}{the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}}
-
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function.}
+gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, and 
+\code{ks::Hpi.diag}}
+
+\item{num.bootstrap}{the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}}
 
 \item{index}{exponent on Euclidean distance, in \eqn{(0,2]}}
 

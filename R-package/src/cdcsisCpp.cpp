@@ -12,7 +12,7 @@ using namespace Rcpp;
 // [[Rcpp::export]]
 Rcpp::List cdcsisCpp(uint stats_method, Rcpp::NumericMatrix& x, std::vector<uint> &variable_index, 
                      Rcpp::NumericMatrix& y, Rcpp::NumericMatrix& z, 
-                     double bandwidth, double distance_index, uint num_threads, 
+                     std::vector<double> &bandwidth, double distance_index, uint num_threads, 
                      uint num_bootstrap, uint seed, uint stats_type) {
   Rcpp::List result;
   

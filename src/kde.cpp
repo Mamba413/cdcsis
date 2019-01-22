@@ -13,10 +13,10 @@ void KernelDensityEstimation::compute_kernel_density_estimate() {
 
     switch (this->kernel_type) {
         case KERNEL_GAUSSIAN:
-            if (!this->bandwidth.empty()) {
+            if (!this->bandwidth_matrix.empty()) {
                 this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
                         this->condition_variable,
-                        this->bandwidth);
+                        this->bandwidth_matrix);
             } else if (!this->bandwidth_vector.empty()) {
                 this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
                         this->condition_variable,
@@ -30,7 +30,7 @@ void KernelDensityEstimation::compute_kernel_density_estimate() {
         case KERNEL_RECTANGLE:
             this->kernel_density_estimate = KernelDensityEstimation::compute_rectangle_kernel_estimate(
                     this->condition_variable,
-                    this->bandwidth);
+                    this->bandwidth_matrix);
             break;
     }
 }
@@ -127,4 +127,8 @@ KernelDensityEstimation::compute_rectangle_kernel_estimate(std::vector<std::vect
     std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
     // TODO:
     return (kernel_density_estimate);
+}
+
+void KernelDensityEstimation::setBandwidth_matrix(const vector<vector<double>> &bandwidth_matrix) {
+    KernelDensityEstimation::bandwidth_matrix = bandwidth_matrix;
 }
