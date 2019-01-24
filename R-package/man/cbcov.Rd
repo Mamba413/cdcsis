@@ -15,8 +15,9 @@ cbcov.test(x, y, z, width, num.bootstrap = 99, index = 1,
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, and 
-\code{ks::Hpi.diag}}
+gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, 
+\code{ks::Hpi.diag} when conditional variable with at most trivariate, and \code{stats::bw.nrd} for each marginal variable of 
+conditional variable.}
 
 \item{num.bootstrap}{the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}}
 
@@ -39,7 +40,7 @@ gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} 
 \item{\code{data.name}}{description of data.}
 }
 \description{
-Conditional Ball Covariance Test
+Performs the nonparametric conditional ball covariance test for conditional independence assumption
 }
 \examples{
 library(cdcsis)

@@ -4,6 +4,7 @@
 #' @importFrom ks Hpi.diag
 #' @importFrom stats dist
 #' @importFrom stats bw.nrd0
+#' @importFrom stats bw.nrd
 #' @useDynLib cdcsis, .registration = TRUE
 NULL
 

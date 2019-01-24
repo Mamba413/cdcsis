@@ -4,10 +4,8 @@
 \alias{cdcov.test}
 \title{Conditional Distance Covariance Independence Test}
 \usage{
-cdcov.test(x, y, z, num.bootstrap = 99,
-  width = ifelse(dim(as.matrix(z))[2] == 1, stats::bw.nrd0(as.vector(z)),
-  apply(as.matrix(z), 2, bw.nrd0)), index = 1, distance = FALSE,
-  seed = 1, num.threads = 1)
+cdcov.test(x, y, z, width, num.bootstrap = 99, index = 1,
+  distance = FALSE, seed = 1, num.threads = 1)
 }
 \arguments{
 \item{x}{a numeric vector, matrix, or \code{dist} object}
@@ -16,10 +14,12 @@ cdcov.test(x, y, z, num.bootstrap = 99,
 
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
-\item{num.bootstrap}{the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}}
-
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function.}
+gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, 
+\code{ks::Hpi.diag} when conditional variable with at most trivariate, and \code{stats::bw.nrd} for each marginal variable of 
+conditional variable.}
+
+\item{num.bootstrap}{the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}}
 
 \item{index}{exponent on Euclidean distance, in \eqn{(0,2]}}
 

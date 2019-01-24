@@ -113,7 +113,9 @@ cdcor <- function(x, y, z,
 #' @param z \code{z} is a numeric vector or matrix. It is the variable being conditioned.
 #' @param num.bootstrap the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}
 #' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-#' gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function.
+#' gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, 
+#' \code{ks::Hpi.diag} when conditional variable with at most trivariate, and \code{stats::bw.nrd} for each marginal variable of 
+#' conditional variable.
 #' @param index exponent on Euclidean distance, in \eqn{(0,2]}
 #' @param distance if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}
 #' @param seed the random seed
@@ -173,9 +175,7 @@ cdcor <- function(x, y, z,
 #' x <- dist(x)
 #' y <- dist(y)
 #' cdcov.test(x, y, z, seed = 2, distance = TRUE)
-cdcov.test <- function(x, y, z, num.bootstrap = 99, 
-                       width = ifelse(dim(as.matrix(z))[2] == 1, 
-                                      stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)), 
+cdcov.test <- function(x, y, z, width, num.bootstrap = 99, 
                        index = 1, distance = FALSE, seed = 1, num.threads = 1) {
   
   data_name <- paste(deparse(substitute(x)), "and", deparse(substitute(y)), "and", deparse(substitute(z)))
@@ -183,9 +183,17 @@ cdcov.test <- function(x, y, z, num.bootstrap = 99,
   z <- as.matrix(z)
   check_xyz_arguments(z)
   
-  width <- as.double(min(mean(width), exp(-2 * log(nrow(z)) / (ncol(z) + 4))))
+  if (missing(width)) {
+    if (dim(z)[2] == 1) {
+      width <- stats::bw.nrd0(as.vector(z))
+    } else if (dim(z)[2] <= 3) {
+      width <- diag(ks::Hpi.diag(z))
+    } else {
+      width <- apply(z, 2, stats::bw.nrd)
+    }
+  }
   check_width_arguments(width)
-  
+  width <- as.double(width)  
   x <- compute_distance_matrix(x, distance, index)
   check_xyz_arguments(x)
   
@@ -203,9 +211,7 @@ cdcov.test <- function(x, y, z, num.bootstrap = 99,
 }
 
 #' @title Conditional Ball Covariance Test
-#' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-#' gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, and 
-#' \code{ks::Hpi.diag}
+#' @description Performs the nonparametric conditional ball covariance test for conditional independence assumption
 #' @inheritParams cdcov.test
 #' @rdname cbcov
 #'
