@@ -138,12 +138,17 @@ std::vector<double> ConditionBallCovarianceStats::compute_condition_ball_covaria
         kernel_sum = vector_sum(kernel_density_estimation[l]);
         for (int i = 0; i < num; ++i) {
             for (int j = 0; j < num; ++j) {
-                condition_ball_covariance[l] += pow(
-                        weight_delta_xy_matrix[i][j] -
-                        weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] / kernel_sum, 2);
+//                condition_ball_covariance[l] += pow(
+//                        weight_delta_xy_matrix[i][j] -
+//                        weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] / kernel_sum, 2);
+                condition_ball_covariance[l] += kernel_density_estimation[l][i] * kernel_density_estimation[l][j] *
+                                                pow(weight_delta_xy_matrix[i][j] -
+                                                    weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] /
+                                                    kernel_sum, 2);
             }
         }
-        condition_ball_covariance[l] /= (kernel_sum * kernel_sum * num * num);
+//        condition_ball_covariance[l] /= (kernel_sum * kernel_sum * num * num);
+        condition_ball_covariance[l] /= pow(kernel_sum, 4);
     }
 
     return condition_ball_covariance;
