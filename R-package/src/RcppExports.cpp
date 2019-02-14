@@ -2,27 +2,26 @@
 // Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #include <Rcpp.h>
-#include "global.h"
 
 using namespace Rcpp;
 
 // cdcsisCpp
-Rcpp::List cdcsisCpp(uint stats_method, Rcpp::NumericMatrix& x, std::vector<uint>& variable_index, Rcpp::NumericMatrix& y, Rcpp::NumericMatrix& z, std::vector<double>& bandwidth, double distance_index, uint num_threads, uint num_bootstrap, uint seed, uint stats_type);
+Rcpp::List cdcsisCpp(unsigned int stats_method, Rcpp::NumericMatrix& x, std::vector<unsigned int>& variable_index, Rcpp::NumericMatrix& y, Rcpp::NumericMatrix& z, std::vector<double>& bandwidth, double distance_index, unsigned int num_threads, unsigned int num_bootstrap, unsigned int seed, unsigned int stats_type);
 RcppExport SEXP _cdcsis_cdcsisCpp(SEXP stats_methodSEXP, SEXP xSEXP, SEXP variable_indexSEXP, SEXP ySEXP, SEXP zSEXP, SEXP bandwidthSEXP, SEXP distance_indexSEXP, SEXP num_threadsSEXP, SEXP num_bootstrapSEXP, SEXP seedSEXP, SEXP stats_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< uint >::type stats_method(stats_methodSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type stats_method(stats_methodSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type x(xSEXP);
-    Rcpp::traits::input_parameter< std::vector<uint>& >::type variable_index(variable_indexSEXP);
+    Rcpp::traits::input_parameter< std::vector<unsigned int>& >::type variable_index(variable_indexSEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type y(ySEXP);
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type z(zSEXP);
     Rcpp::traits::input_parameter< std::vector<double>& >::type bandwidth(bandwidthSEXP);
     Rcpp::traits::input_parameter< double >::type distance_index(distance_indexSEXP);
-    Rcpp::traits::input_parameter< uint >::type num_threads(num_threadsSEXP);
-    Rcpp::traits::input_parameter< uint >::type num_bootstrap(num_bootstrapSEXP);
-    Rcpp::traits::input_parameter< uint >::type seed(seedSEXP);
-    Rcpp::traits::input_parameter< uint >::type stats_type(stats_typeSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type num_threads(num_threadsSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type num_bootstrap(num_bootstrapSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type stats_type(stats_typeSEXP);
     rcpp_result_gen = Rcpp::wrap(cdcsisCpp(stats_method, x, variable_index, y, z, bandwidth, distance_index, num_threads, num_bootstrap, seed, stats_type));
     return rcpp_result_gen;
 END_RCPP

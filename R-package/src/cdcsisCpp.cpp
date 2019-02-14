@@ -10,10 +10,11 @@ using namespace Rcpp;
 
 
 // [[Rcpp::export]]
-Rcpp::List cdcsisCpp(uint stats_method, Rcpp::NumericMatrix& x, std::vector<uint> &variable_index, 
+Rcpp::List cdcsisCpp(unsigned int stats_method, 
+                     Rcpp::NumericMatrix& x, std::vector<unsigned int> &variable_index, 
                      Rcpp::NumericMatrix& y, Rcpp::NumericMatrix& z, 
-                     std::vector<double> &bandwidth, double distance_index, uint num_threads, 
-                     uint num_bootstrap, uint seed, uint stats_type) {
+                     std::vector<double> &bandwidth, double distance_index, unsigned int num_threads, 
+                     unsigned int num_bootstrap, unsigned int seed, unsigned int stats_type) {
   Rcpp::List result;
   
   try {

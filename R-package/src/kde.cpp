@@ -104,14 +104,14 @@ std::vector<std::vector<double>> KernelDensityEstimation::compute_gaussian_kerne
     uint num = (uint) condition_variable.size();
     uint d = (uint) condition_variable[0].size();
     double det = pow(bandwidth, d);
-    double density = 1.0 / (pow(2 * CDC_PI, d / 2.0) * det);
+    double density = 1.0 / (pow(2 * CDC_PI, d / 2.0) * sqrt(det));
 
     std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
     for (uint i = 0; i < num; i++) {
         kernel_density_estimate[i][i] = density;
         for (uint j = 0; j < i; j++) {
             kernel_density_estimate[j][i] = exp(
-                    -0.5 * square_Euclidean_distance(condition_variable[i], condition_variable[j]));
+                    -0.5 * square_Euclidean_distance(condition_variable[i], condition_variable[j]) / pow(bandwidth, 2));
             kernel_density_estimate[j][i] *= density;
             kernel_density_estimate[i][j] = kernel_density_estimate[j][i];
         }

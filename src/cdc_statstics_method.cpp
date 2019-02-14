@@ -60,7 +60,7 @@ void CDCStatsticsMethod::conduct_cbc_test(std::vector<std::vector<double>> &dist
                                           uint num_threads) {
     ConditionBallCovarianceStats conditionBallCovarianceStats = ConditionBallCovarianceStats(distance_x,
                                                                                              distance_y,
-                                                                                             kernel, 1);
+                                                                                             kernel, 3);
     conditionBallCovarianceStats.compute_stats();
     this->cdc_statistic.push_back(conditionBallCovarianceStats.getCondition_ball_covariance_stats());
 
