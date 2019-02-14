@@ -643,12 +643,13 @@ double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> 
         }
         for (int i = 0; i < num; ++i) {
             for (int j = 0; j < num; ++j) {
-                condition_ball_covariance[l] += pow(
-                        weight_delta_xy_matrix[i][j] -
-                        weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] / kernel_rowsum[l], 2);
+                condition_ball_covariance[l] += kernel_density_estimation[i][l] * kernel_density_estimation[j][l] *
+                                                pow(weight_delta_xy_matrix[i][j] -
+                                                    weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] /
+                                                    kernel_rowsum[l], 2);
             }
         }
-        condition_ball_covariance[l] /= (kernel_rowsum[l] * kernel_rowsum[l] * num * num);
+        condition_ball_covariance[l] /= pow(kernel_rowsum[l], 4);
     }
     condition_ball_covariance_stats = vector_mean(condition_ball_covariance);
 
