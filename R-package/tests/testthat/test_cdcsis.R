@@ -5,7 +5,7 @@ library(cdcsis)
 test_that("Test Conditional-Screening (Univariate Explanation Variable)", {
   set.seed(1)
   num <- 100
-  p <- 200
+  p <- 300
   x <- matrix(rnorm(num * p), nrow = num)
   z <- rnorm(num)
   y <- 3 * x[, 1] + 1.5 * x[, 2] + 4 * z * x[, 5] + rnorm(num)
