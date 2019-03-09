@@ -144,7 +144,9 @@ std::vector<double> ConditionBallCovarianceStats::compute_condition_ball_covaria
                                                     kernel_sum, 2);
             }
         }
-        condition_ball_covariance[l] /= pow(kernel_sum, 4);
+        // condition_ball_covariance[l] /= pow(kernel_sum, 4);
+        condition_ball_covariance[l] *= pow(kernel_sum, 2);
+        condition_ball_covariance[l] /= pow(num, 6);
     }
 
     return condition_ball_covariance;
