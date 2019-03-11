@@ -37,7 +37,9 @@ std::vector<double> ConditionDistanceCovarianceStats::compute_condition_distance
                                                     kernel_density_estimation[i][j];
             }
         }
-        condition_distance_covariance[i] /= kernel_sum_square;
+//        condition_distance_covariance[i] /= kernel_sum_square;
+        condition_distance_covariance[i] *= kernel_sum_square;
+        condition_distance_covariance[i] /= pow(num, 4);
     }
 
     return condition_distance_covariance;

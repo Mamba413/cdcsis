@@ -649,10 +649,17 @@ double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> 
                              weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] / pow(kernel_rowsum[l], 2), 2));
             }
         }
-        condition_ball_covariance[l] *=  pow(kernel_rowsum[l], 6);
+        condition_ball_covariance[l] *= pow(kernel_rowsum[l], 6);
         condition_ball_covariance[l] /= pow(num, 6);
     }
     condition_ball_covariance_stats = vector_mean(condition_ball_covariance);
 
     return condition_ball_covariance_stats;
 }
+
+// TODO: V-type conditional distance covariance
+//double compute_condition_distance_covariance_crude(std::vector<std::vector<double>> &distance_x,
+//                                                   std::vector<std::vector<double>> &distance_y,
+//                                                   std::vector<std::vector<double>> &kernel_density_estimation) {
+//
+//}
