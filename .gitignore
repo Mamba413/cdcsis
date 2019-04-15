@@ -16,3 +16,6 @@ R-package/src-i386/
 R-package/src-x64/cdc_stats.cpp
 R-package/src-x64/
 R-package/build.sh
+src/review.md
+src/future.md
+src/test/gtest.md
