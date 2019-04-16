@@ -4,9 +4,7 @@
 \alias{cdcsis}
 \title{Conditional Distance Correlation Sure Independence Screening (CDC-SIS)}
 \usage{
-cdcsis(x, y, z = NULL, width = ifelse(dim(as.matrix(z))[2] == 1,
-  KernSmooth::dpik(as.vector(z)), apply(as.matrix(z), 2,
-  KernSmooth::dpik)), threshold = nrow(y), distance = FALSE,
+cdcsis(x, y, z = NULL, width, threshold = nrow(y), distance = FALSE,
   index = 1, num.threads = 1)
 }
 \arguments{
@@ -17,7 +15,8 @@ cdcsis(x, y, z = NULL, width = ifelse(dim(as.matrix(z))[2] == 1,
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-gaussian kernel bandwidth. Its default value is relies on \code{KernSmooth::dpik} function.}
+gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, 
+\code{ks::Hpi.diag} when conditional variable with at most trivariate, and \code{stats::bw.nrd} on the other cases.}
 
 \item{threshold}{the threshold of the number of predictors recuited by CDC-SIS. 
 Should be less than or equal than the number of column of \code{x}. Default value \code{threshold} is sample size.}
@@ -38,17 +37,17 @@ Performs conditional distance correlation sure independence screening (CDC-SIS).
 \examples{
 library(cdcsis)
 
-########## univariate explanation variables ##########
+########## univariate explanative variables ##########
 set.seed(1)
 num <- 100
-p <- 200
+p <- 150
 x <- matrix(rnorm(num * p), nrow = num)
 z <- rnorm(num)
 y <- 3 * x[, 1] + 1.5 * x[, 2] + 4 * z * x[, 5] + rnorm(num)
 res <- cdcsis(x, y, z)
 head(res[["ix"]], n = 10)
 
-########## multivariate explanation variables ##########
+########## multivariate explanative variables ##########
 x <- as.list(as.data.frame(x))
 x <- lapply(x, as.matrix)
 x[[1]] <- cbind(x[[1]], x[[2]])

@@ -4,8 +4,6 @@
 #' 
 #' @inheritParams cdcov.test
 #' @param x a numeric matrix, or a list which contains multiple numeric matrix
-#' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
-#' gaussian kernel bandwidth. Its default value is relies on \code{KernSmooth::dpik} function.
 #' @param distance if \code{distance = TRUE}, only \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}
 #' @param threshold the threshold of the number of predictors recuited by CDC-SIS. 
 #' Should be less than or equal than the number of column of \code{x}. Default value \code{threshold} is sample size.
@@ -20,17 +18,17 @@
 #' @examples
 #' library(cdcsis)
 #' 
-#' ########## univariate explanation variables ##########
+#' ########## univariate explanative variables ##########
 #' set.seed(1)
 #' num <- 100
-#' p <- 200
+#' p <- 150
 #' x <- matrix(rnorm(num * p), nrow = num)
 #' z <- rnorm(num)
 #' y <- 3 * x[, 1] + 1.5 * x[, 2] + 4 * z * x[, 5] + rnorm(num)
 #' res <- cdcsis(x, y, z)
 #' head(res[["ix"]], n = 10)
 #' 
-#' ########## multivariate explanation variables ##########
+#' ########## multivariate explanative variables ##########
 #' x <- as.list(as.data.frame(x))
 #' x <- lapply(x, as.matrix)
 #' x[[1]] <- cbind(x[[1]], x[[2]])
@@ -38,19 +36,25 @@
 #' res <- cdcsis(x, y, z)
 #' head(res[["ix"]], n = 10)
 #' 
-cdcsis <- function(x, y, z = NULL, 
-                   width = ifelse(dim(as.matrix(z))[2] == 1, 
-                                  KernSmooth::dpik(as.vector(z)), apply(as.matrix(z), 2, KernSmooth::dpik)),
+cdcsis <- function(x, y, z = NULL, width,
                    threshold = nrow(y), distance = FALSE, index = 1, num.threads = 1) 
 {
-  width <- as.double(width)
+  z <- as.matrix(z)
+  check_xyz_arguments(z)
+  if (missing(width)) {
+    if (dim(z)[2] == 1) {
+      width <- stats::bw.nrd0(as.vector(z))
+    } else if (dim(z)[2] <= 3) {
+      width <- diag(ks::Hpi.diag(z))
+    } else {
+      width <- apply(z, 2, stats::bw.nrd)
+    }
+  }
   check_width_arguments(width)
+  width <- as.double(width)  
   
   check_threads_arguments(num.threads)
   check_index_arguments(index)
-  
-  z <- as.matrix(z)
-  check_xyz_arguments(z)
   
   y <- compute_distance_matrix(y, distance, index)
   check_xyz_arguments(y)

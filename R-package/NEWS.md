@@ -1,3 +1,7 @@
+# cdcsis 2.0.1
+* optimize the internal bandwidth selection strategy
+* C internal change
+
 # cdcsis 2.0
 
 * Provide statistical inference method for conditional dependence   

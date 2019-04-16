@@ -114,8 +114,7 @@ cdcor <- function(x, y, z,
 #' @param num.bootstrap the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}
 #' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
 #' gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, 
-#' \code{ks::Hpi.diag} when conditional variable with at most trivariate, and \code{stats::bw.nrd} for each marginal variable of 
-#' conditional variable.
+#' \code{ks::Hpi.diag} when conditional variable with at most trivariate, and \code{stats::bw.nrd} on the other cases.
 #' @param index exponent on Euclidean distance, in \eqn{(0,2]}
 #' @param distance if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}
 #' @param seed the random seed
