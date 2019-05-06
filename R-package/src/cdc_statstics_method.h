@@ -53,7 +53,7 @@ private:
     double compute_p_value(std::vector<double> permuted_statistic, double statistic) {
         double larger_num = 0.0;
         for (double value : permuted_statistic) {
-            larger_num += value > statistic;
+            larger_num += value >= statistic;
         }
         // p-value:
         return (1.0 + larger_num) / (1.0 + (double) permuted_statistic.size());

@@ -36,9 +36,16 @@
 #' res <- cdcsis(x, y, z)
 #' head(res[["ix"]], n = 10)
 #' 
-cdcsis <- function(x, y, z = NULL, width,
+cdcsis <- function(x, y, z = NULL, 
+                   kernel.type = c("rectangle", "gauss"), k = 6, width,
                    threshold = nrow(y), distance = FALSE, index = 1, num.threads = 1) 
 {
+  conditional.distance <- FALSE
+  if (length(kernel.type) > 1) {
+    kernel.type <- "gauss"
+  } else {
+    kernel.type <- match.arg(kernel.type)
+  }
   z <- as.matrix(z)
   check_xyz_arguments(z)
   if (missing(width)) {
@@ -75,7 +82,9 @@ cdcsis <- function(x, y, z = NULL, width,
   
   x <- as.matrix(t(x))
   
-  res <- cdcsisCpp(2, x, variable_index, y, z, width, index, num.threads, 0, 0, 2)
+  kernel.type <- ifelse(kernel.type == "gauss", 1, 3)
+  res <- cdcsisCpp(2, x, variable_index, y, z, width, index, num.threads, 0, 0, 2,
+                   as.integer(kernel.type), as.integer(conditional.distance))
   res <- res[["statistic"]]
   list("ix" = order(res, decreasing = T)[1:threshold], 
        "cdcor" = res)

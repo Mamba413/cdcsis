@@ -4,8 +4,9 @@
 \alias{cdcsis}
 \title{Conditional Distance Correlation Sure Independence Screening (CDC-SIS)}
 \usage{
-cdcsis(x, y, z = NULL, width, threshold = nrow(y), distance = FALSE,
-  index = 1, num.threads = 1)
+cdcsis(x, y, z = NULL, kernel.type = c("rectangle", "gauss"), k = 6,
+  width, threshold = nrow(y), distance = FALSE, index = 1,
+  num.threads = 1)
 }
 \arguments{
 \item{x}{a numeric matrix, or a list which contains multiple numeric matrix}
@@ -13,6 +14,11 @@ cdcsis(x, y, z = NULL, width, threshold = nrow(y), distance = FALSE,
 \item{y}{a numeric vector, matrix, or \code{dist} object}
 
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
+
+\item{kernel.type}{the kernel to be used. This must be one of "gauss", "rectangle". Any unambiguous substring can be given.
+Default: \code{kernel.type = "gauss"}.}
+
+\item{k}{a user-specified positive integer value for computing rectangle kernel bandwidth.}
 
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
 gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, 

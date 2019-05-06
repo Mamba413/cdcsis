@@ -4,8 +4,9 @@
 \alias{cbcov.test}
 \title{Conditional Ball Covariance Test}
 \usage{
-cbcov.test(x, y, z, width, num.bootstrap = 99, index = 1,
-  distance = FALSE, seed = 1, num.threads = 1)
+cbcov.test(x, y, z, num.bootstrap = 99, kernel.type = c("rectangle",
+  "gauss"), k = 6, width, index = 1, distance = FALSE, seed = 1,
+  num.threads = 1)
 }
 \arguments{
 \item{x}{a numeric vector, matrix, or \code{dist} object}
@@ -14,16 +15,20 @@ cbcov.test(x, y, z, width, num.bootstrap = 99, index = 1,
 
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
+\item{num.bootstrap}{the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}.}
+
+\item{kernel.type}{the kernel to be used. This must be one of "gauss", "rectangle". Any unambiguous substring can be given.
+Default: \code{kernel.type = "rectangle"}.}
+
+\item{k}{a user-specified positive integer value for computing rectangle kernel bandwidth.}
+
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
 gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, 
-\code{ks::Hpi.diag} when conditional variable with at most trivariate, and \code{stats::bw.nrd} for each marginal variable of 
-conditional variable.}
-
-\item{num.bootstrap}{the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}}
+\code{ks::Hpi.diag} when conditional variable with at most trivariate, and \code{stats::bw.nrd} on the other cases.}
 
 \item{index}{exponent on Euclidean distance, in \eqn{(0,2]}}
 
-\item{distance}{if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}}
+\item{distance}{if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}.}
 
 \item{seed}{the random seed}
 
@@ -54,13 +59,15 @@ x <- dat[, 1]
 y <- dat[, 2]
 z <- dat[, 3]
 cbcov.test(x, y, z)
+cbcov.test(x, y, z, kernel.type = "gauss")
 ## Case 2:
 z <- rnorm(num)
 x <- 0.5 * (z^3 / 7 + z / 2) + tanh(rnorm(num))
 x <- x + x^3 / 3
 y <- (z^3 + z) / 3 + rnorm(num)
 y <- y + tanh(y / 3)
-cbcov.test(x, y, z, num.bootstrap = 99)
+cbcov.test(x, y, z, num.bootstrap = 199)
+
 
 ################# Conditional Dependent #################
 ## Case 3:
@@ -69,17 +76,17 @@ dat <- mvtnorm::rmvnorm(n = num, sigma = cov_mat)
 x <- dat[, 1]
 y <- dat[, 2]
 z <- dat[, 3]
-cbcov.test(x, y, z, width = 0.5)
+cbcov.test(x, y, z, k = 10)
 ## Case 4:
 z <- matrix(rt(num * 4, df = 2), nrow = num)
 x <- z
 y <- cbind(sin(z[, 1]) + cos(z[, 2]) + (z[, 3])^2 + (z[, 4])^2, 
            (z[, 1])^2 + (z[, 2])^2 + z[, 3] + z[, 4])
 z <- z[, 1:2]
-cbcov.test(x, y, z, seed = 2)
+cbcov.test(x, y, z, seed = 2, k = 10)
 
 ################# Distance Matrix Input #################
 x <- dist(x)
 y <- dist(y)
-cbcov.test(x, y, z, seed = 2, distance = TRUE)
+cbcov.test(x, y, z, seed = 1, distance = TRUE, k = 10)
 }

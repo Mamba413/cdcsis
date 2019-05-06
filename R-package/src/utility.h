@@ -237,4 +237,8 @@ double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> 
                                                std::vector<std::vector<double>> &distance_y,
                                                std::vector<std::vector<double>> &kernel_density_estimation);
 
+double compute_condition_distance_covariance_crude(std::vector<std::vector<double>> &distance_x,
+                                                   std::vector<std::vector<double>> &distance_y,
+                                                   std::vector<std::vector<double>> &kernel_density_estimation);
+
 #endif //SRC_UTILITY_H

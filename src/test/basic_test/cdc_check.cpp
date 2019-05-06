@@ -62,10 +62,9 @@ TEST(cdc_stats, compute_condition_distance_covariance) {
                                                               0.04967046};
 
     double abs_error = 0.000001;
-    EXPECT_NEAR(0.05211691, condition_distance_covariance_stats, abs_error);
-    for (size_t i = 0; i < condition_distance_covariance.size(); ++i) {
-        EXPECT_NEAR(condition_distance_covariance_true[i], condition_distance_covariance[i], abs_error);
-    }
+    double condition_distance_covariance_stats_crude = compute_condition_distance_covariance_crude(distance_x,
+                                                                                                   distance_y, kde);
+    EXPECT_NEAR(condition_distance_covariance_stats_crude, condition_distance_covariance_stats, abs_error);
 
     ConditionDistanceCovarianceStats conditionDistanceCorrelationStats = ConditionDistanceCovarianceStats(distance_x,
                                                                                                           distance_y,
@@ -147,7 +146,7 @@ TEST(cbc_stats, compute_condition_ball_covariance) {
     std::vector<std::vector<double>> kde(num_row, std::vector<double>(num_row));
 //    std::vector<std::vector<double>> bandwidth(1, std::vector<double>(1));
 //    bandwidth[0][0] = 0.1;
-    double bandwidth = 0.1;
+    double bandwidth = 1.0;
 
     KernelDensityEstimation kernelDensityEstimation = KernelDensityEstimation(z_2d, bandwidth, 1);
     kernelDensityEstimation.compute_kernel_density_estimate();

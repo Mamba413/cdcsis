@@ -11,27 +11,72 @@ void KernelDensityEstimation::compute_kernel_density_estimate() {
         this->kernel_density_estimate[i].resize(this->num);
     }
 
-    switch (this->kernel_type) {
-        case KERNEL_GAUSSIAN:
-            if (!this->bandwidth_matrix.empty()) {
-                this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
-                        this->condition_variable,
-                        this->bandwidth_matrix);
-            } else if (!this->bandwidth_vector.empty()) {
-                this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
-                        this->condition_variable,
-                        this->bandwidth_vector);
-            } else {
-                this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
-                        this->condition_variable,
-                        this->bandwidth_value);
-            }
-            break;
-        case KERNEL_RECTANGLE:
-            this->kernel_density_estimate = KernelDensityEstimation::compute_rectangle_kernel_estimate(
-                    this->condition_variable,
-                    this->bandwidth_matrix);
-            break;
+    if (this->distance) {
+        switch (this->kernel_type) {
+            case KERNEL_GAUSSIAN:
+                if (!this->bandwidth_matrix.empty()) {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate_based_distance(
+                            this->condition_variable,
+                            this->bandwidth_matrix);
+                } else if (!this->bandwidth_vector.empty()) {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate_based_distance(
+                            this->condition_variable,
+                            this->bandwidth_vector);
+                } else {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate_based_distance(
+                            this->condition_variable,
+                            this->bandwidth_value);
+                }
+                break;
+            case KERNEL_RECTANGLE:
+                if (!this->bandwidth_matrix.empty()) {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_rectangle_kernel_estimate_based_distance(
+                            this->condition_variable,
+                            this->bandwidth_matrix);
+                } else if (!this->bandwidth_vector.empty()) {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_rectangle_kernel_estimate_based_distance(
+                            this->condition_variable,
+                            this->bandwidth_vector);
+                } else {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_rectangle_kernel_estimate_based_distance(
+                            this->condition_variable,
+                            this->bandwidth_value);
+                }
+                break;
+        }
+    } else {
+        switch (this->kernel_type) {
+            case KERNEL_GAUSSIAN:
+                if (!this->bandwidth_matrix.empty()) {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
+                            this->condition_variable,
+                            this->bandwidth_matrix);
+                } else if (!this->bandwidth_vector.empty()) {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
+                            this->condition_variable,
+                            this->bandwidth_vector);
+                } else {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_gaussian_kernel_estimate(
+                            this->condition_variable,
+                            this->bandwidth_value);
+                }
+                break;
+            case KERNEL_RECTANGLE:
+                if (!this->bandwidth_matrix.empty()) {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_rectangle_kernel_estimate(
+                            this->condition_variable,
+                            this->bandwidth_matrix);
+                } else if (!this->bandwidth_vector.empty()) {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_rectangle_kernel_estimate(
+                            this->condition_variable,
+                            this->bandwidth_vector);
+                } else {
+                    this->kernel_density_estimate = KernelDensityEstimation::compute_rectangle_kernel_estimate(
+                            this->condition_variable,
+                            this->bandwidth_value);
+                }
+                break;
+        }
     }
 }
 
@@ -130,11 +175,140 @@ std::vector<std::vector<double>> KernelDensityEstimation::compute_gaussian_kerne
 }
 
 std::vector<std::vector<double>>
-KernelDensityEstimation::compute_rectangle_kernel_estimate(std::vector<std::vector<double>> &condition_variable,
-                                                           std::vector<std::vector<double>> &bandwidth) {
-    size_t num = condition_variable.size();
+KernelDensityEstimation::compute_gaussian_kernel_estimate_based_distance(
+        std::vector<std::vector<double>> &distance_matrix,
+        std::vector<std::vector<double>> &bandwidth) {
+    size_t num = distance_matrix.size();
     std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
     // TODO:
+    return (kernel_density_estimate);
+}
+
+std::vector<std::vector<double>>
+KernelDensityEstimation::compute_gaussian_kernel_estimate_based_distance(
+        std::vector<std::vector<double>> &distance_matrix,
+        std::vector<double> &bandwidth) {
+    size_t num = distance_matrix.size();
+    std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
+    // TODO:
+    return (kernel_density_estimate);
+}
+
+std::vector<std::vector<double>>
+KernelDensityEstimation::compute_gaussian_kernel_estimate_based_distance(
+        std::vector<std::vector<double>> &distance_matrix,
+        double bandwidth) {
+    size_t num = distance_matrix.size();
+    std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
+    // TODO:
+    return (kernel_density_estimate);
+}
+
+std::vector<std::vector<double>>
+KernelDensityEstimation::compute_rectangle_kernel_estimate_based_distance(
+        std::vector<std::vector<double>> &distance_matrix,
+        std::vector<std::vector<double>> &bandwidth) {
+    size_t num = distance_matrix.size();
+    std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
+    // TODO:
+    return (kernel_density_estimate);
+}
+
+std::vector<std::vector<double>>
+KernelDensityEstimation::compute_rectangle_kernel_estimate_based_distance(
+        std::vector<std::vector<double>> &distance_matrix,
+        std::vector<double> &bandwidth) {
+    size_t num = distance_matrix.size();
+    std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
+
+    for (size_t i = 0; i < num; i++) {
+        for (size_t j = 0; j < num; j++) {
+            if (distance_matrix[i][j] <= bandwidth[i]) {
+                kernel_density_estimate[i][j] = 1.0;
+            } else {
+                kernel_density_estimate[i][j] = 0.0;
+            }
+        }
+    }
+    return (kernel_density_estimate);
+}
+
+std::vector<std::vector<double>>
+KernelDensityEstimation::compute_rectangle_kernel_estimate_based_distance(
+        std::vector<std::vector<double>> &distance_matrix,
+        double bandwidth) {
+    size_t num = distance_matrix.size();
+    std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
+    // TODO:
+    return (kernel_density_estimate);
+}
+
+std::vector<std::vector<double>>
+KernelDensityEstimation::compute_rectangle_kernel_estimate(std::vector<std::vector<double> > &condition_variable,
+                                                           std::vector<std::vector<double> > &bandwidth) {
+    size_t num = condition_variable.size();
+    size_t z_dim = condition_variable[0].size();
+    std::vector<std::vector<double> > kernel_density_estimate(num, std::vector<double>(num));
+
+    for (size_t i = 0; i < num; i++) {
+        for (size_t j = 0; j < num; j++) {
+            kernel_density_estimate[i][j] = 1;
+            for (size_t k = 0; k < z_dim; k++) {
+                if (abs(condition_variable[i][k] - condition_variable[j][k]) < bandwidth[k][k])
+                    kernel_density_estimate[i][j] *= 1.0;
+                else
+                    kernel_density_estimate[i][j] *= 0;
+
+            }
+
+        }
+    }
+
+    return (kernel_density_estimate);
+}
+
+std::vector<std::vector<double>>
+KernelDensityEstimation::compute_rectangle_kernel_estimate(std::vector<std::vector<double>> &condition_variable,
+                                                           std::vector<double> &bandwidth) {
+    size_t num = condition_variable.size();
+    size_t z_dim = condition_variable[0].size();
+    std::vector<std::vector<double>> kernel_density_estimate(num, std::vector<double>(num));
+
+    for (size_t i = 0; i < num; i++) {
+        for (size_t j = 0; j < num; j++) {
+            kernel_density_estimate[i][j] = 1;
+            for (size_t k = 0; k < z_dim; k++) {
+                if (abs(condition_variable[i][k] - condition_variable[j][k]) < bandwidth[k]) {
+                    kernel_density_estimate[i][j] *= 1.0;
+                } else {
+                    kernel_density_estimate[i][j] *= 0;
+                }
+            }
+        }
+    }
+    return (kernel_density_estimate);
+}
+
+std::vector<std::vector<double>>
+KernelDensityEstimation::compute_rectangle_kernel_estimate(std::vector<std::vector<double> > &condition_variable,
+                                                           double bandwidth) {
+    size_t num = condition_variable.size();
+    size_t z_dim = condition_variable[0].size();
+    std::vector<std::vector<double> > kernel_density_estimate(num, std::vector<double>(num));
+
+    for (size_t i = 0; i < num; i++) {
+        for (size_t j = 0; j < num; j++) {
+            kernel_density_estimate[i][j] = 1;
+            for (size_t k = 0; k < z_dim; k++) {
+                if (abs(condition_variable[i][k] - condition_variable[j][k]) < bandwidth)
+                    kernel_density_estimate[i][j] *= 1.0;
+                else
+                    kernel_density_estimate[i][j] *= 0;
+
+            }
+
+        }
+    }
     return (kernel_density_estimate);
 }
 

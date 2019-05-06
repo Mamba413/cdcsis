@@ -40,6 +40,7 @@ std::vector<double> ConditionDistanceCovarianceStats::compute_condition_distance
 //        condition_distance_covariance[i] /= kernel_sum_square;
         condition_distance_covariance[i] *= kernel_sum_square;
         condition_distance_covariance[i] /= pow(num, 4);
+        condition_distance_covariance[i] *= 12;
     }
 
     return condition_distance_covariance;
@@ -123,6 +124,35 @@ std::vector<std::vector<double >> ConditionBallCovarianceStats::compute_weight_d
     return weight_delta_xy_matrix;
 }
 
+//std::vector<double> ConditionBallCovarianceStats::compute_condition_ball_covariance(
+//        std::vector<std::vector<double>> &distance_x,
+//        std::vector<std::vector<double>> &distance_y,
+//        std::vector<std::vector<double>> &kernel_density_estimation) {
+//    int num = (int) kernel_density_estimation.size();
+//    std::vector<double> condition_ball_covariance(kernel_density_estimation.size(), 0.0);
+//
+//    std::vector<std::vector<double >> weight_delta_x_matrix, weight_delta_y_matrix, weight_delta_xy_matrix;
+//    double kernel_sum;
+//    for (int l = 0; l < num; ++l) {
+//        weight_delta_x_matrix = compute_weight_delta_x_matrix(distance_x, kernel_density_estimation[l]);
+//        weight_delta_y_matrix = compute_weight_delta_x_matrix(distance_y, kernel_density_estimation[l]);
+//        weight_delta_xy_matrix = compute_weight_delta_xy_matrix(weight_delta_y_matrix, distance_x, distance_y,
+//                                                                kernel_density_estimation[l]);
+//        kernel_sum = vector_sum(kernel_density_estimation[l]);
+//        for (int i = 0; i < num; ++i) {
+//            for (int j = 0; j < num; ++j) {
+//                condition_ball_covariance[l] += kernel_density_estimation[l][i] * kernel_density_estimation[l][j] *
+//                                                pow(weight_delta_xy_matrix[i][j] -
+//                                                    weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] /
+//                                                    kernel_sum, 2);
+//            }
+//        }
+//        condition_ball_covariance[l] *= pow(kernel_sum, 2);
+//        condition_ball_covariance[l] /= pow(num, 6);
+//    }
+//    return condition_ball_covariance;
+//}
+
 std::vector<double> ConditionBallCovarianceStats::compute_condition_ball_covariance(
         std::vector<std::vector<double>> &distance_x,
         std::vector<std::vector<double>> &distance_y,
@@ -130,17 +160,40 @@ std::vector<double> ConditionBallCovarianceStats::compute_condition_ball_covaria
     int num = (int) kernel_density_estimation.size();
     std::vector<double> condition_ball_covariance(kernel_density_estimation.size(), 0.0);
 
-    std::vector<std::vector<double >> weight_delta_x_matrix, weight_delta_y_matrix, weight_delta_xy_matrix;
+    std::vector<int> valid_index;
     double kernel_sum;
     for (int l = 0; l < num; ++l) {
-        weight_delta_x_matrix = compute_weight_delta_x_matrix(distance_x, kernel_density_estimation[l]);
-        weight_delta_y_matrix = compute_weight_delta_x_matrix(distance_y, kernel_density_estimation[l]);
-        weight_delta_xy_matrix = compute_weight_delta_xy_matrix(weight_delta_y_matrix, distance_x, distance_y,
-                                                                kernel_density_estimation[l]);
-        kernel_sum = vector_sum(kernel_density_estimation[l]);
         for (int i = 0; i < num; ++i) {
-            for (int j = 0; j < num; ++j) {
-                condition_ball_covariance[l] += kernel_density_estimation[l][i] * kernel_density_estimation[l][j] *
+            if (kernel_density_estimation[l][i] > ZERO_VALUE) {
+                valid_index.push_back(i);
+            }
+        }
+        size_t valid_number = valid_index.size();
+        std::vector<std::vector<double>> sub_distance_x(valid_number, std::vector<double>(valid_number));
+        std::vector<std::vector<double>> sub_distance_y(valid_number, std::vector<double>(valid_number));
+        std::vector<std::vector<double>> weight_delta_x_matrix(valid_number, std::vector<double>(valid_number));
+        std::vector<std::vector<double>> weight_delta_y_matrix(valid_number, std::vector<double>(valid_number));
+        std::vector<std::vector<double>> weight_delta_xy_matrix(valid_number, std::vector<double>(valid_number));
+        std::vector<double> tmp_distance_x(valid_number);
+        std::vector<double> tmp_distance_y(valid_number);
+        std::vector<double> weight(valid_number);
+        for (size_t i = 0; i < valid_number; ++i) {
+            for (size_t j = 0; j < valid_number; ++j) {
+                tmp_distance_x[j] = distance_x[valid_index[i]][valid_index[j]];
+                tmp_distance_y[j] = distance_y[valid_index[i]][valid_index[j]];
+            }
+            sub_distance_x[i] = tmp_distance_x;
+            sub_distance_y[i] = tmp_distance_y;
+            weight[i] = kernel_density_estimation[l][valid_index[i]];
+        }
+        weight_delta_x_matrix = compute_weight_delta_x_matrix(sub_distance_x, weight);
+        weight_delta_y_matrix = compute_weight_delta_x_matrix(sub_distance_y, weight);
+        weight_delta_xy_matrix = compute_weight_delta_xy_matrix(weight_delta_y_matrix, sub_distance_x, sub_distance_y,
+                                                                weight);
+        kernel_sum = vector_sum(weight);
+        for (size_t i = 0; i < valid_number; ++i) {
+            for (size_t j = 0; j < valid_number; ++j) {
+                condition_ball_covariance[l] += weight[i] * weight[j] *
                                                 pow(weight_delta_xy_matrix[i][j] -
                                                     weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] /
                                                     kernel_sum, 2);
@@ -148,9 +201,61 @@ std::vector<double> ConditionBallCovarianceStats::compute_condition_ball_covaria
         }
         condition_ball_covariance[l] *= pow(kernel_sum, 2);
         condition_ball_covariance[l] /= pow(num, 6);
-    }
 
+        valid_index.clear();
+        weight.clear();
+        tmp_distance_x.clear();
+        tmp_distance_y.clear();
+        for (size_t i = 0; i < valid_number; ++i) {
+            sub_distance_x[i].clear();
+            sub_distance_y[i].clear();
+            weight_delta_x_matrix[i].clear();
+            weight_delta_y_matrix[i].clear();
+            weight_delta_xy_matrix[i].clear();
+        }
+    }
     return condition_ball_covariance;
+}
+
+double ConditionBallCovarianceStats::compute_condition_ball_covariance_fix_z(
+        std::vector<std::vector<double>> &weight_delta_xy_matrix,
+        std::vector<std::vector<double>> &weight_delta_x_matrix,
+        std::vector<std::vector<double>> &weight_delta_y_matrix,
+        std::vector<double> weight, uint num) {
+    double condition_ball_covariance_value = 0.0;
+    size_t valid_number = weight_delta_y_matrix.size();
+    double kernel_sum = vector_sum(weight);
+    for (size_t i = 0; i < valid_number; ++i) {
+        for (size_t j = 0; j < valid_number; ++j) {
+            condition_ball_covariance_value += weight[i] * weight[j] *
+                                               pow(weight_delta_xy_matrix[i][j] -
+                                                   weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] /
+                                                   kernel_sum, 2);
+        }
+    }
+    condition_ball_covariance_value *= pow(kernel_sum, 2);
+    condition_ball_covariance_value /= pow(num, 6);
+    return condition_ball_covariance_value;
+}
+
+double ConditionBallCovarianceStats::compute_condition_ball_covariance_fix_z(
+        std::vector<std::vector<double>> &weight_delta_xy_matrix,
+        std::vector<std::vector<double>> &weight_delta_x_matrix,
+        std::vector<std::vector<double>> &weight_delta_y_matrix,
+        std::vector<double> weight) {
+    double condition_ball_covariance_value = 0.0;
+    size_t valid_number = weight_delta_y_matrix.size();
+    double kernel_sum = vector_sum(weight);
+    for (size_t i = 0; i < valid_number; ++i) {
+        for (size_t j = 0; j < valid_number; ++j) {
+            condition_ball_covariance_value += weight[i] * weight[j] *
+                                               pow(weight_delta_xy_matrix[i][j] -
+                                                   weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] /
+                                                   kernel_sum, 2);
+        }
+    }
+    condition_ball_covariance_value *= pow(kernel_sum, 2);
+    return condition_ball_covariance_value;
 }
 
 std::vector<double> ConditionBallCovarianceStats::compute_condition_ball_correlation(

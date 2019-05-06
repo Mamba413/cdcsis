@@ -111,6 +111,18 @@ private:
                                                     double bandwidth);
 
     std::vector<std::vector<double>>
+    compute_rectangle_kernel_estimate_based_distance(std::vector<std::vector<double>> &distance_matrix,
+                                                     std::vector<std::vector<double>> &bandwidth);
+
+    std::vector<std::vector<double>>
+    compute_rectangle_kernel_estimate_based_distance(std::vector<std::vector<double>> &distance_matrix,
+                                                     std::vector<double> &bandwidth);
+
+    std::vector<std::vector<double>>
+    compute_rectangle_kernel_estimate_based_distance(std::vector<std::vector<double>> &distance_matrix,
+                                                     double bandwidth);
+
+    std::vector<std::vector<double>>
     compute_rectangle_kernel_estimate(std::vector<std::vector<double>> &condition_variable,
                                       std::vector<std::vector<double>> &bandwidth);
 

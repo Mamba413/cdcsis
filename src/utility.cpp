@@ -657,9 +657,44 @@ double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> 
     return condition_ball_covariance_stats;
 }
 
-// TODO: V-type conditional distance covariance
-//double compute_condition_distance_covariance_crude(std::vector<std::vector<double>> &distance_x,
-//                                                   std::vector<std::vector<double>> &distance_y,
-//                                                   std::vector<std::vector<double>> &kernel_density_estimation) {
-//
-//}
+/**
+ * V-type conditional distance covariance
+ * @param distance_x : pairwise distance of variable x
+ * @param distance_y : pairwise distance of variable y
+ * @param kernel_density_estimation : KDE result of conditional variable
+ * @return the value of conditional distance covariance test statistic
+ * @refitem Xueqin Wang, Wenliang Pan, Wenhao Hu, Yuan Tian & Heping Zhang (2015) Conditional Distance Correlation,
+ * Journal of the American Statistical Association, 110:512, 1726-1734, DOI: 10.1080/01621459.2014.993081
+ */
+double compute_condition_distance_covariance_crude(std::vector<std::vector<double>> &distance_x,
+                                                   std::vector<std::vector<double>> &distance_y,
+                                                   std::vector<std::vector<double>> &kernel_density_estimation) {
+    size_t num = distance_x.size();
+    std::vector<double> condition_distance_covariance(num, 0.0);
+    double cross_dx1, cross_dy1, cross_dx2, cross_dy2, cross_dx3, cross_dy3, d_ijkl;
+    for (size_t u = 0; u < num; ++u) {
+        for (size_t i = 0; i < num; ++i) {
+            for (size_t j = 0; j < num; ++j) {
+                for (size_t k = 0; k < num; ++k) {
+                    for (size_t l = 0; l < num; ++l) {
+                        cross_dx1 = distance_x[i][j] + distance_x[k][l] - distance_x[i][k] - distance_x[j][l];
+                        cross_dy1 = distance_y[i][j] + distance_y[k][l] - distance_y[i][k] - distance_y[j][l];
+                        cross_dx2 = distance_x[i][j] + distance_x[k][l] - distance_x[i][l] - distance_x[j][k];
+                        cross_dy2 = distance_y[i][j] + distance_y[k][l] - distance_y[i][l] - distance_y[j][k];
+                        cross_dx3 = distance_x[i][l] + distance_x[k][j] - distance_x[i][k] - distance_x[j][l];
+                        cross_dy3 = distance_y[i][l] + distance_y[k][j] - distance_y[i][k] - distance_y[j][l];
+                        d_ijkl = cross_dx1 * cross_dy1 + cross_dx2 * cross_dy2 + cross_dx3 * cross_dy3;
+
+                        condition_distance_covariance[u] += d_ijkl * kernel_density_estimation[i][u] *
+                                                            kernel_density_estimation[j][u] *
+                                                            kernel_density_estimation[k][u] *
+                                                            kernel_density_estimation[l][u];
+                    }
+                }
+            }
+        }
+        condition_distance_covariance[u] /= pow(num, 4);
+    }
+    double condition_distance_covariance_stat = vector_mean(condition_distance_covariance);
+    return condition_distance_covariance_stat;
+}
