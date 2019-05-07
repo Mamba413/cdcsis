@@ -74,6 +74,8 @@ double weight_square_Euclidean_distance(std::vector<double> &vector1, std::vecto
 
 std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, uint num_row, uint num_col);
 
+std::vector<std::vector<double>> vector_to_matrix(double vector[], uint num_row, uint num_col);
+
 std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<double>> &distance_matrix,
                                                        std::vector<double> &weight);
 
@@ -84,6 +86,15 @@ std::vector<double> compute_weight_delta_xy_vector(std::vector<double> &delta_y_
                                                    std::vector<double> &distance_x,
                                                    std::vector<double> &distance_y,
                                                    std::vector<double> &weight);
+
+std::vector<double> compute_weight_delta_xy_vector_ties(std::vector<double> &delta_y_vector,
+                                                        std::vector<double> &distance_x,
+                                                        std::vector<double> &distance_y,
+                                                        std::vector<double> &weight);
+
+std::vector<double> compute_weight_delta_xy_vector_crude(std::vector<double> &distance_x,
+                                                         std::vector<double> &distance_y,
+                                                         std::vector<double> &weight);
 
 /**
  * Rearrange N*N matrix
@@ -232,6 +243,16 @@ std::vector<int> countSmaller(std::vector<int> &vector);
 void quick_sort_dataset(std::vector<std::tuple<int, double, double>> &dataset, int start, int end);
 
 void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &dataset, int start, int end);
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double>> &dataset);
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &dataset);
+
+void quick_sort_dataset2(std::vector<std::tuple<int, double, double, double>> &dataset, int start, int end);
+
+bool quick_sort_dataset2_compare(std::tuple<int, double, double, double> x, std::tuple<int, double, double, double> y);
+
+void quick_sort_dataset2(std::vector<std::tuple<int, double, double, double>> &dataset);
 
 double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> &distance_x,
                                                std::vector<std::vector<double>> &distance_y,

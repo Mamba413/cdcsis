@@ -7,6 +7,7 @@
 #include <iostream>
 #include <random>
 #include <array>
+#include <algorithm>
 #include "global.h"
 #include "utility.h"
 
@@ -333,6 +334,17 @@ std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, u
     return matrix;
 }
 
+std::vector<std::vector<double>> vector_to_matrix(double vector[], uint num_row, uint num_col) {
+    std::vector<std::vector<double>> matrix(num_row, std::vector<double>(num_col));
+    uint k = 0;
+    for (uint i = 0; i < num_row; i++) {
+        for (uint j = 0; j < num_col; j++) {
+            matrix[i][j] = vector[k++];
+        }
+    }
+    return matrix;
+}
+
 std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<double>> &distance_matrix,
                                                        std::vector<double> &weight) {
     double weight_sum = vector_sum(weight);
@@ -455,6 +467,86 @@ std::vector<double> compute_weight_delta_xy_vector(std::vector<double> &delta_y_
     }
 
     return weight_delta_xy_vector;
+}
+
+std::vector<double> compute_weight_delta_xy_vector_ties(std::vector<double> &delta_y_vector,
+                                                        std::vector<double> &distance_x,
+                                                        std::vector<double> &distance_y,
+                                                        std::vector<double> &weight) {
+    int num = (int) distance_x.size(), index;
+    std::vector<std::tuple<int, double, double, double >> dataset;
+    for (int j = 0; j < num; ++j) {
+        dataset.emplace_back(std::make_tuple(j, distance_x[j], distance_y[j], weight[j]));
+    }
+    quick_sort_dataset2(dataset);
+    bool any_same_point = false;
+    for (int j = 1; j < num; ++j) {
+        if (any_same_point) {
+            break;
+        } else {
+            if (std::get<2>(dataset[j]) == std::get<2>(dataset[j - 1]) &&
+                std::get<1>(dataset[j]) == std::get<1>(dataset[j - 1])) {
+                any_same_point = true;
+            }
+        }
+    }
+
+    std::vector<double> distance_y_vector, weight_vector, weight_sum_count_smaller_number_after_self_vec;
+    std::vector<double> weight_delta_xy_vector(dataset.size(), 0.0);
+    if (any_same_point) {
+        std::vector<size_t> weight_sum_count_smaller_number_after_self_index;
+        weight_sum_count_smaller_number_after_self_index.push_back(0);
+        distance_y_vector.push_back(std::get<2>(dataset[0]));
+        weight_vector.push_back(std::get<3>(dataset[0]));
+        for (int j = 1; j < num; ++j) {
+            if (std::get<2>(dataset[j]) == std::get<2>(dataset[j - 1]) &&
+                std::get<1>(dataset[j]) == std::get<1>(dataset[j - 1])) {
+                size_t last_index = weight_vector.size() - 1;
+                weight_vector[last_index] += std::get<3>(dataset[j]);
+                weight_sum_count_smaller_number_after_self_index.push_back(last_index);
+            } else {
+                distance_y_vector.push_back(std::get<2>(dataset[j]));
+                weight_vector.push_back(std::get<3>(dataset[j]));
+                weight_sum_count_smaller_number_after_self_index.push_back(weight_vector.size() - 1);
+            }
+        }
+        weight_sum_count_smaller_number_after_self_vec = weight_sum_count_smaller_number_after_self(distance_y_vector,
+                                                                                                    weight_vector);
+        for (int j = 0; j < num; ++j) {
+            index = std::get<0>(dataset[j]);
+            size_t tmp_index = weight_sum_count_smaller_number_after_self_index[j];
+            weight_delta_xy_vector[index] =
+                    delta_y_vector[index] - weight_sum_count_smaller_number_after_self_vec[tmp_index];
+        }
+    } else {
+        for (int j = 0; j < num; ++j) {
+            distance_y_vector.push_back(std::get<2>(dataset[j]));
+            weight_vector.push_back(std::get<3>(dataset[j]));
+        }
+        weight_sum_count_smaller_number_after_self_vec = weight_sum_count_smaller_number_after_self(distance_y_vector,
+                                                                                                    weight_vector);
+        for (int j = 0; j < num; ++j) {
+            index = std::get<0>(dataset[j]);
+            weight_delta_xy_vector[index] =
+                    delta_y_vector[index] - weight_sum_count_smaller_number_after_self_vec[j];
+        }
+    }
+
+    return weight_delta_xy_vector;
+}
+
+std::vector<double> compute_weight_delta_xy_vector_crude(std::vector<double> &distance_x,
+                                                         std::vector<double> &distance_y,
+                                                         std::vector<double> &weight) {
+    std::vector<double> delta_xy_true(distance_x.size(), 0.0);
+    for (size_t j = 0; j < distance_x.size(); ++j) {
+        for (size_t k = 0; k < distance_x.size(); ++k) {
+            if ((distance_x[j] >= distance_x[k]) && (distance_y[j] >= distance_y[k])) {
+                delta_xy_true[j] += weight[k];
+            }
+        }
+    }
+    return delta_xy_true;
 }
 
 std::vector<double> compositional_transform(std::vector<double> &vector) {
@@ -590,10 +682,10 @@ void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &da
         return;
     double mid = std::get<1>(dataset[end]);
     int left = start, right = end - 1;
-    while (left < right) {
-        while (std::get<1>(dataset[left]) < mid && left < right)
+    while (left != right) {
+        while ((std::get<1>(dataset[left]) < mid) && (left != right))
             left++;
-        while (std::get<1>(dataset[right]) >= mid && left < right)
+        while ((std::get<1>(dataset[right]) >= mid) && (left != right))
             right--;
         dataset[left].swap(dataset[right]);
     }
@@ -606,6 +698,72 @@ void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &da
         quick_sort_dataset(dataset, start, left - 1);
     }
     quick_sort_dataset(dataset, left + 1, end);
+}
+
+bool quick_sort_3way_tuple_compare(std::tuple<int, double, double> x,
+                                   std::tuple<int, double, double> y) {
+    if (std::get<1>(x) < std::get<1>(y)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double>> &dataset) {
+    std::sort(dataset.begin(), dataset.end(), quick_sort_3way_tuple_compare);
+}
+
+bool quick_sort_4way_tuple_compare(std::tuple<int, double, double, double> x,
+                                   std::tuple<int, double, double, double> y) {
+    if (std::get<1>(x) < std::get<1>(y)) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &dataset) {
+    std::sort(dataset.begin(), dataset.end(), quick_sort_4way_tuple_compare);
+}
+
+void quick_sort_dataset2(std::vector<std::tuple<int, double, double, double>> &dataset, int start, int end) {
+    if (start >= end)
+        return;
+    double m1 = std::get<1>(dataset[end]), m2 = std::get<2>(dataset[end]);
+    int left = start, right = end - 1;
+    while (left != right) {
+        while (((std::get<1>(dataset[left]) < m1) ||
+                (std::get<1>(dataset[left]) == m1 && std::get<2>(dataset[left]) > m2)) &&
+               (left != right))
+            left++;
+        while (((std::get<1>(dataset[right]) > m1) ||
+                (std::get<1>(dataset[right]) == m1 && std::get<2>(dataset[right]) < m2)) &&
+               (left != right))
+            right--;
+        if (left != right) {
+            dataset[left].swap(dataset[right]);
+        }
+    }
+    dataset[left].swap(dataset[end]);
+    if (left) {
+        quick_sort_dataset2(dataset, start, left - 1);
+    }
+    quick_sort_dataset2(dataset, left + 1, end);
+}
+
+bool quick_sort_dataset2_compare(std::tuple<int, double, double, double> x,
+                                 std::tuple<int, double, double, double> y) {
+    if (std::get<1>(x) < std::get<1>(y)) {
+        return true;
+    } else if ((std::get<1>(x) == std::get<1>(y)) && (std::get<2>(x) < std::get<2>(y))) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void quick_sort_dataset2(std::vector<std::tuple<int, double, double, double>> &dataset) {
+    std::sort(dataset.begin(), dataset.end(), quick_sort_dataset2_compare);
 }
 
 double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> &distance_x,

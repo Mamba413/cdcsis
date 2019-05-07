@@ -117,8 +117,8 @@ std::vector<std::vector<double >> ConditionBallCovarianceStats::compute_weight_d
 
     std::vector<std::vector<double >> weight_delta_xy_matrix;
     for (uint i = 0; i < delta_y_matrix.size(); ++i) {
-        weight_delta_xy_matrix.push_back(compute_weight_delta_xy_vector(delta_y_matrix[i], distance_x[i], distance_y[i],
-                                                                        weight));
+        weight_delta_xy_matrix.push_back(compute_weight_delta_xy_vector_ties(delta_y_matrix[i], distance_x[i],
+                                                                             distance_y[i], weight));
     }
 
     return weight_delta_xy_matrix;
