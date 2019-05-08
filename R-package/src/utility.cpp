@@ -733,18 +733,22 @@ void quick_sort_dataset2(std::vector<std::tuple<int, double, double, double>> &d
     int left = start, right = end - 1;
     while (left != right) {
         while (((std::get<1>(dataset[left]) < m1) ||
-                (std::get<1>(dataset[left]) == m1 && std::get<2>(dataset[left]) > m2)) &&
+                (std::get<1>(dataset[left]) == m1 && std::get<2>(dataset[left]) < m2)) &&
                (left != right))
             left++;
         while (((std::get<1>(dataset[right]) > m1) ||
-                (std::get<1>(dataset[right]) == m1 && std::get<2>(dataset[right]) < m2)) &&
+                (std::get<1>(dataset[right]) == m1 && std::get<2>(dataset[right]) > m2)) &&
                (left != right))
             right--;
         if (left != right) {
             dataset[left].swap(dataset[right]);
         }
     }
-    dataset[left].swap(dataset[end]);
+    if ((std::get<1>(dataset[left]) > m1) || (std::get<1>(dataset[left]) == m1 && std::get<2>(dataset[left]) > m2)) {
+        dataset[left].swap(dataset[end]);
+    } else {
+        left++;
+    }
     if (left) {
         quick_sort_dataset2(dataset, start, left - 1);
     }

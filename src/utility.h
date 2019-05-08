@@ -140,6 +140,19 @@ T quartile_value(std::vector<T> vector, double quartile) {
     return vector[q_index];
 }
 
+template<typename T>
+bool find_ties(std::vector<T> vector) {
+    bool ties = false;
+    std::sort(vector.begin(), vector.end());
+    for (uint i = 1; i < vector.size(); ++i) {
+        if (vector[i] == vector[i - 1]) {
+            ties = true;
+            break;
+        }
+    }
+    return ties;
+}
+
 void merge(std::vector<std::pair<int, int>> &vec, int start, int mid, int end,
            std::vector<int> &right_smaller);
 

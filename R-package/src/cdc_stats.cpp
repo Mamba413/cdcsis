@@ -114,13 +114,22 @@ void ConditionDistanceCovarianceStats::setKernel_density_estimation(
 std::vector<std::vector<double >> ConditionBallCovarianceStats::compute_weight_delta_xy_matrix(
         std::vector<std::vector<double >> &delta_y_matrix, std::vector<std::vector<double >> &distance_x,
         std::vector<std::vector<double >> &distance_y, std::vector<double> &weight) {
-
     std::vector<std::vector<double >> weight_delta_xy_matrix;
+    std::vector<double> distance_copy;
     for (uint i = 0; i < delta_y_matrix.size(); ++i) {
-        weight_delta_xy_matrix.push_back(compute_weight_delta_xy_vector_ties(delta_y_matrix[i], distance_x[i],
-                                                                             distance_y[i], weight));
-    }
+        distance_copy.assign(distance_x[i].begin(), distance_x[i].end());
+        bool x_ties = find_ties(distance_copy);
+        distance_copy.assign(distance_y[i].begin(), distance_y[i].end());
+        bool y_ties = find_ties(distance_copy);
+        if (x_ties || y_ties) {
+            weight_delta_xy_matrix.push_back(compute_weight_delta_xy_vector_ties(delta_y_matrix[i], distance_x[i],
+                                                                                 distance_y[i], weight));
+        } else {
+            weight_delta_xy_matrix.push_back(compute_weight_delta_xy_vector(delta_y_matrix[i], distance_x[i],
+                                                                            distance_y[i], weight));
+        }
 
+    }
     return weight_delta_xy_matrix;
 }
 
