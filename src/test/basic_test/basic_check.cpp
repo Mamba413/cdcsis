@@ -148,6 +148,19 @@ TEST(utility, compute_weight_delta_xy_vector_ties) {
     for (int i = 0; i < distance_x.size(); ++i) {
         EXPECT_EQ(delta_xy_true[i], delta_xy[i]);
     }
+
+    std::vector<double> distance_x1 = {0, 0, 0, 0, 1, 1, 1, 1};
+    std::vector<double> distance_y1 = {0, 0, 1, 1, 0, 0, 1, 1};
+    std::vector<double> weight_1 = {1, 2, 3, 4, 5, 6, 7, 8};
+    delta_y.clear();
+    delta_xy.clear();
+    delta_xy_true.clear();
+    delta_y = compute_weight_delta_x_vector(distance_y1, weight_1);
+    delta_xy = compute_weight_delta_xy_vector_ties(delta_y, distance_x1, distance_y1, weight_1);
+    delta_xy_true = compute_weight_delta_xy_vector_crude(distance_x1, distance_y1, weight_1);
+    for (int i = 0; i < distance_x.size(); ++i) {
+        EXPECT_EQ(delta_xy_true[i], delta_xy[i]);
+    }
 }
 
 TEST(utility, sample_multinomial_distribution) {
@@ -284,7 +297,6 @@ TEST(kde, compute_gaussian_kernel_estimate) {
     conditional_variable[3][1] = 0.5757814;
     conditional_variable[4][0] = 0.3295078;
     conditional_variable[4][1] = -0.3053884;
-
 
     std::vector<std::vector<double>> bandwidth(2, std::vector<double>(2));
     bandwidth[0][0] = 1.0;
