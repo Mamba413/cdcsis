@@ -1,29 +1,29 @@
 ## Maintainer comments     
 The following NOTE occurs when checking:    
 * *(possibly) invalid doi 10.5705/ss.202014.0117.*    
-Actually, this doi is definitely right. R user can search it through google.com or search.crossref.org.
-    
+Actually, this doi is definitely right. R users can search it through google.com or search.crossref.org.  
 
-## Check environments
-* Local PC, Windows, R 3.5.1    
-* Debian Linux, R-devel, GCC ASAN/UBSAN
-* Fedora Linux, R-devel, clang, gfortran
+## Test environments
+* Local PC, Windows, R 3.6.0    
+* Oracle Solaris 10, x86, 32 bit, R-patched
 * Windows Server 2008 R2 SP1, R-devel, 32/64 bit
-* Windows Devel (by `check_win_devel()` function)
+* Windows Server 2008 R2 SP1, R-release, 32/64 bit
 
-## Check results
-* **Local PC, Windows, R 3.5.3** and **Debian Linux, R-devel, GCC ASAN/UBSAN**      
+## R CMD check results
+* **Local PC, Windows, R 3.6.0** and **Oracle Solaris 10, x86, 32 bit, R-patched**      
 Status: OK
 
-* **Fedora Linux, R-devel, clang, gfortran**, **Windows Server 2008 R2 SP1, R-devel, 32/64 bit** and **Windows Devel**       
+* **Windows Server 2008 R2 SP1, R-devel, 32/64 bit** and **Windows Server 2008 R2 SP1, R-release, 32/64 bit**       
 NOTE:    
-
+  
 ```
-  Found the following (possibly) invalid DOIs:
-    DOI: 10.5705/ss.202014.0117
-      From: DESCRIPTION
-      Status: Not Found
-      Message: 404
+Maintainer: 'Jin Zhu <zhuj37@mail2.sysu.edu.cn>'
+
+Found the following (possibly) invalid DOIs:
+  DOI: 10.5705/ss.202014.0117
+From: DESCRIPTION
+Status: Not Found
+Message: 404
 ```
 
 ## Reverse dependencies

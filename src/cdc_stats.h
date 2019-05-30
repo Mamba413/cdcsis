@@ -54,6 +54,7 @@ private:
         std::vector<double> condition_distance_covariance(distance_x.size());
         condition_distance_covariance = compute_condition_distance_covariance(distance_x, distance_y,
                                                                               kernel_density_estimation);
+        this->condition_distance_covariance = condition_distance_covariance;
         return vector_mean(condition_distance_covariance);
     }
 
@@ -71,6 +72,8 @@ private:
 class ConditionBallCovarianceStats {
 
 public:
+    ConditionBallCovarianceStats() = default;
+
     ConditionBallCovarianceStats(std::vector<std::vector<double>> &distance_x,
                                  std::vector<std::vector<double>> &distance_y,
                                  std::vector<std::vector<double>> &kernel_density_estimation, int stats_type) {
@@ -91,6 +94,7 @@ public:
     void setKernel_density_estimation(const std::vector<std::vector<double>> &kernel_density_estimation);
 
 private:
+    friend class CDCStatsticsMethod;
 
     std::vector<double> compute_condition_ball_covariance(std::vector<std::vector<double>> &distance_x,
                                                           std::vector<std::vector<double>> &distance_y,
@@ -132,6 +136,15 @@ private:
         return delta_x_matrix;
     };
 
+    double compute_condition_ball_covariance_fix_z(std::vector<std::vector<double>> &weight_delta_xy_matrix,
+                                                   std::vector<std::vector<double>> &weight_delta_x_matrix,
+                                                   std::vector<std::vector<double>> &weight_delta_y_matrix,
+                                                   std::vector<double> weight, uint num);
+
+    double compute_condition_ball_covariance_fix_z(std::vector<std::vector<double>> &weight_delta_xy_matrix,
+                                                   std::vector<std::vector<double>> &weight_delta_x_matrix,
+                                                   std::vector<std::vector<double>> &weight_delta_y_matrix,
+                                                   std::vector<double> weight);
 
 private:
 

@@ -9,6 +9,10 @@
 #define CDC_PI 3.14159265358979323846
 #endif
 
+#ifndef ZERO_VALUE
+#define ZERO_VALUE 0.0000000000000000000000001
+#endif
+
 typedef unsigned int uint;
 
 enum KernelType {

@@ -74,6 +74,8 @@ double weight_square_Euclidean_distance(std::vector<double> &vector1, std::vecto
 
 std::vector<std::vector<double>> vector_to_matrix(std::vector<double> &vector, uint num_row, uint num_col);
 
+std::vector<std::vector<double>> vector_to_matrix(double vector[], uint num_row, uint num_col);
+
 std::vector<std::vector<double>> weight_distance_anova(std::vector<std::vector<double>> &distance_matrix,
                                                        std::vector<double> &weight);
 
@@ -84,6 +86,15 @@ std::vector<double> compute_weight_delta_xy_vector(std::vector<double> &delta_y_
                                                    std::vector<double> &distance_x,
                                                    std::vector<double> &distance_y,
                                                    std::vector<double> &weight);
+
+std::vector<double> compute_weight_delta_xy_vector_ties(std::vector<double> &delta_y_vector,
+                                                        std::vector<double> &distance_x,
+                                                        std::vector<double> &distance_y,
+                                                        std::vector<double> &weight);
+
+std::vector<double> compute_weight_delta_xy_vector_crude(std::vector<double> &distance_x,
+                                                         std::vector<double> &distance_y,
+                                                         std::vector<double> &weight);
 
 /**
  * Rearrange N*N matrix
@@ -127,6 +138,19 @@ T quartile_value(std::vector<T> vector, double quartile) {
     int q_index = (int) (vector.size() * quartile + 0.5) - 1;
     std::nth_element(vector.begin(), vector.begin() + q_index, vector.end());
     return vector[q_index];
+}
+
+template<typename T>
+bool find_ties(std::vector<T> vector) {
+    bool ties = false;
+    std::sort(vector.begin(), vector.end());
+    for (uint i = 1; i < vector.size(); ++i) {
+        if (vector[i] == vector[i - 1]) {
+            ties = true;
+            break;
+        }
+    }
+    return ties;
 }
 
 void merge(std::vector<std::pair<int, int>> &vec, int start, int mid, int end,
@@ -233,8 +257,22 @@ void quick_sort_dataset(std::vector<std::tuple<int, double, double>> &dataset, i
 
 void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &dataset, int start, int end);
 
+void quick_sort_dataset(std::vector<std::tuple<int, double, double>> &dataset);
+
+void quick_sort_dataset(std::vector<std::tuple<int, double, double, double>> &dataset);
+
+void quick_sort_dataset2(std::vector<std::tuple<int, double, double, double>> &dataset, int start, int end);
+
+bool quick_sort_dataset2_compare(std::tuple<int, double, double, double> x, std::tuple<int, double, double, double> y);
+
+void quick_sort_dataset2(std::vector<std::tuple<int, double, double, double>> &dataset);
+
 double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> &distance_x,
                                                std::vector<std::vector<double>> &distance_y,
                                                std::vector<std::vector<double>> &kernel_density_estimation);
+
+double compute_condition_distance_covariance_crude(std::vector<std::vector<double>> &distance_x,
+                                                   std::vector<std::vector<double>> &distance_y,
+                                                   std::vector<std::vector<double>> &kernel_density_estimation);
 
 #endif //SRC_UTILITY_H

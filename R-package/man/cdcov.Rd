@@ -5,12 +5,10 @@
 \alias{cdcor}
 \title{Conditional Distance Covariance/Correlation Statistics}
 \usage{
-cdcov(x, y, z, width = ifelse(dim(as.matrix(z))[2] == 1,
-  stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)),
+cdcov(x, y, z, kernel.type = c("rectangle", "gauss"), k = 6, width,
   index = 1, distance = FALSE)
 
-cdcor(x, y, z, width = ifelse(dim(as.matrix(z))[2] == 1,
-  stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)),
+cdcor(x, y, z, kernel.type = c("rectangle", "gauss"), k = 6, width,
   index = 1, distance = FALSE)
 }
 \arguments{
@@ -20,12 +18,17 @@ cdcor(x, y, z, width = ifelse(dim(as.matrix(z))[2] == 1,
 
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
+\item{kernel.type}{the kernel to be used. This must be one of "gauss", "rectangle". Any unambiguous substring can be given.
+Default: \code{kernel.type = "gauss"}.}
+
+\item{k}{a user-specified positive integer value for computing rectangle kernel bandwidth.}
+
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
 gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0}.}
 
 \item{index}{exponent on Euclidean distance, in \eqn{(0,2]}}
 
-\item{distance}{if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}}
+\item{distance}{if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}.}
 }
 \value{
 \item{\code{cdcov }}{ sample version of conditional distance covariance.}

@@ -1,3 +1,6 @@
+# cdcsis 2.0.2
+* Bug fix
+
 # cdcsis 2.0.1
 * optimize the internal bandwidth selection strategy
 * C internal change

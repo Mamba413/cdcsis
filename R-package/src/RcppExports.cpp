@@ -6,8 +6,8 @@
 using namespace Rcpp;
 
 // cdcsisCpp
-Rcpp::List cdcsisCpp(unsigned int stats_method, Rcpp::NumericMatrix& x, std::vector<unsigned int>& variable_index, Rcpp::NumericMatrix& y, Rcpp::NumericMatrix& z, std::vector<double>& bandwidth, double distance_index, unsigned int num_threads, unsigned int num_bootstrap, unsigned int seed, unsigned int stats_type);
-RcppExport SEXP _cdcsis_cdcsisCpp(SEXP stats_methodSEXP, SEXP xSEXP, SEXP variable_indexSEXP, SEXP ySEXP, SEXP zSEXP, SEXP bandwidthSEXP, SEXP distance_indexSEXP, SEXP num_threadsSEXP, SEXP num_bootstrapSEXP, SEXP seedSEXP, SEXP stats_typeSEXP) {
+Rcpp::List cdcsisCpp(unsigned int stats_method, Rcpp::NumericMatrix& x, std::vector<unsigned int>& variable_index, Rcpp::NumericMatrix& y, Rcpp::NumericMatrix& z, std::vector<double>& bandwidth, double distance_index, unsigned int num_threads, unsigned int num_bootstrap, unsigned int seed, unsigned int stats_type, unsigned int kernel_type, unsigned int distance_z);
+RcppExport SEXP _cdcsis_cdcsisCpp(SEXP stats_methodSEXP, SEXP xSEXP, SEXP variable_indexSEXP, SEXP ySEXP, SEXP zSEXP, SEXP bandwidthSEXP, SEXP distance_indexSEXP, SEXP num_threadsSEXP, SEXP num_bootstrapSEXP, SEXP seedSEXP, SEXP stats_typeSEXP, SEXP kernel_typeSEXP, SEXP distance_zSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -22,13 +22,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< unsigned int >::type num_bootstrap(num_bootstrapSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type seed(seedSEXP);
     Rcpp::traits::input_parameter< unsigned int >::type stats_type(stats_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(cdcsisCpp(stats_method, x, variable_index, y, z, bandwidth, distance_index, num_threads, num_bootstrap, seed, stats_type));
+    Rcpp::traits::input_parameter< unsigned int >::type kernel_type(kernel_typeSEXP);
+    Rcpp::traits::input_parameter< unsigned int >::type distance_z(distance_zSEXP);
+    rcpp_result_gen = Rcpp::wrap(cdcsisCpp(stats_method, x, variable_index, y, z, bandwidth, distance_index, num_threads, num_bootstrap, seed, stats_type, kernel_type, distance_z));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cdcsis_cdcsisCpp", (DL_FUNC) &_cdcsis_cdcsisCpp, 11},
+    {"_cdcsis_cdcsisCpp", (DL_FUNC) &_cdcsis_cdcsisCpp, 13},
     {NULL, NULL, 0}
 };
 

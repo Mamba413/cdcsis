@@ -14,14 +14,18 @@ Rcpp::List cdcsisCpp(unsigned int stats_method,
                      Rcpp::NumericMatrix& x, std::vector<unsigned int> &variable_index, 
                      Rcpp::NumericMatrix& y, Rcpp::NumericMatrix& z, 
                      std::vector<double> &bandwidth, double distance_index, unsigned int num_threads, 
-                     unsigned int num_bootstrap, unsigned int seed, unsigned int stats_type) {
+                     unsigned int num_bootstrap, unsigned int seed, unsigned int stats_type, 
+                     unsigned int kernel_type, unsigned int distance_z) {
   Rcpp::List result;
   
   try {
     StatsMethod statsMethod = StatsMethod(stats_method);
-    
+    bool kde_distance = false;
+    if (distance_z) {
+      kde_distance = true;
+    }
     std::vector<std::vector<double> > kernel = rcpp_matrix_to_vector2d<double>(z);
-    KernelDensityEstimation kernelDensityEstimation = KernelDensityEstimation(kernel, bandwidth, 1);
+    KernelDensityEstimation kernelDensityEstimation = KernelDensityEstimation(kernel, bandwidth, kernel_type, kde_distance);
     kernelDensityEstimation.compute_kernel_density_estimate();
     kernel = kernelDensityEstimation.get_kernel_density_estimate();
     
@@ -34,9 +38,9 @@ Rcpp::List cdcsisCpp(unsigned int stats_method,
       std::vector<std::vector<double> > distance_x = rcpp_distance_matrix_to_vector2d<double>(x);
       
       if (stats_type == 1) {
-          cDCStatsticsMethod.conduct_cdc_test(distance_x, distance_y, kernel, num_bootstrap, seed, num_threads);
+        cDCStatsticsMethod.conduct_cdc_test(distance_x, distance_y, kernel, num_bootstrap, seed, num_threads);
       } else if (stats_type == 3) {
-          cDCStatsticsMethod.conduct_cbc_test(distance_x, distance_y, kernel, num_bootstrap, seed, num_threads);
+        cDCStatsticsMethod.conduct_cbc_test(distance_x, distance_y, kernel, num_bootstrap, seed, num_threads);
       }
       
       result.push_back(cDCStatsticsMethod.getCdc_statistic(), "statistic");
@@ -55,13 +59,22 @@ Rcpp::List cdcsisCpp(unsigned int stats_method,
       result.push_back(cDCStatsticsMethod.getCdc_statistic(), "statistic");
     } else if (statsMethod == STATISTICS_VALUE) {
       std::vector<std::vector<double> > distance_x = rcpp_distance_matrix_to_vector2d<double>(x);
-      
-      ConditionDistanceCovarianceStats conditionDistanceCovarianceStats = ConditionDistanceCovarianceStats(distance_x, 
-                                                                                                           distance_y, 
-                                                                                                           kernel, 
-                                                                                                           stats_type);
-      conditionDistanceCovarianceStats.compute_stats();
-      result.push_back(conditionDistanceCovarianceStats.getCondition_distance_covariance_stats(), "statistic");
+      if (stats_type == 1 || stats_type == 2) {
+        ConditionDistanceCovarianceStats conditionCovarianceStats = ConditionDistanceCovarianceStats(distance_x, 
+                                                                                                             distance_y, 
+                                                                                                             kernel, 
+                                                                                                             stats_type);
+        conditionCovarianceStats.compute_stats();
+        result.push_back(conditionCovarianceStats.getCondition_distance_covariance_stats(), "statistic");
+      } else if (stats_type == 3 || stats_type == 4) {
+        ConditionBallCovarianceStats conditionCovarianceStats = ConditionBallCovarianceStats(distance_x, 
+                                                                                                 distance_y, 
+                                                                                                 kernel, 
+                                                                                                 stats_type);
+        conditionCovarianceStats.compute_stats();
+        result.push_back(conditionCovarianceStats.getCondition_ball_covariance_stats(), "statistic");
+      }
+
     }
   } catch (std::exception& e) {
     if (strcmp(e.what(), "User interrupt.") != 0) {

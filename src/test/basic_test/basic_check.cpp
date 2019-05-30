@@ -92,10 +92,10 @@ TEST(utility, rearrange_matrix) {
 }
 
 TEST(utility, compute_weight_delta_x_vector) {
-    std::vector<double > distance_vector = {3.0, 2.0, 4.0, 5.0, 1.0};
-    std::vector<double > weight = {1.0, 2.0, 3.0, 4.0, 5.0};
-    std::vector<double > true_delta_x = {8.0, 7.0, 11.0, 15.0, 5.0};
-    std::vector<double > delta_x = compute_weight_delta_x_vector(distance_vector, weight);
+    std::vector<double> distance_vector = {3.0, 2.0, 4.0, 5.0, 1.0};
+    std::vector<double> weight = {1.0, 2.0, 3.0, 4.0, 5.0};
+    std::vector<double> true_delta_x = {8.0, 7.0, 11.0, 15.0, 5.0};
+    std::vector<double> delta_x = compute_weight_delta_x_vector(distance_vector, weight);
     for (int i = 0; i < true_delta_x.size(); ++i) {
         EXPECT_EQ(true_delta_x[i], delta_x[i]);
     }
@@ -110,19 +110,54 @@ TEST(utility, compute_weight_delta_x_vector) {
 }
 
 TEST(utility, compute_weight_delta_xy_vector) {
-    std::vector<double > distance_x = {1.0, 2.0, 3.0, 4.0, 5.0};
-    std::vector<double > distance_y = {5.0, 4.0, 3.0, 2.0, 1.0};
-    std::vector<double > weight = {2.0, 1.0, 2.0, 1.0, 3.0};
-    std::vector<double > delta_y = compute_weight_delta_x_vector(distance_y, weight);
-    std::vector<double > delta_xy = compute_weight_delta_xy_vector(delta_y, distance_x, distance_y, weight);
+    std::vector<double> distance_x = {1.0, 2.0, 3.0, 4.0, 5.0};
+    std::vector<double> distance_y = {5.0, 4.0, 3.0, 2.0, 1.0};
+    std::vector<double> weight = {2.0, 1.0, 2.0, 1.0, 3.0};
+    std::vector<double> delta_y = compute_weight_delta_x_vector(distance_y, weight);
+    std::vector<double> delta_xy = compute_weight_delta_xy_vector(delta_y, distance_x, distance_y, weight);
 
-    std::vector<double > delta_xy_true(distance_x.size(), 0.0);
+    std::vector<double> delta_xy_true(distance_x.size(), 0.0);
     for (int j = 0; j < distance_x.size(); ++j) {
         for (int k = 0; k < distance_x.size(); ++k) {
             delta_xy_true[j] += distance_x[j] >= distance_x[k] && distance_y[j] >= distance_y[k] ? weight[k] : 0;
         }
     }
 
+    for (int i = 0; i < distance_x.size(); ++i) {
+        EXPECT_EQ(delta_xy_true[i], delta_xy[i]);
+    }
+}
+
+TEST(utility, compute_weight_delta_xy_vector_ties) {
+    std::vector<double> distance_x = {1.0, 3.0, 3.0, 4.0, 5.0};
+    std::vector<double> distance_y = {5.0, 4.0, 3.0, 2.0, 2.0};
+    std::vector<double> weight = {2.0, 1.0, 2.0, 1.0, 3.0};
+
+    std::vector<double> delta_y, delta_xy, delta_xy_true;
+    delta_y = compute_weight_delta_x_vector(distance_y, weight);
+    delta_xy = compute_weight_delta_xy_vector_ties(delta_y, distance_x, distance_y, weight);
+    delta_xy_true = compute_weight_delta_xy_vector_crude(distance_x, distance_y, weight);
+    for (int i = 0; i < distance_x.size(); ++i) {
+        EXPECT_EQ(delta_xy_true[i], delta_xy[i]);
+    }
+
+    distance_x[2] = 4.0;
+    delta_y = compute_weight_delta_x_vector(distance_y, weight);
+    delta_xy = compute_weight_delta_xy_vector_ties(delta_y, distance_x, distance_y, weight);
+    delta_xy_true = compute_weight_delta_xy_vector_crude(distance_x, distance_y, weight);
+    for (int i = 0; i < distance_x.size(); ++i) {
+        EXPECT_EQ(delta_xy_true[i], delta_xy[i]);
+    }
+
+    std::vector<double> distance_x1 = {0, 0, 0, 0, 1, 1, 1, 1};
+    std::vector<double> distance_y1 = {0, 0, 1, 1, 0, 0, 1, 1};
+    std::vector<double> weight_1 = {1, 2, 3, 4, 5, 6, 7, 8};
+    delta_y.clear();
+    delta_xy.clear();
+    delta_xy_true.clear();
+    delta_y = compute_weight_delta_x_vector(distance_y1, weight_1);
+    delta_xy = compute_weight_delta_xy_vector_ties(delta_y, distance_x1, distance_y1, weight_1);
+    delta_xy_true = compute_weight_delta_xy_vector_crude(distance_x1, distance_y1, weight_1);
     for (int i = 0; i < distance_x.size(); ++i) {
         EXPECT_EQ(delta_xy_true[i], delta_xy[i]);
     }
@@ -169,13 +204,13 @@ TEST(utility, generate_sequence) {
 
 TEST(utility, quartile_value) {
     std::vector<int> vector;
-    for (int i=1; i<=10; i++) vector.push_back(i);
+    for (int i = 1; i <= 10; i++) vector.push_back(i);
     int q_value = quartile_value(vector, 0.6);
     EXPECT_EQ(q_value, 6);
     vector.clear();
 
     std::vector<double> vector1;
-    for (int i=1; i<=10; i++) vector1.push_back(static_cast<double>(i));
+    for (int i = 1; i <= 10; i++) vector1.push_back(static_cast<double>(i));
     double q_value1 = quartile_value(vector1, 0.4);
     EXPECT_EQ(q_value1, 4.0);
     vector.clear();
@@ -216,18 +251,37 @@ TEST(utility, weight_sum_count_smaller_number_after_self) {
 }
 
 TEST(utility, quick_sort_dataset) {
-    std::vector<double> data = {0.2, 0.2, 2.0, 3.0, 0.2};
-    std::vector<double> weight = {1.0, 2.0, 3.0, 4.0, 5.0};
-    std::vector<int> index = {1, 2, 3, 4, 5};
+    std::vector<double> data = {0.2, 0.4, 0.2, 2.0, 3.0, 0.2, 0.6};
+    std::vector<double> weight = {1.0, 2.0, 2.0, 3.0, 4.0, 5.0, 0.2};
+    std::vector<int> index = {1, 2, 3, 4, 5, 6, 7};
     std::vector<std::tuple<int, double, double >> dataset;
     for (int i = 0; i < index.size(); ++i) {
         dataset.emplace_back(make_tuple(index[i], data[i], weight[i]));
     }
-    quick_sort_dataset(dataset, 0, (int) (dataset.size() - 1));
+    quick_sort_dataset(dataset);
 
-    std::vector<double > true_value = {0.2, 0.2, 0.2, 2.0, 3.0};
+    std::vector<double> true_value = {0.2, 0.2, 0.2, 0.4, 0.6, 2.0, 3.0};
     for (int j = 0; j < dataset.size(); ++j) {
         EXPECT_EQ(true_value[j], std::get<1>(dataset[j]));
+    }
+}
+
+TEST(utility, quick_sort_dataset2) {
+    std::vector<double> v1 = {0.2, 0.2, 0.2, 2.0, 3.0, 0.6};
+    std::vector<double> v2 = {0.2, 0.4, 0.3, 2.0, 3.0, 0.2};
+    std::vector<double> weight = {1.0, 2.0, 2.0, 3.0, 4.0, 5.0};
+    std::vector<int> index = {1, 2, 3, 4, 5, 6};
+    std::vector<std::tuple<int, double, double, double>> dataset;
+    for (int i = 0; i < index.size(); ++i) {
+        dataset.emplace_back(make_tuple(index[i], v1[i], v2[i], weight[i]));
+    }
+    quick_sort_dataset2(dataset);
+
+    std::vector<double> true_v1 = {0.2, 0.2, 0.2, 0.6, 2.0, 3.0};
+    std::vector<double> true_v2 = {0.2, 0.3, 0.4, 0.2, 2.0, 3.0};
+    for (int j = 0; j < dataset.size(); ++j) {
+        EXPECT_EQ(true_v1[j], std::get<1>(dataset[j]));
+        EXPECT_EQ(true_v2[j], std::get<2>(dataset[j]));
     }
 }
 
@@ -243,7 +297,6 @@ TEST(kde, compute_gaussian_kernel_estimate) {
     conditional_variable[3][1] = 0.5757814;
     conditional_variable[4][0] = 0.3295078;
     conditional_variable[4][1] = -0.3053884;
-
 
     std::vector<std::vector<double>> bandwidth(2, std::vector<double>(2));
     bandwidth[0][0] = 1.0;

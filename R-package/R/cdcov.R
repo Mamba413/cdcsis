@@ -33,18 +33,31 @@
 #' z <- rnorm(25)
 #' cdcov(x, y, z)
 #' 
-cdcov <- function(x, y, z, 
-                  width = ifelse(dim(as.matrix(z))[2] == 1, 
-                                 stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)), 
+cdcov <- function(x, y, z, kernel.type = c("rectangle", "gauss"), k = 6, width,
                   index = 1, distance = FALSE) 
 {
-  width <- as.double(width)
-  check_width_arguments(width)
-  
-  check_index_arguments(index)
+  conditional.distance <- FALSE
+  if (length(kernel.type) > 1) {
+    kernel.type <- "gauss"
+  } else {
+    kernel.type <- match.arg(kernel.type)
+  }
   
   z <- as.matrix(z)
   check_xyz_arguments(z)
+  if (missing(width)) {
+    if (dim(z)[2] == 1) {
+      width <- stats::bw.nrd0(as.vector(z))
+    } else if (dim(z)[2] <= 3) {
+      width <- diag(ks::Hpi.diag(z))
+    } else {
+      width <- apply(z, 2, stats::bw.nrd)
+    }
+  }
+  check_width_arguments(width)
+  width <- as.double(width)
+  
+  check_index_arguments(index)
   
   x <- compute_distance_matrix(x, distance, index)
   check_xyz_arguments(x)
@@ -55,7 +68,9 @@ cdcov <- function(x, y, z,
   check_sample_size(x, z)
   check_sample_size(y, z)
   
-  res <- cdcsisCpp(stats_method = 3, x, c(0), y, z, width, index, 0, 0, 0, 1)
+  kernel.type <- ifelse(kernel.type == "gauss", 1, 3)
+  res <- cdcsisCpp(stats_method = 3, x, c(0), y, z, width, index, 0, 0, 0, 1, 
+                   as.integer(kernel.type), as.integer(conditional.distance))
   res <- res[["statistic"]]
   names(res) <- "cdcov"
   res
@@ -75,18 +90,30 @@ cdcov <- function(x, y, z,
 #' y <- rnorm(num)
 #' z <- rnorm(num)
 #' cdcor(x, y, z)
-cdcor <- function(x, y, z, 
-                  width = ifelse(dim(as.matrix(z))[2] == 1, 
-                                 stats::bw.nrd0(as.vector(z)), apply(as.matrix(z), 2, bw.nrd0)), 
+cdcor <- function(x, y, z, kernel.type = c("rectangle", "gauss"), k = 6, width, 
                   index = 1, distance = FALSE) {
-  
-  width <- as.double(width)
-  check_width_arguments(width)
-  
-  check_index_arguments(index)
+  conditional.distance <- FALSE
+  if (length(kernel.type) > 1) {
+    kernel.type <- "gauss"
+  } else {
+    kernel.type <- match.arg(kernel.type)
+  }
   
   z <- as.matrix(z)
   check_xyz_arguments(z)
+  if (missing(width)) {
+    if (dim(z)[2] == 1) {
+      width <- stats::bw.nrd0(as.vector(z))
+    } else if (dim(z)[2] <= 3) {
+      width <- diag(ks::Hpi.diag(z))
+    } else {
+      width <- apply(z, 2, stats::bw.nrd)
+    }
+  }
+  check_width_arguments(width)
+  width <- as.double(width)
+  
+  check_index_arguments(index)
   
   x <- compute_distance_matrix(x, distance, index)
   check_xyz_arguments(x)
@@ -97,7 +124,9 @@ cdcor <- function(x, y, z,
   check_sample_size(x, z)
   check_sample_size(y, z)
   
-  res <- cdcsisCpp(stats_method = 3, x, c(0), y, z, width, index, 0, 0, 0, 2)
+  kernel.type <- ifelse(kernel.type == "gauss", 1, 3)
+  res <- cdcsisCpp(stats_method = 3, x, c(0), y, z, width, index, 0, 0, 0, 2,
+                   as.integer(kernel.type), as.integer(conditional.distance))
   res <- res[["statistic"]]
   names(res) <- "cdcor"
   res
@@ -111,12 +140,15 @@ cdcor <- function(x, y, z,
 #' @param x a numeric vector, matrix, or \code{dist} object
 #' @param y a numeric vector, matrix, or \code{dist} object
 #' @param z \code{z} is a numeric vector or matrix. It is the variable being conditioned.
-#' @param num.bootstrap the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}
+#' @param num.bootstrap the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}.
+#' @param kernel.type the kernel to be used. This must be one of "gauss", "rectangle". Any unambiguous substring can be given.
+#' Default: \code{kernel.type = "gauss"}.
 #' @param width a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
 #' gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, 
 #' \code{ks::Hpi.diag} when conditional variable with at most trivariate, and \code{stats::bw.nrd} on the other cases.
+#' @param k a user-specified positive integer value for computing rectangle kernel bandwidth.
 #' @param index exponent on Euclidean distance, in \eqn{(0,2]}
-#' @param distance if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}
+#' @param distance if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}.
 #' @param seed the random seed
 #' @param num.threads number of threads. Default \code{num.threads = 1}.
 #'
@@ -174,9 +206,15 @@ cdcor <- function(x, y, z,
 #' x <- dist(x)
 #' y <- dist(y)
 #' cdcov.test(x, y, z, seed = 2, distance = TRUE)
-cdcov.test <- function(x, y, z, width, num.bootstrap = 99, 
-                       index = 1, distance = FALSE, seed = 1, num.threads = 1) {
-  
+cdcov.test <- function(x, y, z, num.bootstrap = 99, 
+                       kernel.type = c("rectangle", "gauss"), k = 6, width,
+                       distance = FALSE, index = 1, seed = 1, num.threads = 1) {
+  conditional.distance <- FALSE
+  if (length(kernel.type) > 1) {
+    kernel.type <- "gauss"
+  } else {
+    kernel.type <- match.arg(kernel.type)
+  }
   data_name <- paste(deparse(substitute(x)), "and", deparse(substitute(y)), "and", deparse(substitute(z)))
   
   z <- as.matrix(z)
@@ -202,7 +240,9 @@ cdcov.test <- function(x, y, z, width, num.bootstrap = 99,
   check_sample_size(x, z)
   check_sample_size(y, z)
   
-  res <- cdcsisCpp(stats_method = 1, x, c(0), y, z, width, index, num.threads, num.bootstrap, seed, 1)
+  kernel.type <- ifelse(kernel.type == "gauss", 1, 3)
+  res <- cdcsisCpp(stats_method = 1, x, c(0), y, z, width, index, num.threads, num.bootstrap, seed, 1, 
+                   kernel.type, as.integer(conditional.distance))
   
   res <- wrap_to_htest(res, num.bootstrap, nrow(z), data_name)
   names(res[["statistic"]]) <- "cdcov"
