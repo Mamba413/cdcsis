@@ -5,7 +5,7 @@
 \title{Conditional Ball Covariance Test}
 \usage{
 cbcov.test(x, y, z, num.bootstrap = 99, kernel.type = c("rectangle",
-  "gauss"), k = 6, width, index = 1, distance = FALSE, seed = 1,
+  "gauss"), k, width, index = 1, distance = FALSE, seed = 1,
   num.threads = 1)
 }
 \arguments{

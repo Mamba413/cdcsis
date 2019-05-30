@@ -309,7 +309,7 @@ cdcov.test <- function(x, y, z, num.bootstrap = 99,
 #' y <- dist(y)
 #' cbcov.test(x, y, z, seed = 1, distance = TRUE, k = 10)
 cbcov.test <- function(x, y, z, num.bootstrap = 99, 
-                       kernel.type = c("rectangle", "gauss"), k = 6, width,
+                       kernel.type = c("rectangle", "gauss"), k, width,
                        index = 1, distance = FALSE, seed = 1, num.threads = 1) {
   conditional.distance <- FALSE
   if (length(kernel.type) > 1) {
@@ -339,6 +339,10 @@ cbcov.test <- function(x, y, z, num.bootstrap = 99,
         }
       }
     } else {
+      if (missing(k)) {
+        k <- exp(1 + dim(z)[2] / 4 + log(dim(z)[1]) / 3)
+        k <- ceiling(k)
+      }
       width <- as.matrix(dist(z))
       width <- t(apply(width, 1, sort))
       width <- mean(width[, k]) / sqrt(dim(z)[2])
