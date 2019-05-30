@@ -73,6 +73,3 @@ Wang, X., Pan, W., Hu, W., Tian, Y. and Zhang, H., 2015. Conditional distance co
 \author{
 Canhong Wen, Wenliang Pan, and Xueqin Wang
 }
-\keyword{conditional}
-\keyword{covariance}
-\keyword{distance}

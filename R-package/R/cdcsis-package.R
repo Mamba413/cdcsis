@@ -10,5 +10,4 @@
 #' Maintainer: Jin Zhu <zhuj37@@mail2.sysu.edu.cn>
 #' @references Wang, X., Pan, W., Hu, W., Tian, Y. and Zhang, H., 2015. Conditional distance correlation. Journal of the American Statistical Association, 110(512), pp.1726-1734.
 #' @references Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317.
-#' @keywords SIS, conditional distance correlation, confounder
 NULL

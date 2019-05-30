@@ -13,7 +13,6 @@
 #' @author Canhong Wen, Wenliang Pan, Mian Huang, and Xueqin Wang
 #' @seealso \code{\link{cdcor}}
 #' @references Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317.
-#' @keywords conditional distance correlation, sure independence screening, ultrahigh dimensional
 #' @export
 #' @examples
 #' library(cdcsis)

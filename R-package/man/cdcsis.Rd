@@ -71,11 +71,3 @@ Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adju
 \author{
 Canhong Wen, Wenliang Pan, Mian Huang, and Xueqin Wang
 }
-\keyword{conditional}
-\keyword{correlation,}
-\keyword{dimensional}
-\keyword{distance}
-\keyword{independence}
-\keyword{screening,}
-\keyword{sure}
-\keyword{ultrahigh}
