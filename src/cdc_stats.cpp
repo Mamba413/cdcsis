@@ -39,7 +39,7 @@ std::vector<double> ConditionDistanceCovarianceStats::compute_condition_distance
         }
 //        condition_distance_covariance[i] /= kernel_sum_square;
         condition_distance_covariance[i] *= kernel_sum_square;
-        condition_distance_covariance[i] /= pow(num, 4);
+        condition_distance_covariance[i] /= pow((double) num, 4.0);
         condition_distance_covariance[i] *= 12;
     }
 
@@ -205,11 +205,11 @@ std::vector<double> ConditionBallCovarianceStats::compute_condition_ball_covaria
                 condition_ball_covariance[l] += weight[i] * weight[j] *
                                                 pow(weight_delta_xy_matrix[i][j] -
                                                     weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] /
-                                                    kernel_sum, 2);
+                                                    kernel_sum, 2.0);
             }
         }
-        condition_ball_covariance[l] *= pow(kernel_sum, 2);
-        condition_ball_covariance[l] /= pow(num, 6);
+        condition_ball_covariance[l] *= pow(kernel_sum, 2.0);
+        condition_ball_covariance[l] /= pow((double) num, 6.0);
 
         valid_index.clear();
         weight.clear();
@@ -239,11 +239,11 @@ double ConditionBallCovarianceStats::compute_condition_ball_covariance_fix_z(
             condition_ball_covariance_value += weight[i] * weight[j] *
                                                pow(weight_delta_xy_matrix[i][j] -
                                                    weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] /
-                                                   kernel_sum, 2);
+                                                   kernel_sum, 2.0);
         }
     }
-    condition_ball_covariance_value *= pow(kernel_sum, 2);
-    condition_ball_covariance_value /= pow(num, 6);
+    condition_ball_covariance_value *= pow(kernel_sum, 2.0);
+    condition_ball_covariance_value /= pow((double) num, 6.0);
     return condition_ball_covariance_value;
 }
 
@@ -260,10 +260,10 @@ double ConditionBallCovarianceStats::compute_condition_ball_covariance_fix_z(
             condition_ball_covariance_value += weight[i] * weight[j] *
                                                pow(weight_delta_xy_matrix[i][j] -
                                                    weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] /
-                                                   kernel_sum, 2);
+                                                   kernel_sum, 2.0);
         }
     }
-    condition_ball_covariance_value *= pow(kernel_sum, 2);
+    condition_ball_covariance_value *= pow(kernel_sum, 2.0);
     return condition_ball_covariance_value;
 }
 

@@ -812,7 +812,7 @@ double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> 
             }
         }
         condition_ball_covariance[l] *= pow(kernel_rowsum[l], 6);
-        condition_ball_covariance[l] /= pow(num, 6);
+        condition_ball_covariance[l] /= pow((double) num, 6.0);
     }
     condition_ball_covariance_stats = vector_mean(condition_ball_covariance);
 
@@ -855,7 +855,7 @@ double compute_condition_distance_covariance_crude(std::vector<std::vector<doubl
                 }
             }
         }
-        condition_distance_covariance[u] /= pow(num, 4);
+        condition_distance_covariance[u] /= pow((double) num, 4.0);
     }
     double condition_distance_covariance_stat = vector_mean(condition_distance_covariance);
     return condition_distance_covariance_stat;
