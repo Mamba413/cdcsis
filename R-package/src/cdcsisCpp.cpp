@@ -59,14 +59,14 @@ Rcpp::List cdcsisCpp(unsigned int stats_method,
       result.push_back(cDCStatsticsMethod.getCdc_statistic(), "statistic");
     } else if (statsMethod == STATISTICS_VALUE) {
       std::vector<std::vector<double> > distance_x = rcpp_distance_matrix_to_vector2d<double>(x);
-      if (stats_type == 1) {
+      if (stats_type == 1 || stats_type == 2) {
         ConditionDistanceCovarianceStats conditionCovarianceStats = ConditionDistanceCovarianceStats(distance_x, 
                                                                                                              distance_y, 
                                                                                                              kernel, 
                                                                                                              stats_type);
         conditionCovarianceStats.compute_stats();
         result.push_back(conditionCovarianceStats.getCondition_distance_covariance_stats(), "statistic");
-      } else if (stats_type == 3) {
+      } else if (stats_type == 3 || stats_type == 4) {
         ConditionBallCovarianceStats conditionCovarianceStats = ConditionBallCovarianceStats(distance_x, 
                                                                                                  distance_y, 
                                                                                                  kernel, 
