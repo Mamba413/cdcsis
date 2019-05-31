@@ -88,6 +88,9 @@ x <- dist(x)
 y <- dist(y)
 cdcov.test(x, y, z, seed = 2, distance = TRUE)
 }
+\references{
+Wang, X., Pan, W., Hu, W., Tian, Y. and Zhang, H., 2015. Conditional distance correlation. Journal of the American Statistical Association, 110(512), pp.1726-1734.
+}
 \seealso{
 \code{\link{cdcov}}
 }

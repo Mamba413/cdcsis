@@ -12,7 +12,7 @@
 #' \item{ cdcor }{ the conditional distance correlation for each univariate/multivariate variable in \code{x}} 
 #' @author Canhong Wen, Wenliang Pan, Mian Huang, and Xueqin Wang
 #' @seealso \code{\link{cdcor}}
-#' @references Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317.
+#' @references Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317. URL http://www3.stat.sinica.edu.tw/statistica/J28N1/28-1.html
 #' @export
 #' @examples
 #' library(cdcsis)

@@ -12,7 +12,7 @@ and conducts conditional distance covariance test for conditional independence a
 \references{
 Wang, X., Pan, W., Hu, W., Tian, Y. and Zhang, H., 2015. Conditional distance correlation. Journal of the American Statistical Association, 110(512), pp.1726-1734.
 
-Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317.
+Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317. URL http://www3.stat.sinica.edu.tw/statistica/J28N1/28-1.html
 }
 \author{
 Wenhao Hu, Mian Huang, Wenliang Pan, Xueqin Wang, Canhong Wen, Yuan Tian, Heping Zhang, Jin Zhu

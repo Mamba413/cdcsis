@@ -1,7 +1,13 @@
 ## Maintainer comments     
-The following NOTE occurs when checking:    
+Response to Uwe Ligges:       
+* We have fixed the **keyword** and **concept** entries errors which appeared in the last submission.       
+* We have cross checked the doi:10.5705/ss.202014.0117 in DESCRIPTION file. And it is right. For the DOI, doi.org redierects to
+http://www3.stat.sinica.edu.tw/statistica/J28N1/J28N114/J27N114.html. However, the website can not be visited directly. Alternative, we have to first visit http://www3.stat.sinica.edu.tw/statistica/J28N1/28-1.html, then jump to 
+http://www3.stat.sinica.edu.tw/statistica/J28N1/J28N114/J28N114.html.
+
+The following NOTE occurs when checking:      
 * *(possibly) invalid doi 10.5705/ss.202014.0117.*    
-Actually, this doi is definitely right. R users can search it through google.com or search.crossref.org.  
+Actually, this doi is definitely right. R users can search it through google.com or search.crossref.org.    
 
 ## Test environments
 * Local PC, Windows, R 3.6.0    

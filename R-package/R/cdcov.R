@@ -163,6 +163,8 @@ cdcor <- function(x, y, z, kernel.type = c("rectangle", "gauss"), k = 6, width,
 #' @rdname cdcov.test
 #' @seealso \code{\link{cdcov}}
 #' 
+#' @references Wang, X., Pan, W., Hu, W., Tian, Y. and Zhang, H., 2015. Conditional distance correlation. Journal of the American Statistical Association, 110(512), pp.1726-1734.
+#' 
 #' @export
 #' 
 #' @examples
