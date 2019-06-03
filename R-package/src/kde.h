@@ -39,7 +39,7 @@ public:
                             bool distance = false) {
         if (bandwidth.size() == 1) {
             this->bandwidth_value = bandwidth[0];
-        } else if (bandwidth.size() == pow(condition_variable[0].size(), 2)) {
+        } else if (bandwidth.size() == pow((double) condition_variable[0].size(), 2.0)) {
 
             uint d = (uint) condition_variable[0].size();
             std::vector<std::vector<double>> bandwidth_matrix(d);

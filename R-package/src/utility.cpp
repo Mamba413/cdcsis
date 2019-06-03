@@ -222,7 +222,7 @@ double vector_sd(std::vector<double> &vector1) {
     double vec_mean = vector_mean(vector1);
     double vec_sd = 0.0;
     for (double vector1_value:vector1) {
-        vec_sd += pow(vector1_value - vec_mean, 2);
+        vec_sd += pow(vector1_value - vec_mean, 2.0);
     }
     vec_sd = vec_sd / (vector1.size() - 1);
     vec_sd = sqrt(vec_sd);
@@ -306,7 +306,7 @@ std::vector<std::vector<double>> Euclidean_distance(std::vector<double> &matrix,
 double square_Euclidean_distance(std::vector<double> &vector1, std::vector<double> &vector2) {
     double distance_value = 0.0;
     for (uint i = 0; i < vector1.size(); ++i) {
-        distance_value += pow(vector1[i] - vector2[i], 2);
+        distance_value += pow(vector1[i] - vector2[i], 2.0);
     }
     return distance_value;
 }
@@ -315,7 +315,7 @@ double weight_square_Euclidean_distance(std::vector<double> &vector1, std::vecto
                                         std::vector<double> &weight) {
     double distance_value = 0.0;
     for (uint i = 0; i < vector1.size(); ++i) {
-        distance_value += weight[i] * pow(vector1[i] - vector2[i], 2);
+        distance_value += weight[i] * pow(vector1[i] - vector2[i], 2.0);
     }
     return distance_value;
 }
@@ -806,12 +806,12 @@ double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> 
         for (int i = 0; i < num; ++i) {
             for (int j = 0; j < num; ++j) {
                 condition_ball_covariance[l] +=
-                        (kernel_density_estimation[i][l] * kernel_density_estimation[j][l] / pow(kernel_rowsum[l], 2)) *
+                        (kernel_density_estimation[i][l] * kernel_density_estimation[j][l] / pow(kernel_rowsum[l], 2.0)) *
                         (pow(weight_delta_xy_matrix[i][j] / kernel_rowsum[l] -
-                             weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] / pow(kernel_rowsum[l], 2), 2));
+                             weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] / pow(kernel_rowsum[l], 2.0), 2.0));
             }
         }
-        condition_ball_covariance[l] *= pow(kernel_rowsum[l], 6);
+        condition_ball_covariance[l] *= pow(kernel_rowsum[l], 6.0);
         condition_ball_covariance[l] /= pow((double) num, 6.0);
     }
     condition_ball_covariance_stats = vector_mean(condition_ball_covariance);
