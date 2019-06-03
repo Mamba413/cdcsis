@@ -770,55 +770,6 @@ void quick_sort_dataset2(std::vector<std::tuple<int, double, double, double>> &d
     std::sort(dataset.begin(), dataset.end(), quick_sort_dataset2_compare);
 }
 
-double compute_condition_ball_covariance_crude(std::vector<std::vector<double>> &distance_x,
-                                               std::vector<std::vector<double>> &distance_y,
-                                               std::vector<std::vector<double>> &kernel_density_estimation) {
-    int num = (int) kernel_density_estimation.size();
-    std::vector<double> condition_ball_covariance(kernel_density_estimation.size(), 0.0);
-    double condition_ball_covariance_stats;
-
-    std::vector<double> kernel_rowsum(kernel_density_estimation.size(), 0.0);
-    for (int m = 0; m < num; ++m) {
-        kernel_rowsum[m] += vector_sum(kernel_density_estimation[m]);
-    }
-    std::vector<std::vector<double >> weight_delta_x_matrix(kernel_rowsum.size(),
-                                                            std::vector<double>(kernel_rowsum.size()));
-    std::vector<std::vector<double >> weight_delta_y_matrix(kernel_rowsum.size(),
-                                                            std::vector<double>(kernel_rowsum.size()));
-    std::vector<std::vector<double >> weight_delta_xy_matrix(kernel_rowsum.size(),
-                                                             std::vector<double>(kernel_rowsum.size()));
-    double delta_ijl_xy, delta_ijl_x, delta_ijl_y;
-    for (int l = 0; l < num; ++l) {
-        for (int i = 0; i < num; ++i) {
-            for (int j = 0; j < num; ++j) {
-                delta_ijl_xy = delta_ijl_x = delta_ijl_y = 0.0;
-                for (int k = 0; k < num; ++k) {
-                    delta_ijl_xy += distance_x[i][j] >= distance_x[i][k] && distance_y[i][j] >= distance_y[i][k]
-                                    ? kernel_density_estimation[k][l] : 0;
-                    delta_ijl_x += distance_x[i][j] >= distance_x[i][k] ? kernel_density_estimation[k][l] : 0;
-                    delta_ijl_y += distance_y[i][j] >= distance_y[i][k] ? kernel_density_estimation[k][l] : 0;
-                }
-                weight_delta_xy_matrix[i][j] = delta_ijl_xy;
-                weight_delta_x_matrix[i][j] = delta_ijl_x;
-                weight_delta_y_matrix[i][j] = delta_ijl_y;
-            }
-        }
-        for (int i = 0; i < num; ++i) {
-            for (int j = 0; j < num; ++j) {
-                condition_ball_covariance[l] +=
-                        (kernel_density_estimation[i][l] * kernel_density_estimation[j][l] / pow(kernel_rowsum[l], 2.0)) *
-                        (pow(weight_delta_xy_matrix[i][j] / kernel_rowsum[l] -
-                             weight_delta_x_matrix[i][j] * weight_delta_y_matrix[i][j] / pow(kernel_rowsum[l], 2.0), 2.0));
-            }
-        }
-        condition_ball_covariance[l] *= pow(kernel_rowsum[l], 6.0);
-        condition_ball_covariance[l] /= pow((double) num, 6.0);
-    }
-    condition_ball_covariance_stats = vector_mean(condition_ball_covariance);
-
-    return condition_ball_covariance_stats;
-}
-
 /**
  * V-type conditional distance covariance
  * @param distance_x : pairwise distance of variable x
