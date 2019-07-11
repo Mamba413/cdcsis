@@ -5,11 +5,9 @@
 \alias{cdcor}
 \title{Conditional Distance Covariance/Correlation Statistics}
 \usage{
-cdcov(x, y, z, kernel.type = c("rectangle", "gauss"), k = 6, width,
-  index = 1, distance = FALSE)
+cdcov(x, y, z, width, index = 1, distance = FALSE)
 
-cdcor(x, y, z, kernel.type = c("rectangle", "gauss"), k = 6, width,
-  index = 1, distance = FALSE)
+cdcor(x, y, z, width, index = 1, distance = FALSE)
 }
 \arguments{
 \item{x}{a numeric vector, matrix, or \code{dist} object}
@@ -17,11 +15,6 @@ cdcor(x, y, z, kernel.type = c("rectangle", "gauss"), k = 6, width,
 \item{y}{a numeric vector, matrix, or \code{dist} object}
 
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
-
-\item{kernel.type}{the kernel to be used. This must be one of "gauss", "rectangle". Any unambiguous substring can be given.
-Default: \code{kernel.type = "gauss"}.}
-
-\item{k}{a user-specified positive integer value for computing rectangle kernel bandwidth.}
 
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
 gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0}.}
@@ -31,9 +24,10 @@ gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0}.
 \item{distance}{if \code{distance = TRUE}, \code{x} and \code{y} will be considered as distance matrices. Default: \code{distance = FALSE}.}
 }
 \value{
-\item{\code{cdcov }}{ sample version of conditional distance covariance.}
+\item{\code{cdcov }}{ conditional distance covariance test statistic.}
 
-\item{\code{cdcor }}{ sample version of conditional distance correlation.}
+\item{\code{cdcor }}{ conditional distance correlation statistic.}
+\item{\code{cdc }}{ conditional distance covariance/correlation vector.}
 }
 \description{
 Computes conditional distance covariance and conditional distance correlation statistics, 
@@ -49,13 +43,12 @@ otherwise, these arguments are treated as multivariate data.
 \examples{
 library(cdcsis)
 
-############# Conditional Distance Correlation #############
+############# Conditional Distance Covariance #############
 set.seed(1)
 x <- rnorm(25)
 y <- rnorm(25)
 z <- rnorm(25)
 cdcov(x, y, z)
-
 ############# Conditional Distance Correlation #############
 num <- 25
 set.seed(1)

@@ -1,12 +1,12 @@
 Package: cdcsis
 Type: Package
 Title: Conditional Distance Correlation Based Feature Screening and Conditional Independence Inference
-Description: Conditional distance correlation <doi:10.1080/01621459.2014.993081> is a novel conditional dependence measurement of two multivariate random variables given a confounding variable. This package provides conditional distance correlation, performs the conditional distance correlation sure independence screening procedure for ultrahigh dimensional data <doi:10.5705/ss.202014.0117>, and conducts conditional distance covariance test for conditional independence assumption of two multivariate variable.
-Version: 2.0.2
-Date: 2019-5-30
+Description: Conditional distance correlation <doi:10.1080/01621459.2014.993081> is a novel conditional dependence measurement of two multivariate random variables given a confounding variable. This package provides conditional distance correlation, performs the conditional distance correlation sure independence screening procedure for ultrahigh dimensional data <http://www3.stat.sinica.edu.tw/statistica/J28N1/J28N114/J28N114.html>, and conducts conditional distance covariance test for conditional independence assumption of two multivariate variable.
+Version: 2.0.3
+Date: 2019-7-9
 Author: Wenhao Hu, Mian Huang, Wenliang Pan, Xueqin Wang, Canhong Wen, Yuan Tian, Heping Zhang, Jin Zhu
 Depends: R(>= 3.0.1)
-Imports: ks (>= 1.8.0), mvtnorm, Rcpp
+Imports: ks (>= 1.8.0), mvtnorm, utils, Rcpp
 Suggests: testthat
 Maintainer: Jin Zhu <zhuj37@mail2.sysu.edu.cn>
 License: GPL (>= 2)

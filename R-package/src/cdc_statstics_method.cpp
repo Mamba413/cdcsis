@@ -8,16 +8,16 @@
 
 #include <algorithm>
 
-const double &CDCStatsticsMethod::getP_value() const {
+const double &CDCStatisticsMethod::getP_value() const {
     return p_value;
 }
 
-const std::vector<double> &CDCStatsticsMethod::getCdc_statistic() const {
+const std::vector<double> &CDCStatisticsMethod::getCdc_statistic() const {
     return cdc_statistic;
 }
 
 
-void CDCStatsticsMethod::conduct_cdc_test(std::vector<std::vector<double>> &distance_x,
+void CDCStatisticsMethod::conduct_cdc_test(std::vector<std::vector<double>> &distance_x,
                                           std::vector<std::vector<double>> &distance_y,
                                           std::vector<std::vector<double>> &kernel, uint num_bootstrap, uint seed,
                                           uint num_threads) {
@@ -54,43 +54,7 @@ void CDCStatsticsMethod::conduct_cdc_test(std::vector<std::vector<double>> &dist
     }
 }
 
-void CDCStatsticsMethod::conduct_cbc_test(std::vector<std::vector<double>> &distance_x,
-                                          std::vector<std::vector<double>> &distance_y,
-                                          std::vector<std::vector<double>> &kernel, uint num_bootstrap, uint seed,
-                                          uint num_threads) {
-    ConditionBallCovarianceStats conditionBallCovarianceStats = ConditionBallCovarianceStats(distance_x,
-                                                                                             distance_y,
-                                                                                             kernel, 3);
-    conditionBallCovarianceStats.compute_stats();
-    this->cdc_statistic.push_back(conditionBallCovarianceStats.getCondition_ball_covariance_stats());
-
-    if (num_bootstrap != 0) {
-        // bootstrap sample index:
-        if (seed == 0) {
-            std::random_device random_device;
-            random_number_generator.seed(random_device());
-        } else {
-            random_number_generator.seed(seed);
-        }
-        std::vector<std::vector<uint>> random_sample_index = generate_random_sample_index(num_bootstrap, kernel,
-                                                                                          random_number_generator);
-
-        // bootstrap test:
-        std::vector<std::vector<double >> bootstrap_distance_x;
-        for (uint i = 0; i < num_bootstrap; ++i) {
-            bootstrap_distance_x = rearrange_matrix(distance_x, random_sample_index[i]);
-            conditionBallCovarianceStats.setDistance_x(bootstrap_distance_x);
-            conditionBallCovarianceStats.compute_stats();
-            this->permuted_cdc_statistic.push_back(
-                    conditionBallCovarianceStats.getCondition_ball_covariance_stats());
-        }
-
-        // compute p-value:
-        this->p_value = compute_p_value(this->permuted_cdc_statistic, this->cdc_statistic[0]);
-    }
-}
-
-void CDCStatsticsMethod::conduct_cdc_screening(std::vector<std::vector<double>> &x,
+void CDCStatisticsMethod::conduct_cdc_screening(std::vector<std::vector<double>> &x,
                                                std::vector<std::vector<double>> &distance_y,
                                                std::vector<std::vector<double>> &kernel, double index) {
     std::vector<std::vector<double>> distance_x;
@@ -105,7 +69,7 @@ void CDCStatsticsMethod::conduct_cdc_screening(std::vector<std::vector<double>> 
     }
 }
 
-void CDCStatsticsMethod::conduct_cdc_screening(std::vector<std::vector<double>> &x,
+void CDCStatisticsMethod::conduct_cdc_screening(std::vector<std::vector<double>> &x,
                                                std::vector<uint> &x_variable_index,
                                                std::vector<std::vector<double>> &distance_y,
                                                std::vector<std::vector<double>> &kernel, double index) {

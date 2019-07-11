@@ -110,8 +110,8 @@ TEST(cdc_statistics_method, conduct_cdc_screening) {
     std::vector<uint> variable_index = {1, 2};
 
     double abs_error = 0.000001;
-    CDCStatsticsMethod cdcStatsticsMethod = CDCStatsticsMethod();
-    cdcStatsticsMethod.conduct_cdc_screening(x_2d, variable_index, distance_y, kde, 1.0);
-    std::vector<double> result = cdcStatsticsMethod.getCdc_statistic();
+    CDCStatisticsMethod cdcStatisticsMethod = CDCStatisticsMethod();
+    cdcStatisticsMethod.conduct_cdc_screening(x_2d, variable_index, distance_y, kde, 1.0);
+    std::vector<double> result = cdcStatisticsMethod.getCdc_statistic();
     EXPECT_NEAR(0.1810813, result[1], abs_error);
 }

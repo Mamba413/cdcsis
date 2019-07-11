@@ -4,9 +4,8 @@
 \alias{cdcov.test}
 \title{Conditional Distance Covariance Independence Test}
 \usage{
-cdcov.test(x, y, z, num.bootstrap = 99, kernel.type = c("rectangle",
-  "gauss"), k = 6, width, distance = FALSE, index = 1, seed = 1,
-  num.threads = 1)
+cdcov.test(x, y, z, num.bootstrap = 99, width, distance = FALSE,
+  index = 1, seed = 1, num.threads = 1)
 }
 \arguments{
 \item{x}{a numeric vector, matrix, or \code{dist} object}
@@ -16,11 +15,6 @@ cdcov.test(x, y, z, num.bootstrap = 99, kernel.type = c("rectangle",
 \item{z}{\code{z} is a numeric vector or matrix. It is the variable being conditioned.}
 
 \item{num.bootstrap}{the number of local bootstrap procedure replications. Default: \code{num.bootstrap = 99}.}
-
-\item{kernel.type}{the kernel to be used. This must be one of "gauss", "rectangle". Any unambiguous substring can be given.
-Default: \code{kernel.type = "gauss"}.}
-
-\item{k}{a user-specified positive integer value for computing rectangle kernel bandwidth.}
 
 \item{width}{a user-specified positive value (univariate conditional variable) or vector (multivariate conditional variable) for 
 gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} function when conditional variable is univariate, 
@@ -48,6 +42,8 @@ gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} 
 Performs the nonparametric conditional distance covariance test for conditional independence assumption
 }
 \examples{
+\dontrun{
+
 library(cdcsis)
 set.seed(1)
 num <- 50
@@ -87,6 +83,7 @@ cdcov.test(x, y, z, seed = 2)
 x <- dist(x)
 y <- dist(y)
 cdcov.test(x, y, z, seed = 2, distance = TRUE)
+}
 }
 \references{
 Wang, X., Pan, W., Hu, W., Tian, Y. and Zhang, H., 2015. Conditional distance correlation. Journal of the American Statistical Association, 110(512), pp.1726-1734.

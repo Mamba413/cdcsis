@@ -798,7 +798,8 @@ double compute_condition_distance_covariance_crude(std::vector<std::vector<doubl
                         cross_dy3 = distance_y[i][l] + distance_y[k][j] - distance_y[i][k] - distance_y[j][l];
                         d_ijkl = cross_dx1 * cross_dy1 + cross_dx2 * cross_dy2 + cross_dx3 * cross_dy3;
 
-                        condition_distance_covariance[u] += d_ijkl * kernel_density_estimation[i][u] *
+                        condition_distance_covariance[u] += d_ijkl *
+                                                            kernel_density_estimation[i][u] *
                                                             kernel_density_estimation[j][u] *
                                                             kernel_density_estimation[k][u] *
                                                             kernel_density_estimation[l][u];
@@ -806,7 +807,7 @@ double compute_condition_distance_covariance_crude(std::vector<std::vector<doubl
                 }
             }
         }
-        condition_distance_covariance[u] /= pow((double) num, 4.0);
+        condition_distance_covariance[u] /= (num * num * num * num);
     }
     double condition_distance_covariance_stat = vector_mean(condition_distance_covariance);
     return condition_distance_covariance_stat;

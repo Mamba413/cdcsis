@@ -1,3 +1,7 @@
+# cdcsis 2.0.3
+* Bug fix
+* Output conditional distance covariance/correlation vector 
+
 # cdcsis 2.0.2
 * Bug fix
 

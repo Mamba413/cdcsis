@@ -33,14 +33,12 @@ std::vector<double> ConditionDistanceCovarianceStats::compute_condition_distance
 
         for (uint k = 0; k < num; k++) {
             for (uint j = 0; j < num; j++) {
-                condition_distance_covariance[i] += anova_x[k][j] * anova_y[k][j] * kernel_density_estimation[i][k] *
+                condition_distance_covariance[i] += anova_x[k][j] * anova_y[k][j] *
+                                                    kernel_density_estimation[i][k] *
                                                     kernel_density_estimation[i][j];
             }
         }
-//        condition_distance_covariance[i] /= kernel_sum_square;
-        condition_distance_covariance[i] *= kernel_sum_square;
-        condition_distance_covariance[i] /= pow((double) num, 4.0);
-        condition_distance_covariance[i] *= 12;
+        condition_distance_covariance[i] /= kernel_sum_square;
     }
 
     return condition_distance_covariance;
@@ -64,19 +62,27 @@ std::vector<double> ConditionDistanceCovarianceStats::compute_condition_distance
 
         for (uint k = 0; k < num; k++) {
             for (uint j = 0; j < num; j++) {
-                condition_distance_covariance_xy[i] += anova_x[k][j] * anova_y[k][j] * kernel_density_estimation[i][k] *
+                condition_distance_covariance_xy[i] += anova_x[k][j] * anova_y[k][j] *
+                                                       kernel_density_estimation[i][k] *
                                                        kernel_density_estimation[i][j];
-                condition_distance_covariance_xx[i] += anova_x[k][j] * anova_x[k][j] * kernel_density_estimation[i][k] *
+                condition_distance_covariance_xx[i] += anova_x[k][j] * anova_x[k][j] *
+                                                       kernel_density_estimation[i][k] *
                                                        kernel_density_estimation[i][j];
-                condition_distance_covariance_yy[i] += anova_y[k][j] * anova_y[k][j] * kernel_density_estimation[i][k] *
+                condition_distance_covariance_yy[i] += anova_y[k][j] * anova_y[k][j] *
+                                                       kernel_density_estimation[i][k] *
                                                        kernel_density_estimation[i][j];
             }
         }
     }
 
+    double dcor_denominator;
     for (uint i = 0; i < num; i++) {
-        condition_distance_covariance_xy[i] /= sqrt(
-                condition_distance_covariance_xx[i] * condition_distance_covariance_yy[i]);
+        dcor_denominator = condition_distance_covariance_xx[i] * condition_distance_covariance_yy[i];
+        if (dcor_denominator > 0.0) {
+            condition_distance_covariance_xy[i] /= sqrt(dcor_denominator);
+        } else {
+            condition_distance_covariance_xy[i] = 0.0;
+        }
     }
 
     return condition_distance_covariance_xy;

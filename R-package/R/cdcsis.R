@@ -12,9 +12,11 @@
 #' \item{ cdcor }{ the conditional distance correlation for each univariate/multivariate variable in \code{x}} 
 #' @author Canhong Wen, Wenliang Pan, Mian Huang, and Xueqin Wang
 #' @seealso \code{\link{cdcor}}
-#' @references Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317. URL http://www3.stat.sinica.edu.tw/statistica/J28N1/28-1.html
+#' @references Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317. URL http://www3.stat.sinica.edu.tw/statistica/J28N1/J28N114/J28N114.html
 #' @export
 #' @examples
+#' \dontrun{
+#' 
 #' library(cdcsis)
 #' 
 #' ########## univariate explanative variables ##########
@@ -35,10 +37,21 @@
 #' res <- cdcsis(x, y, z)
 #' head(res[["ix"]], n = 10)
 #' 
-cdcsis <- function(x, y, z = NULL, 
-                   kernel.type = c("rectangle", "gauss"), k = 6, width,
+#' ########## multivariate response variables ##########
+#' num <- 100
+#' p <- 150
+#' x <- matrix(rnorm(num * p), nrow = num)
+#' z <- rnorm(num)
+#' y1 <- 3 * x[, 1] + 5 * z * x[, 4] + rnorm(num)
+#' y2 <- 3 * x[, 2] + 5 * x[, 3] + 2 * z + rnorm(num)
+#' y <- cbind(y1, y2)
+#' res <- cdcsis(x, y, z)
+#' head(res[["ix"]], n = 10)
+#' }
+cdcsis <- function(x, y, z = NULL, width,
                    threshold = nrow(y), distance = FALSE, index = 1, num.threads = 1) 
 {
+  kernel.type <- c("rectangle", "gauss")
   conditional.distance <- FALSE
   if (length(kernel.type) > 1) {
     kernel.type <- "gauss"

@@ -8,5 +8,5 @@ test_that("Test CDC statistics (Correlation) value", {
   z <- rnorm(25)
   target_value <- 0.1810813
   names(target_value) <- "cdcor"
-  expect_equal(cdcor(x, y, z, width = 1.0), target_value)
+  expect_equal(cdcor(x, y, z, width = 1.0)[["statistic"]], target_value)
 })

@@ -55,7 +55,15 @@ private:
         condition_distance_covariance = compute_condition_distance_covariance(distance_x, distance_y,
                                                                               kernel_density_estimation);
         this->condition_distance_covariance = condition_distance_covariance;
-        return vector_mean(condition_distance_covariance);
+        uint num = condition_distance_covariance.size();
+        double kernel_sum_square, condition_distance_covariance_stats = 0.0;
+        for (uint i = 0; i < num; ++i) {
+            kernel_sum_square = vector_sum(kernel_density_estimation[i]);
+            condition_distance_covariance_stats += 12 * pow(kernel_sum_square / num, 4.0) *
+                                                   condition_distance_covariance[i];
+        }
+        condition_distance_covariance_stats /= num;
+        return condition_distance_covariance_stats;
     }
 
     double compute_condition_distance_correlation_stats(std::vector<std::vector<double>> &distance_x,
@@ -64,6 +72,7 @@ private:
         std::vector<double> condition_distance_correlation(distance_x.size());
         condition_distance_correlation = compute_condition_distance_correlation(distance_x, distance_y,
                                                                                 kernel_density_estimation);
+        this->condition_distance_covariance = condition_distance_correlation;
         return vector_mean(condition_distance_correlation);
     }
 };
@@ -83,49 +92,8 @@ public:
         this->statsType = StatsType(stats_type);
     };
 
-    void compute_stats();
-
-    double getCondition_ball_covariance_stats() const;
-
-    const std::vector<double> &getCondition_ball_covariance() const;
-
-    void setDistance_x(const std::vector<std::vector<double>> &distance_x);
-
-    void setKernel_density_estimation(const std::vector<std::vector<double>> &kernel_density_estimation);
-
 private:
     friend class CDCStatsticsMethod;
-
-    std::vector<double> compute_condition_ball_covariance(std::vector<std::vector<double>> &distance_x,
-                                                          std::vector<std::vector<double>> &distance_y,
-                                                          std::vector<std::vector<double>> &kernel_density_estimation);
-
-    std::vector<double> compute_condition_ball_correlation(std::vector<std::vector<double>> &distance_x,
-                                                           std::vector<std::vector<double>> &distance_y,
-                                                           std::vector<std::vector<double>> &kernel_density_estimation);
-
-    double compute_condition_ball_covariance_stats(std::vector<std::vector<double>> &distance_x,
-                                                   std::vector<std::vector<double>> &distance_y,
-                                                   std::vector<std::vector<double>> &kernel_density_estimation) {
-        std::vector<double> condition_ball_covariance(distance_x.size());
-        condition_ball_covariance = compute_condition_ball_covariance(distance_x, distance_y,
-                                                                      kernel_density_estimation);
-        return vector_mean(condition_ball_covariance);
-    }
-
-    double compute_condition_ball_correlation_stats(std::vector<std::vector<double>> &distance_x,
-                                                    std::vector<std::vector<double>> &distance_y,
-                                                    std::vector<std::vector<double>> &kernel_density_estimation) {
-        std::vector<double> condition_ball_correlation(distance_x.size());
-        condition_ball_correlation = compute_condition_ball_correlation(distance_x, distance_y,
-                                                                        kernel_density_estimation);
-        return vector_mean(condition_ball_correlation);
-    }
-
-    std::vector<std::vector<double >> compute_weight_delta_xy_matrix(std::vector<std::vector<double >> &delta_y_matrix,
-                                                                     std::vector<std::vector<double >> &distance_x,
-                                                                     std::vector<std::vector<double >> &distance_y,
-                                                                     std::vector<double> &weight);
 
     std::vector<std::vector<double >> compute_weight_delta_x_matrix(std::vector<std::vector<double >> &distance_x,
                                                                     std::vector<double> &weight) {
@@ -135,16 +103,6 @@ private:
         }
         return delta_x_matrix;
     };
-
-    double compute_condition_ball_covariance_fix_z(std::vector<std::vector<double>> &weight_delta_xy_matrix,
-                                                   std::vector<std::vector<double>> &weight_delta_x_matrix,
-                                                   std::vector<std::vector<double>> &weight_delta_y_matrix,
-                                                   std::vector<double> weight, uint num);
-
-    double compute_condition_ball_covariance_fix_z(std::vector<std::vector<double>> &weight_delta_xy_matrix,
-                                                   std::vector<std::vector<double>> &weight_delta_x_matrix,
-                                                   std::vector<std::vector<double>> &weight_delta_y_matrix,
-                                                   std::vector<double> weight);
 
 private:
 

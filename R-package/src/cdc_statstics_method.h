@@ -2,14 +2,14 @@
 // Created by JinZhu on 2018/12/28.
 //
 
-#ifndef CDC_STATSTICS_METHOD_H
-#define CDC_STATSTICS_METHOD_H
+#ifndef CDC_STATISTICS_METHOD_H
+#define CDC_STATISTICS_METHOD_H
 
 #include <vector>
 #include <random>
 #include "global.h"
 
-class CDCStatsticsMethod {
+class CDCStatisticsMethod {
 
 public:
     const double &getP_value() const;
@@ -17,9 +17,6 @@ public:
     const std::vector<double> &getCdc_statistic() const;
 
     void conduct_cdc_test(std::vector<std::vector<double>> &distance_x, std::vector<std::vector<double>> &distance_y,
-                          std::vector<std::vector<double>> &kernel, uint num_bootstrap, uint seed, uint num_threads);
-    
-    void conduct_cbc_test(std::vector<std::vector<double>> &distance_x, std::vector<std::vector<double>> &distance_y,
                           std::vector<std::vector<double>> &kernel, uint num_bootstrap, uint seed, uint num_threads);
 
     /**
@@ -64,4 +61,4 @@ protected:
 };
 
 
-#endif //CDC_STATSTICS_METHOD_H
+#endif //CDC_STATISTICS_METHOD_H

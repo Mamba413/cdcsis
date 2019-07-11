@@ -28,11 +28,11 @@ int main(int argc, char **argv) {
 
         std::vector<std::vector<double>> distance_x = data.getDistance_x();
         std::vector<std::vector<double>> distance_y = data.getDistance_y();
-        CDCStatsticsMethod cDCStatsticsMethod = CDCStatsticsMethod();
-        cDCStatsticsMethod.conduct_cdc_test(distance_x, distance_y, kernel, arg_handler.num_permutation, 1, 1);
+        CDCStatisticsMethod cDCStatisticsMethod = CDCStatisticsMethod();
+        cDCStatisticsMethod.conduct_cdc_test(distance_x, distance_y, kernel, arg_handler.num_permutation, 1, 1);
 
-        std::cout << "CDC statistics: " << cDCStatsticsMethod.getCdc_statistic()[0] << std::endl;
-        std::cout << "p-value: " << cDCStatsticsMethod.getP_value() << std::endl;
+        std::cout << "CDC statistics: " << cDCStatisticsMethod.getCdc_statistic()[0] << std::endl;
+        std::cout << "p-value: " << cDCStatisticsMethod.getP_value() << std::endl;
 
     } catch (std::exception &e) {
         std::cerr << "Error: " << e.what() << " CDC will EXIT now." << std::endl;

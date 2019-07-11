@@ -4,9 +4,31 @@
 #' @importFrom stats dist
 #' @importFrom stats bw.nrd0
 #' @importFrom stats bw.nrd
+#' @importFrom utils packageVersion
 #' @useDynLib cdcsis, .registration = TRUE
 NULL
 
+.onAttach <- function(...){
+  ## Retrieve Year Information
+  date <- date()
+  x <- regexpr("[0-9]{4}", date)
+  this.year <- substr(date, x[1], x[1] + attr(x, "match.length") - 1)
+  
+  # Retrieve Current Version
+  this.version <- utils::packageVersion("cdcsis")
+  
+  ## Print on Screen
+  packageStartupMessage("** cdcsis")
+  packageStartupMessage("**  - Conditional Feature Screening & Conditional Independence Test.")
+  packageStartupMessage("** Version    : ",this.version," (",this.year,")", sep="")
+  packageStartupMessage("** Maintainer : Jin Zhu (zhuj37@mail2.sysu.edu.cn)")
+  packageStartupMessage("**")
+  packageStartupMessage("** Please share any bugs or suggestions to the maintainer.")
+}
+
+.onUnload <- function(libpath) {
+  library.dynam.unload("cdcsis", libpath)
+}
 
 #' Convert to distance matrix
 #'
