@@ -5,6 +5,11 @@
 
 using namespace Rcpp;
 
+#ifdef RCPP_USE_GLOBAL_ROSTREAM
+Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
+Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
+#endif
+
 // cdcsisCpp
 Rcpp::List cdcsisCpp(unsigned int stats_method, Rcpp::NumericMatrix& x, std::vector<unsigned int>& variable_index, Rcpp::NumericMatrix& y, Rcpp::NumericMatrix& z, std::vector<double>& bandwidth, double distance_index, unsigned int num_threads, unsigned int num_bootstrap, unsigned int seed, unsigned int stats_type, unsigned int kernel_type, unsigned int distance_z);
 RcppExport SEXP _cdcsis_cdcsisCpp(SEXP stats_methodSEXP, SEXP xSEXP, SEXP variable_indexSEXP, SEXP ySEXP, SEXP zSEXP, SEXP bandwidthSEXP, SEXP distance_indexSEXP, SEXP num_threadsSEXP, SEXP num_bootstrapSEXP, SEXP seedSEXP, SEXP stats_typeSEXP, SEXP kernel_typeSEXP, SEXP distance_zSEXP) {

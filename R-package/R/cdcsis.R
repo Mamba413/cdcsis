@@ -48,10 +48,11 @@
 #' res <- cdcsis(x, y, z)
 #' head(res[["ix"]], n = 10)
 #' }
-cdcsis <- function(x, y, z = NULL, width,
-                   threshold = nrow(y), distance = FALSE, index = 1, num.threads = 1) 
+cdcsis <- function(x, y, z = NULL, 
+                   kernel.type = c("gauss", "rectangle"), width, k,
+                   threshold = nrow(y), hergenerity.z = FALSE, 
+                   distance = FALSE, index = 1, num.threads = 1) 
 {
-  kernel.type <- c("rectangle", "gauss")
   conditional.distance <- FALSE
   if (length(kernel.type) > 1) {
     kernel.type <- "gauss"
@@ -60,21 +61,55 @@ cdcsis <- function(x, y, z = NULL, width,
   }
   z <- as.matrix(z)
   check_xyz_arguments(z)
-  if (missing(width)) {
-    if (dim(z)[2] == 1) {
-      width <- stats::bw.nrd0(as.vector(z))
-    } else if (dim(z)[2] <= 3) {
-      width <- diag(ks::Hpi.diag(z))
+  
+  check_k_arguments(k, conditional.distance, kernel.type, z)
+  
+  # check heterogeneity and discrete
+  if (!hergenerity.z) {
+    hergenerity.z <- check_z_hergenerity(z)
+  }
+  discrete <- any_discrete_variable(z)
+  
+  if (any(discrete)) {
+    if (hergenerity.z) {
+      width <- discrete_z_heterogeneity_width(z, discrete)
     } else {
-      width <- apply(z, 2, stats::bw.nrd)
+      width <- discrete_z_width(z)
     }
+  } else {
+    if (conditional.distance) {
+      z <- compute_distance_matrix(z, conditional.distance, index)
+      check_xyz_arguments(z)
+      kernel.type <- "rectangle"
+      width <- distance_z_width(z, k)
+    } else {
+      z <- as.matrix(z)
+      check_xyz_arguments(z)
+      if (kernel.type == "gauss") {
+        if (missing(width)) {
+          width <- gauss_z_width(z)
+        }
+      } else {
+        if (missing(k)) {
+          k <- compute_k(k, z)
+        }
+        if (hergenerity.z) {
+          # width <- rectangle_z_hergenerity_width(z, k)
+          width <- rectangle_z_hergenerity_width2(z)
+        } else {
+          # width <- rectangle_z_width(z, k) 
+          width <- rectangle_z_width2(z) 
+        }
+      }
+    } 
   }
   check_width_arguments(width)
-  width <- as.double(width)  
+  width <- as.double(width)
   
   check_threads_arguments(num.threads)
   check_index_arguments(index)
   
+  y <- as.matrix(y)
   y <- compute_distance_matrix(y, distance, index)
   check_xyz_arguments(y)
   
@@ -83,6 +118,7 @@ cdcsis <- function(x, y, z = NULL, width,
     names(variable_index) <- NULL
     variable_index <- as.integer(variable_index)
     x <- do.call("cbind", x)
+    x <- as.matrix(x)
   } else {
     variable_index <- integer(0)
   }
