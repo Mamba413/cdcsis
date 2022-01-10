@@ -25,3 +25,13 @@ cdcsis_2.0.3.tar.gz
 cdcsis_2.0.2.zip
 cdcsis_2.0.3.zip
 cdcsis_2.0.2.tar.gz
+R-package/src/cdcsis.dll
+simulation/hypothesis_test/cdcsis.pbs
+simulation/hypothesis_test/data_generator.R
+simulation/hypothesis_test/main.R
+simulation/hypothesis_test/univariate_test.pbs
+simulation/hypothesis_test/univariate_test.R
+simulation/sis/check_cdcsis_paper.R
+cdcsis_2.0.1.tar.gz
+.vscode/settings.json
+R-package/docs/*
