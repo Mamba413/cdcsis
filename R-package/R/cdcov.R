@@ -170,7 +170,7 @@ cdcor <- function(x, y, z, width,
 #' @export
 #' 
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' 
 #' library(cdcsis)
 #' set.seed(1)

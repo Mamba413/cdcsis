@@ -83,6 +83,7 @@ cdcsis <- function(x, y, z = NULL, width,
     names(variable_index) <- NULL
     variable_index <- as.integer(variable_index)
     x <- do.call("cbind", x)
+    x <- as.matrix(x)
   } else {
     variable_index <- integer(0)
   }

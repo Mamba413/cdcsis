@@ -4,8 +4,16 @@
 \alias{cdcsis}
 \title{Conditional Distance Correlation Sure Independence Screening (CDC-SIS)}
 \usage{
-cdcsis(x, y, z = NULL, width, threshold = nrow(y), distance = FALSE,
-  index = 1, num.threads = 1)
+cdcsis(
+  x,
+  y,
+  z = NULL,
+  width,
+  threshold = nrow(y),
+  distance = FALSE,
+  index = 1,
+  num.threads = 1
+)
 }
 \arguments{
 \item{x}{a numeric matrix, or a list which contains multiple numeric matrix}
@@ -70,7 +78,7 @@ head(res[["ix"]], n = 10)
 }
 }
 \references{
-Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317. URL http://www3.stat.sinica.edu.tw/statistica/J28N1/28-1.html
+Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adjusted for confounding covariates with ultrahigh-dimensional data. Statistica Sinica, 28, pp.293-317. URL http://www3.stat.sinica.edu.tw/statistica/J28N1/J28N114/J28N114.html
 }
 \seealso{
 \code{\link{cdcor}}

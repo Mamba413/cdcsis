@@ -4,8 +4,17 @@
 \alias{cdcov.test}
 \title{Conditional Distance Covariance Independence Test}
 \usage{
-cdcov.test(x, y, z, num.bootstrap = 99, width, distance = FALSE,
-  index = 1, seed = 1, num.threads = 1)
+cdcov.test(
+  x,
+  y,
+  z,
+  num.bootstrap = 99,
+  width,
+  distance = FALSE,
+  index = 1,
+  seed = 1,
+  num.threads = 1
+)
 }
 \arguments{
 \item{x}{a numeric vector, matrix, or \code{dist} object}
@@ -42,7 +51,7 @@ gaussian kernel bandwidth. Its default value is relies on \code{stats::bw.nrd0} 
 Performs the nonparametric conditional distance covariance test for conditional independence assumption
 }
 \examples{
-\dontrun{
+\donttest{
 
 library(cdcsis)
 set.seed(1)
