@@ -134,7 +134,7 @@ private:
     compute_rectangle_kernel_estimate(std::vector<std::vector<double>> &condition_variable,
                                       double bandwidth);
 
-    // I think I find a valid method to auto selection strategy for bandwidth even when the distance matrix are computed by Non-Euclidean metric..
+    // A valid method to auto selection strategy for bandwidth even when the distance matrix are computed by Non-Euclidean metric..
     // I briefly describe below:
     // 1. For i = 1, ..., n find the K nearest-neighbor and its associated distance d_{i_K}
     // 2. Take the average of d_{1_K}, ..., d_{n_K}} as the bandwidth

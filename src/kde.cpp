@@ -83,10 +83,6 @@ void KernelDensityEstimation::compute_kernel_density_estimate() {
 /**
  * The kernel estimation function is the same as the equation in the section 4.2 The Kernel Function and Bandwidth Selection
  * (Conditional Distance Correlation, 2015, JASA).
- *
- * I think the code provided by original author is wrong and I add follow two line:
- *    sigma = compute_matrix_multiplication(sigma, sigma);
- *
  */
 std::vector<std::vector<double>>
 KernelDensityEstimation::compute_gaussian_kernel_estimate(std::vector<std::vector<double>> &condition_variable,
