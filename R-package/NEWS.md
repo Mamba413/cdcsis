@@ -1,3 +1,6 @@
+# cdcsis 2.0.4
+* change annotations in cpp 
+
 # cdcsis 2.0.3
 * Bug fix
 * Output conditional distance covariance/correlation vector 
