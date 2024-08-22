@@ -1,3 +1,6 @@
+# cdcsis 2.0.5
+* change maintainer
+
 # cdcsis 2.0.4
 * change annotations in cpp 
 

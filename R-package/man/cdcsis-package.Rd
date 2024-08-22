@@ -16,5 +16,5 @@ Wen, C., Pan, W., Huang, M. and Wang, X., 2018. Sure independence screening adju
 }
 \author{
 Wenhao Hu, Mian Huang, Wenliang Pan, Xueqin Wang, Canhong Wen, Yuan Tian, Heping Zhang, Jin Zhu
-Maintainer: Jin Zhu <zhuj37@mail2.sysu.edu.cn>
+Maintainer: Canhong Wen <wench@ustc.edu.cn>
 }

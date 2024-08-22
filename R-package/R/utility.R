@@ -21,7 +21,7 @@ NULL
   packageStartupMessage("** cdcsis")
   packageStartupMessage("**  - Conditional Feature Screening & Conditional Independence Test.")
   packageStartupMessage("** Version    : ",this.version," (",this.year,")", sep="")
-  packageStartupMessage("** Maintainer : Jin Zhu (zhuj37@mail2.sysu.edu.cn)")
+  packageStartupMessage("** Maintainer : Canhong Wen (wench@ustc.edu.cn)")
   packageStartupMessage("**")
   packageStartupMessage("** Please share any bugs or suggestions to the maintainer.")
 }

@@ -1,5 +1,5 @@
 ## Maintainer comments    
-New submission.
+New submission with the change on maintainer. 
 
 ## Test environments
 * Local PC, Windows, R 3.6.0    
