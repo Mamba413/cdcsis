@@ -4,7 +4,16 @@ Title: Conditional Distance Correlation Based Feature Screening and Conditional 
 Description: Conditional distance correlation <doi:10.1080/01621459.2014.993081> is a novel conditional dependence measurement of two multivariate random variables given a confounding variable. This package provides conditional distance correlation, performs the conditional distance correlation sure independence screening procedure for ultrahigh dimensional data <https://www3.stat.sinica.edu.tw/statistica/J28N1/J28N114/J28N114.html>, and conducts conditional distance covariance test for conditional independence assumption of two multivariate variable.
 Version: 2.0.5
 Date: 2024-08-22
-Author: Wenhao Hu, Mian Huang, Wenliang Pan, Xueqin Wang, Canhong Wen, Yuan Tian, Heping Zhang, Jin Zhu
+Authors@R: c(
+  person(given = "Wenhao", family = "Hu", role = "aut"),
+  person(given = "Mian", family = "Huang", role = "aut"),
+  person(given = "Wenliang", family = "Pan", role = "aut"),
+  person(given = "Xueqin", family = "Wang", role = "aut", comment = c(ORCID = "0000-0001-5205-9950")),
+  person(given = "Canhong", family = "Wen", role = c("aut", "cre"), email = "wench@ustc.edu.cn"),
+  person(given = "Yuan", family = "Tian", role = "aut"),
+  person(given = "Heping", family = "Zhang", role = "aut", comment = c(ORCID = "0000-0002-0688-4076")),
+  person(given = "Jin", family = "Zhu", email = "zhuj37@mail2.sysu.edu.cn", role = c("aut"), comment = c(ORCID = "0000-0001-8550-5822"))
+  )
 Depends: R(>= 3.0.1)
 Imports: ks (>= 1.8.0), mvtnorm, utils, Rcpp
 Suggests: testthat
@@ -12,7 +21,7 @@ Maintainer: Canhong Wen <wench@ustc.edu.cn>
 License: GPL (>= 2)
 NeedsCompilation: yes
 Encoding: UTF-8
-RoxygenNote: 7.1.1
+RoxygenNote: 7.2.3
 LinkingTo: Rcpp
 URL: https://github.com/Mamba413/cdcsis
 BugReports: https://github.com/Mamba413/cdcsis/issues
